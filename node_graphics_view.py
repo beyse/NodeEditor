@@ -13,7 +13,7 @@ class QDMGraphicsView(QGraphicsView):
         self.setScene(self.grScene)
 
         self.zoomInFactor = 1.25
-        self.zoomClamp = False
+        self.zoomClamp = True
         self.zoom = 10
         self.zoomStep = 1
         self.zoomRange = [0, 10]
@@ -96,6 +96,11 @@ class QDMGraphicsView(QGraphicsView):
             self.zoom -= self.zoomStep
 
 
+        clamped = False
+        if self.zoom < self.zoomRange[0]: self.zoom, clamped = self.zoomRange[0], True
+        if self.zoom > self.zoomRange[1]: self.zoom, clamped = self.zoomRange[1], True
+
         # set scene scale
-        self.scale(zoomFactor, zoomFactor)
+        if not clamped or self.zoomClamp is False:
+            self.scale(zoomFactor, zoomFactor)
 
