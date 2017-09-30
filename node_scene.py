@@ -1,7 +1,7 @@
 from node_graphics_scene import QDMGraphicsScene
 
 
-class Scene:
+class Scene():
     def __init__(self):
         self.nodes = []
         self.edges = []
