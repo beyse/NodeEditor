@@ -41,9 +41,9 @@ class NodeEditorWnd(QWidget):
 
 
     def addNodes(self):
-        node1 = Node(self.scene, "My Awesome Node 1", inputs=[1,2,3], outputs=[1])
-        node2 = Node(self.scene, "My Awesome Node 2", inputs=[1,2,3], outputs=[1])
-        node3 = Node(self.scene, "My Awesome Node 3", inputs=[1,2,3], outputs=[1])
+        node1 = Node(self.scene, "My Awesome Node 1", inputs=[0,0,0], outputs=[1])
+        node2 = Node(self.scene, "My Awesome Node 2", inputs=[3,3,3], outputs=[1])
+        node3 = Node(self.scene, "My Awesome Node 3", inputs=[2,2,2], outputs=[1])
         node1.setPos(-350, -250)
         node2.setPos(-75, 0)
         node3.setPos(200, -150)

@@ -11,15 +11,17 @@ DEBUG = False
 
 
 class Socket():
-    def __init__(self, node, index=0, position=LEFT_TOP):
+    def __init__(self, node, index=0, position=LEFT_TOP, socket_type=1):
 
         self.node = node
         self.index = index
         self.position = position
+        self.socket_type = socket_type
 
         if DEBUG: print("Socket -- creating with", self.index, self.position, "for node", self.node)
 
-        self.grSocket = QDMGraphicsSocket(self.node.grNode)
+
+        self.grSocket = QDMGraphicsSocket(self.node.grNode, self.socket_type)
 
         self.grSocket.setPos(*self.node.getSocketPosition(index, position))
 

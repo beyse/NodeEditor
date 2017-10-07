@@ -4,7 +4,7 @@ from node_graphics_edge import *
 EDGE_TYPE_DIRECT = 1
 EDGE_TYPE_BEZIER = 2
 
-DEBUG = True
+DEBUG = False
 
 class Edge:
     def __init__(self, scene, start_socket, end_socket, edge_type=EDGE_TYPE_DIRECT):
@@ -34,8 +34,6 @@ class Edge:
             end_pos[0] += self.end_socket.node.grNode.pos().x()
             end_pos[1] += self.end_socket.node.grNode.pos().y()
             self.grEdge.setDestination(*end_pos)
-        if DEBUG: print(" SS:", self.start_socket)
-        if DEBUG: print(" ES:", self.end_socket)
         self.grEdge.update()
 
 
