@@ -32,6 +32,9 @@ class Node():
             counter += 1
             self.outputs.append(socket)
 
+    def __str__(self):
+        return "<Node %s..%s>" % (hex(id(self))[2:5], hex(id(self))[-3:])
+
     @property
     def pos(self):
         return self.grNode.pos()        # QPointF
