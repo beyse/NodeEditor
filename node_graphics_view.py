@@ -94,6 +94,17 @@ class QDMGraphicsView(QGraphicsView):
         self.last_lmb_click_scene_pos = self.mapToScene(event.pos())
 
         # logic
+        if hasattr(item, "node") or isinstance(item, QDMGraphicsEdge):
+            if event.modifiers() & Qt.ShiftModifier:
+                if DEBUG: print("LMB + Shift on", item)
+                event.ignore()
+                fakeEvent = QMouseEvent(QEvent.MouseButtonPress, event.localPos(), event.screenPos(),
+                                        Qt.LeftButton, event.buttons() | Qt.LeftButton,
+                                        event.modifiers() | Qt.ControlModifier)
+                super().mousePressEvent(fakeEvent)
+                return
+
+
         if type(item) is QDMGraphicsSocket:
             if self.mode == MODE_NOOP:
                 self.mode = MODE_EDGE_DRAG
@@ -113,6 +124,16 @@ class QDMGraphicsView(QGraphicsView):
         item = self.getItemAtClick(event)
 
         # logic
+        if hasattr(item, "node") or isinstance(item, QDMGraphicsEdge):
+            if event.modifiers() & Qt.ShiftModifier:
+                if DEBUG: print("LMB Release + Shift on", item)
+                event.ignore()
+                fakeEvent = QMouseEvent(event.type(), event.localPos(), event.screenPos(),
+                                        Qt.LeftButton, Qt.NoButton,
+                                        event.modifiers() | Qt.ControlModifier)
+                super().mouseReleaseEvent(fakeEvent)
+                return
+
         if self.mode == MODE_EDGE_DRAG:
             if self.distanceBetweenClickAndReleaseIsOff(event):
                 res = self.edgeDragEnd(item)
