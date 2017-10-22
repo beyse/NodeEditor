@@ -203,19 +203,20 @@ class QDMGraphicsView(QGraphicsView):
         self.mode = MODE_NOOP
 
         if type(item) is QDMGraphicsSocket:
-            if DEBUG: print('View::edgeDragEnd ~   previous edge:', self.previousEdge)
-            if item.socket.hasEdge():
-                item.socket.edge.remove()
-            if DEBUG: print('View::edgeDragEnd ~   assign End Socket', item.socket)
-            if self.previousEdge is not None: self.previousEdge.remove()
-            if DEBUG: print('View::edgeDragEnd ~  previous edge removed')
-            self.dragEdge.start_socket = self.last_start_socket
-            self.dragEdge.end_socket = item.socket
-            self.dragEdge.start_socket.setConnectedEdge(self.dragEdge)
-            self.dragEdge.end_socket.setConnectedEdge(self.dragEdge)
-            if DEBUG: print('View::edgeDragEnd ~  reassigned start & end sockets to drag edge')
-            self.dragEdge.updatePositions()
-            return True
+            if item.socket != self.last_start_socket:
+                if DEBUG: print('View::edgeDragEnd ~   previous edge:', self.previousEdge)
+                if item.socket.hasEdge():
+                    item.socket.edge.remove()
+                if DEBUG: print('View::edgeDragEnd ~   assign End Socket', item.socket)
+                if self.previousEdge is not None: self.previousEdge.remove()
+                if DEBUG: print('View::edgeDragEnd ~  previous edge removed')
+                self.dragEdge.start_socket = self.last_start_socket
+                self.dragEdge.end_socket = item.socket
+                self.dragEdge.start_socket.setConnectedEdge(self.dragEdge)
+                self.dragEdge.end_socket.setConnectedEdge(self.dragEdge)
+                if DEBUG: print('View::edgeDragEnd ~  reassigned start & end sockets to drag edge')
+                self.dragEdge.updatePositions()
+                return True
 
         if DEBUG: print('View::edgeDragEnd ~ End dragging edge')
         self.dragEdge.remove()
