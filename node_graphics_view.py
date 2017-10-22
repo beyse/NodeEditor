@@ -175,6 +175,22 @@ class QDMGraphicsView(QGraphicsView):
         super().mouseMoveEvent(event)
 
 
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Delete:
+            self.deleteSelected()
+        else:
+            super().keyPressEvent(event)
+
+
+    def deleteSelected(self):
+        for item in self.grScene.selectedItems():
+            if isinstance(item, QDMGraphicsEdge):
+                item.edge.remove()
+            elif hasattr(item, 'node'):
+                item.node.remove()
+
+
+
     def debug_modifiers(self, event):
         out = "MODS: "
         if event.modifiers() & Qt.ShiftModifier: out += "SHIFT "
