@@ -27,6 +27,7 @@ class QDMGraphicsView(QGraphicsView):
         self.setScene(self.grScene)
 
         self.mode = MODE_NOOP
+        self.editingFlag = False
 
         self.zoomInFactor = 1.25
         self.zoomClamp = True
@@ -177,9 +178,13 @@ class QDMGraphicsView(QGraphicsView):
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Delete:
-            self.deleteSelected()
+            if not self.editingFlag:
+                self.deleteSelected()
+            else:
+                super().keyPressEvent(event)
         else:
             super().keyPressEvent(event)
+
 
 
     def deleteSelected(self):
