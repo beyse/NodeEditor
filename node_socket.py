@@ -56,4 +56,6 @@ class Socket(Serializable):
         ])
 
     def deserialize(self, data, hashmap={}):
-        return False
+        self.id = data['id']
+        hashmap[data['id']] = self
+        return True
