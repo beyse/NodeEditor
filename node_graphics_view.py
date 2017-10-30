@@ -100,7 +100,7 @@ class QDMGraphicsView(QGraphicsView):
         # we store the position of last LMB click
         self.last_lmb_click_scene_pos = self.mapToScene(event.pos())
 
-        if DEBUG: print("LMB Click on", item, self.debug_modifiers(event))
+        # if DEBUG: print("LMB Click on", item, self.debug_modifiers(event))
 
         # logic
         if hasattr(item, "node") or isinstance(item, QDMGraphicsEdge) or item is None:
@@ -213,6 +213,20 @@ class QDMGraphicsView(QGraphicsView):
             self.grScene.scene.saveToFile("graph.json.txt")
         elif event.key() == Qt.Key_L and event.modifiers() & Qt.ControlModifier:
             self.grScene.scene.loadFromFile("graph.json.txt")
+        elif event.key() == Qt.Key_1:
+            self.grScene.scene.history.storeHistory("Item A")
+        elif event.key() == Qt.Key_2:
+            self.grScene.scene.history.storeHistory("Item B")
+        elif event.key() == Qt.Key_3:
+            self.grScene.scene.history.storeHistory("Item C")
+        elif event.key() == Qt.Key_4:
+            self.grScene.scene.history.undo()
+        elif event.key() == Qt.Key_5:
+            self.grScene.scene.history.redo()
+        elif event.key() == Qt.Key_H:
+            print("HISTORY:     len(%d)" % len(self.grScene.scene.history.history_stack),
+                  " -- current_step", self.grScene.scene.history.history_current_step)
+            print(self.grScene.scene.history.history_stack)
         else:
             super().keyPressEvent(event)
 
