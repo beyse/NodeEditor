@@ -1,7 +1,7 @@
 from node_graphics_edge import QDMGraphicsEdge
 
 
-DEBUG = True
+DEBUG = False
 
 
 class SceneHistory():
