@@ -37,6 +37,7 @@ class QDMGraphicsNode(QGraphicsItem):
         self.initContent()
 
         self.initUI()
+        self.wasMoved = False
 
     def mouseMoveEvent(self, event):
         super().mouseMoveEvent(event)
@@ -45,7 +46,14 @@ class QDMGraphicsNode(QGraphicsItem):
         for node in self.scene().scene.nodes:
             if node.grNode.isSelected():
                 node.updateConnectedEdges()
+        self.wasMoved = True
 
+    def mouseReleaseEvent(self, event):
+        super().mouseReleaseEvent(event)
+
+        if self.wasMoved:
+            self.wasMoved = False
+            self.node.scene.history.storeHistory("Node moved")
 
     @property
     def title(self): return self._title
