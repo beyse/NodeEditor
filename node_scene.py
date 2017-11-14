@@ -70,6 +70,8 @@ class Scene(Serializable):
         self.clear()
         hashmap = {}
 
+        self.id = data['id']
+
         # create nodes
         for node_data in data['nodes']:
             Node(self).deserialize(node_data, hashmap)
