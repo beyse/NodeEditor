@@ -5,6 +5,7 @@ from node_graphics_scene import QDMGraphicsScene
 from node_node import Node
 from node_edge import Edge
 from node_scene_history import SceneHistory
+from node_scene_clipboard import SceneClipboard
 
 
 class Scene(Serializable):
@@ -18,6 +19,7 @@ class Scene(Serializable):
 
         self.initUI()
         self.history = SceneHistory(self)
+        self.clipboard = SceneClipboard(self)
 
     def initUI(self):
         self.grScene = QDMGraphicsScene(self)
@@ -66,18 +68,18 @@ class Scene(Serializable):
             ('edges', edges),
         ])
 
-    def deserialize(self, data, hashmap={}):
+    def deserialize(self, data, hashmap={}, restore_id=True):
         self.clear()
         hashmap = {}
 
-        self.id = data['id']
+        if restore_id: self.id = data['id']
 
         # create nodes
         for node_data in data['nodes']:
-            Node(self).deserialize(node_data, hashmap)
+            Node(self).deserialize(node_data, hashmap, restore_id)
 
         # create edges
         for edge_data in data['edges']:
-            Edge(self).deserialize(edge_data, hashmap)
+            Edge(self).deserialize(edge_data, hashmap, restore_id)
 
         return True
