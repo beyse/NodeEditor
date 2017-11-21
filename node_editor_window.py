@@ -8,9 +8,10 @@ class NodeEditorWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        self.filename = None
+
         self.initUI()
 
-        self.filename = None
 
     def createAct(self, name, shortcut, tooltip, callback):
         act = QAction(name, self)
@@ -44,6 +45,7 @@ class NodeEditorWindow(QMainWindow):
 
         # create node editor widget
         nodeeditor = NodeEditorWidget(self)
+        nodeeditor.scene.addHasBeenModifiedListener(self.changeTitle)
         self.setCentralWidget(nodeeditor)
 
         # status bar
@@ -54,34 +56,83 @@ class NodeEditorWindow(QMainWindow):
 
         # set window properties
         self.setGeometry(200, 200, 800, 600)
-        self.setWindowTitle("Node Editor")
+        self.changeTitle()
         self.show()
+
+
+    def changeTitle(self):
+        title = "Node Editor - "
+        if self.filename is None:
+            title += "New"
+        else:
+            title += os.path.basename(self.filename)
+
+        if self.centralWidget().scene.has_been_modified:
+            title += "*"
+
+        self.setWindowTitle(title)
+
+
+    def closeEvent(self, event):
+        if self.maybeSave():
+            event.accept()
+        else:
+            event.ignore()
+
+    def isModified(self):
+        return self.centralWidget().scene.has_been_modified
+
+    def maybeSave(self):
+        if not self.isModified():
+            return True
+
+        res = QMessageBox.warning(self, "About to loose your work?",
+                "The document has been modified.\n Do you want to save your changes?",
+                QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel
+              )
+
+        if res == QMessageBox.Save:
+            return self.onFileSave()
+        elif res == QMessageBox.Cancel:
+            return False
+
+        return True
+
 
 
     def onScenePosChanged(self, x, y):
         self.status_mouse_pos.setText("Scene Pos: [%d, %d]" % (x, y))
 
     def onFileNew(self):
-        self.centralWidget().scene.clear()
+        if self.maybeSave():
+            self.centralWidget().scene.clear()
+            self.filename = None
+            self.changeTitle()
+
 
     def onFileOpen(self):
-        fname, filter = QFileDialog.getOpenFileName(self, 'Open graph from file')
-        if fname == '':
-            return
-        if os.path.isfile(fname):
-            self.centralWidget().scene.loadFromFile(fname)
+        if self.maybeSave():
+            fname, filter = QFileDialog.getOpenFileName(self, 'Open graph from file')
+            if fname == '':
+                return
+            if os.path.isfile(fname):
+                self.centralWidget().scene.loadFromFile(fname)
+                self.filename = fname
+                self.changeTitle()
 
     def onFileSave(self):
         if self.filename is None: return self.onFileSaveAs()
         self.centralWidget().scene.saveToFile(self.filename)
         self.statusBar().showMessage("Successfully saved %s" % self.filename)
+        return True
 
     def onFileSaveAs(self):
         fname, filter = QFileDialog.getSaveFileName(self, 'Save graph to file')
         if fname == '':
-            return
+            return False
         self.filename = fname
         self.onFileSave()
+        return True
 
     def onEditUndo(self):
         self.centralWidget().scene.history.undo()
