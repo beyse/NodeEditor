@@ -1,8 +1,6 @@
-from collections import OrderedDict
-from node_serializable import Serializable
-from node_graphics_node import QDMGraphicsNode
-from node_content_widget import QDMNodeContentWidget
-from node_socket import *
+from nodeeditor.node_graphics_node import QDMGraphicsNode
+from nodeeditor.node_content_widget import QDMNodeContentWidget
+from nodeeditor.node_socket import *
 
 
 DEBUG = False

@@ -1,6 +1,6 @@
 from collections import OrderedDict
-from node_serializable import Serializable
-from node_graphics_socket import QDMGraphicsSocket
+from nodeeditor.node_serializable import Serializable
+from nodeeditor.node_graphics_socket import QDMGraphicsSocket
 
 
 LEFT_TOP = 1
