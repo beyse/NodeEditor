@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
-from nodeeditor.node_scene import Scene
+from nodeeditor.node_scene import Scene, InvalidFile
 from nodeeditor.node_node import Node
 from nodeeditor.node_edge import Edge, EDGE_TYPE_BEZIER
 from nodeeditor.node_graphics_view import QDMGraphicsView
@@ -43,6 +43,35 @@ class NodeEditorWidget(QWidget):
     def getUserFriendlyFilename(self):
         name = os.path.basename(self.filename) if self.isFilenameSet() else "New Graph"
         return name + ("*" if self.isModified() else "")
+
+    def fileNew(self):
+        self.scene.clear()
+        self.filename = None
+
+    def fileLoad(self, filename):
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        try:
+            self.scene.loadFromFile(filename)
+            self.filename = filename
+            # clear history
+            return True
+        except InvalidFile as e:
+            print(e)
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, "Error loading %s" % os.path.basename(filename), str(e))
+            return False
+        finally:
+            QApplication.restoreOverrideCursor()
+
+
+    def fileSave(self, filename=None):
+        # when called with empty parameter, we won't store the filename
+        if filename is not None: self.filename = filename
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        self.scene.saveToFile(self.filename)
+        QApplication.restoreOverrideCursor()
+        return True
+
 
     def addNodes(self):
         node1 = Node(self.scene, "My Awesome Node 1", inputs=[0,0,0], outputs=[1])

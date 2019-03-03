@@ -228,9 +228,9 @@ class QDMGraphicsView(QGraphicsView):
         #     else:
         #         super().keyPressEvent(event)
         # elif event.key() == Qt.Key_S and event.modifiers() & Qt.ControlModifier:
-        #     self.grScene.scene.saveToFile("graph.json.txt")
+        #     self.grScene.scene.saveToFile("graph.json")
         # elif event.key() == Qt.Key_L and event.modifiers() & Qt.ControlModifier:
-        #     self.grScene.scene.loadFromFile("graph.json.txt")
+        #     self.grScene.scene.loadFromFile("graph.json")
         # elif event.key() == Qt.Key_Z and event.modifiers() & Qt.ControlModifier and not event.modifiers() & Qt.ShiftModifier:
         #     self.grScene.scene.history.undo()
         # elif event.key() == Qt.Key_Z and event.modifiers() & Qt.ControlModifier and event.modifiers() & Qt.ShiftModifier:

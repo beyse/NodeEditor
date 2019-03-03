@@ -1,7 +1,7 @@
 from nodeeditor.node_graphics_node import QDMGraphicsNode
 from nodeeditor.node_content_widget import QDMNodeContentWidget
 from nodeeditor.node_socket import *
-
+from nodeeditor.utils import dumpException
 
 DEBUG = False
 
@@ -104,28 +104,30 @@ class Node(Serializable):
         ])
 
     def deserialize(self, data, hashmap={}, restore_id=True):
-        if restore_id: self.id = data['id']
-        hashmap[data['id']] = self
+        try:
+            if restore_id: self.id = data['id']
+            hashmap[data['id']] = self
 
-        self.setPos(data['pos_x'], data['pos_y'])
-        self.title = data['title']
+            self.setPos(data['pos_x'], data['pos_y'])
+            self.title = data['title']
 
-        data['inputs'].sort(key=lambda socket: socket['index'] + socket['position'] * 10000 )
-        data['outputs'].sort(key=lambda socket: socket['index'] + socket['position'] * 10000 )
+            data['inputs'].sort(key=lambda socket: socket['index'] + socket['position'] * 10000 )
+            data['outputs'].sort(key=lambda socket: socket['index'] + socket['position'] * 10000 )
 
-        self.inputs = []
-        for socket_data in data['inputs']:
-            new_socket = Socket(node=self, index=socket_data['index'], position=socket_data['position'],
-                                socket_type=socket_data['socket_type'])
-            new_socket.deserialize(socket_data, hashmap, restore_id)
-            self.inputs.append(new_socket)
+            self.inputs = []
+            for socket_data in data['inputs']:
+                new_socket = Socket(node=self, index=socket_data['index'], position=socket_data['position'],
+                                    socket_type=socket_data['socket_type'])
+                new_socket.deserialize(socket_data, hashmap, restore_id)
+                self.inputs.append(new_socket)
 
-        self.outputs = []
-        for socket_data in data['outputs']:
-            new_socket = Socket(node=self, index=socket_data['index'], position=socket_data['position'],
-                                socket_type=socket_data['socket_type'])
-            new_socket.deserialize(socket_data, hashmap, restore_id)
-            self.outputs.append(new_socket)
+            self.outputs = []
+            for socket_data in data['outputs']:
+                new_socket = Socket(node=self, index=socket_data['index'], position=socket_data['position'],
+                                    socket_type=socket_data['socket_type'])
+                new_socket.deserialize(socket_data, hashmap, restore_id)
+                self.outputs.append(new_socket)
+        except Exception as e: dumpException(e)
 
 
         return True
