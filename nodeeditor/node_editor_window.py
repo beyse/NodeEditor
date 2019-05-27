@@ -3,6 +3,7 @@ import json
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from nodeeditor.node_editor_widget import NodeEditorWidget
+from nodeeditor.utils import pp
 
 
 class NodeEditorWindow(QMainWindow):
@@ -128,20 +129,31 @@ class NodeEditorWindow(QMainWindow):
                 self.setTitle()
 
     def onFileSave(self):
-        if self.getCurrentNodeEditorWidget().filename is None: return self.onFileSaveAs()
-        self.getCurrentNodeEditorWidget().fileSave()
-        self.statusBar().showMessage("Successfully saved %s" % self.getCurrentNodeEditorWidget().filename)
-        self.setTitle()
-        return True
+        current_nodeeditor = self.getCurrentNodeEditorWidget()
+        if current_nodeeditor is not None:
+            if not current_nodeeditor.isFilenameSet(): return self.onFileSaveAs()
+
+            current_nodeeditor.fileSave()
+            self.statusBar().showMessage("Successfully saved %s" % current_nodeeditor.filename, 5000)
+
+            # support for MDI app
+            if hasattr(current_nodeeditor, "setTitle"): current_nodeeditor.setTitle()
+            else: self.setTitle()
+            return True
 
     def onFileSaveAs(self):
-        fname, filter = QFileDialog.getSaveFileName(self, 'Save graph to file')
-        if fname == '':
-            return False
-        self.getCurrentNodeEditorWidget().fileSave(fname)
-        self.statusBar().showMessage("Successfully saved as %s" % self.getCurrentNodeEditorWidget().filename)
-        self.setTitle()
-        return True
+        current_nodeeditor = self.getCurrentNodeEditorWidget()
+        if current_nodeeditor is not None:
+            fname, filter = QFileDialog.getSaveFileName(self, 'Save graph to file')
+            if fname == '': return False
+
+            current_nodeeditor.fileSave(fname)
+            self.statusBar().showMessage("Successfully saved as %s" % current_nodeeditor.filename, 5000)
+
+            # support for MDI app
+            if hasattr(current_nodeeditor, "setTitle"): current_nodeeditor.setTitle()
+            else: self.setTitle()
+            return True
 
     def onEditUndo(self):
         self.getCurrentNodeEditorWidget().scene.history.undo()

@@ -6,7 +6,7 @@ from PyQt5.QtCore import *
 from nodeeditor.utils import loadStylesheets
 from nodeeditor.node_editor_window import NodeEditorWindow
 from examples.example_calculator.calc_sub_window import CalculatorSubWindow
-from nodeeditor.utils import dumpException
+from nodeeditor.utils import dumpException, pp
 
 # images for the dark skin
 import examples.example_calculator.qss.nodeeditor_dark_resources
@@ -56,20 +56,6 @@ class CalculatorWindow(NodeEditorWindow):
             self.writeSettings()
             event.accept()
 
-    def updateMenus(self):
-        print("update Menus")
-        active = self.activeMdiChild()
-        hasMdiChild = (active is not None)
-
-        self.actSave.setEnabled(hasMdiChild)
-        self.actSaveAs.setEnabled(hasMdiChild)
-        self.actClose.setEnabled(hasMdiChild)
-        self.actCloseAll.setEnabled(hasMdiChild)
-        self.actTile.setEnabled(hasMdiChild)
-        self.actCascade.setEnabled(hasMdiChild)
-        self.actNext.setEnabled(hasMdiChild)
-        self.actPrevious.setEnabled(hasMdiChild)
-        self.actSeparator.setVisible(hasMdiChild)
 
     def createActions(self):
         super().createActions()
@@ -86,6 +72,13 @@ class CalculatorWindow(NodeEditorWindow):
 
         self.actAbout = QAction("&About", self, statusTip="Show the application's About box", triggered=self.about)
 
+    def getCurrentNodeEditorWidget(self):
+        """ we're returning NodeEditorWidget here... """
+        activeSubWindow = self.mdiArea.activeSubWindow()
+        if activeSubWindow:
+            return activeSubWindow.widget()
+        return None
+
     def onFileNew(self):
         try:
             subwnd = self.createMdiChild()
@@ -93,28 +86,6 @@ class CalculatorWindow(NodeEditorWindow):
             subwnd.show()
         except Exception as e: dumpException(e)
 
-    def onFileSave(self):
-        current_nodeeditor = self.activeMdiChild()
-        if current_nodeeditor:
-            if not current_nodeeditor.isFilenameSet():
-                return self.onFileSaveAs()
-            else:
-                current_nodeeditor.fileSave() # we don't pass argument, keep the filename
-                self.statusBar().showMessage("Succesfully saved %s" % current_nodeeditor.filename, 5000)
-                current_nodeeditor.setTitle()
-                return True
-
-    def onFileSaveAs(self):
-        current_nodeeditor = self.activeMdiChild()
-        if current_nodeeditor:
-            fname, filter = QFileDialog.getSaveFileName(self, "Save graph file")
-
-            if fname == '': return False
-
-            current_nodeeditor.fileSave(fname)
-            current_nodeeditor.setTitle()
-            self.statusBar().showMessage("Successfully saved as %s" % fname, 5000)
-            return True
 
     def onFileOpen(self):
         fnames, filter = QFileDialog.getOpenFileNames(self, 'Open graph from file')
@@ -156,6 +127,21 @@ class CalculatorWindow(NodeEditorWindow):
         self.helpMenu = self.menuBar().addMenu("&Help")
         self.helpMenu.addAction(self.actAbout)
 
+    def updateMenus(self):
+        print("update Menus")
+        active = self.getCurrentNodeEditorWidget()
+        hasMdiChild = (active is not None)
+
+        self.actSave.setEnabled(hasMdiChild)
+        self.actSaveAs.setEnabled(hasMdiChild)
+        self.actClose.setEnabled(hasMdiChild)
+        self.actCloseAll.setEnabled(hasMdiChild)
+        self.actTile.setEnabled(hasMdiChild)
+        self.actCascade.setEnabled(hasMdiChild)
+        self.actNext.setEnabled(hasMdiChild)
+        self.actPrevious.setEnabled(hasMdiChild)
+        self.actSeparator.setVisible(hasMdiChild)
+
     def updateWindowMenu(self):
         self.windowMenu.clear()
         self.windowMenu.addAction(self.actClose)
@@ -180,9 +166,11 @@ class CalculatorWindow(NodeEditorWindow):
 
             action = self.windowMenu.addAction(text)
             action.setCheckable(True)
-            action.setChecked(child is self.activeMdiChild())
+            action.setChecked(child is self.getCurrentNodeEditorWidget())
             action.triggered.connect(self.windowMapper.map)
             self.windowMapper.setMapping(action, window)
+
+
 
     def createToolBars(self):
         pass
@@ -214,13 +202,6 @@ class CalculatorWindow(NodeEditorWindow):
                 return window
         return None
 
-
-    def activeMdiChild(self):
-        """ we're returning NodeEditorWidget here... """
-        activeSubWindow = self.mdiArea.activeSubWindow()
-        if activeSubWindow:
-            return activeSubWindow.widget()
-        return None
 
     def setActiveSubWindow(self, window):
         if window:

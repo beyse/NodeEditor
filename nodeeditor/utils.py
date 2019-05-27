@@ -1,6 +1,9 @@
 import traceback
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
+from pprint import PrettyPrinter
+
+pp = PrettyPrinter(indent=4).pprint
 
 
 def dumpException(e):
