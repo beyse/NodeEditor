@@ -23,7 +23,9 @@ class Scene(Serializable):
         self.scene_height = 64000
 
         self._has_been_modified = False
+        self._last_selected_items = []
 
+        # initialiaze all listeners
         self._has_been_modified_listeners = []
         self._item_selected_listeners = []
         self._items_deselected_listeners = []
@@ -40,10 +42,18 @@ class Scene(Serializable):
         self.grScene.setGrScene(self.scene_width, self.scene_height)
 
     def onItemSelected(self):
-        print("SCENE:: ~onItemSelected")
+        current_selected_items = self.getSelectedItems()
+        if current_selected_items != self._last_selected_items:
+            self._last_selected_items = current_selected_items
+            self.history.storeHistory("Selection Changed")
+            for callback in self._item_selected_listeners: callback()
 
     def onItemsDeselected(self):
-        print("SCENE:: ~onItemsDeselected")
+        self.resetLastSelectedStates()
+        if self._last_selected_items != []:
+            self._last_selected_items = []
+            self.history.storeHistory("Deselected Everything")
+            for callback in self._items_deselected_listeners: callback()
 
     def isModified(self):
         return self.has_been_modified
@@ -58,15 +68,15 @@ class Scene(Serializable):
     @has_been_modified.setter
     def has_been_modified(self, value):
         if not self._has_been_modified and value:
+            # set it now, because we will be reading it soon
             self._has_been_modified = value
 
             # call all registered listeners
-            for callback in self._has_been_modified_listeners:
-                callback()
+            for callback in self._has_been_modified_listeners: callback()
 
         self._has_been_modified = value
 
-
+    # our helper listener functions
     def addHasBeenModifiedListener(self, callback):
         self._has_been_modified_listeners.append(callback)
 
@@ -75,7 +85,6 @@ class Scene(Serializable):
 
     def addItemsDeselectedListener(self, callback):
         self._items_deselected_listeners.append(callback)
-
 
     # custom flag to detect node or edge has been selected....
     def resetLastSelectedStates(self):

@@ -170,7 +170,20 @@ class QDMGraphicsView(QGraphicsView):
 
         if self.rubberBandDraggingRectangle:
             self.rubberBandDraggingRectangle = False
-            self.grScene.scene.history.storeHistory("Selection changed")
+            current_selected_items = self.grScene.selectedItems()
+
+            if current_selected_items != self.grScene.scene._last_selected_items:
+                if current_selected_items == []:
+                    self.grScene.itemsDeselected.emit()
+                else:
+                    self.grScene.itemSelected.emit()
+                self.grScene.scene._last_selected_items = current_selected_items
+
+            return
+
+        # otherwise deselect everything
+        if item is None:
+            self.grScene.itemsDeselected.emit()
 
         super().mouseReleaseEvent(event)
 

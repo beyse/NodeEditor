@@ -47,7 +47,6 @@ class QDMGraphicsNode(QGraphicsItem):
         self._brush_background = QBrush(QColor("#E3212121"))
 
     def onSelected(self):
-        # print("grNode onSelected")
         self.node.scene.grScene.itemSelected.emit()
 
     def mouseMoveEvent(self, event):
@@ -62,11 +61,22 @@ class QDMGraphicsNode(QGraphicsItem):
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
 
+        # handle when grNode moved
         if self._was_moved:
             self._was_moved = False
             self.node.scene.history.storeHistory("Node moved", setModified=True)
 
-        if self._last_selected_state != self.isSelected():
+            self.node.scene.resetLastSelectedStates()
+            self._last_selected_state = True
+
+            # we need to store the last selected state, because moving does also select the nodes
+            self.node.scene._last_selected_items = self.node.scene.getSelectedItems()
+
+            # now we want to skip storing selection
+            return
+
+        # handle when grNode was clicked on
+        if self._last_selected_state != self.isSelected() or self.node.scene._last_selected_items != self.node.scene.getSelectedItems():
             self.node.scene.resetLastSelectedStates()
             self._last_selected_state = self.isSelected()
             self.onSelected()
