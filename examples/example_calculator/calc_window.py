@@ -152,7 +152,7 @@ class CalculatorWindow(NodeEditorWindow):
 
     def updateEditMenu(self):
         try:
-            print("update Edit Menu")
+            # print("update Edit Menu")
             active = self.getCurrentNodeEditorWidget()
             hasMdiChild = (active is not None)
 

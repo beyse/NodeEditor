@@ -2,7 +2,7 @@ from nodeeditor.node_graphics_edge import QDMGraphicsEdge
 
 from nodeeditor.utils import dumpException
 
-DEBUG = True
+DEBUG = False
 
 
 class SceneHistory():
