@@ -5,6 +5,8 @@ from nodeeditor.node_editor_widget import NodeEditorWidget
 from examples.example_calculator.calc_node_base import *
 from nodeeditor.utils import dumpException
 
+DEBUG = False
+
 
 class CalculatorSubWindow(NodeEditorWidget):
     def __init__(self):
@@ -30,8 +32,6 @@ class CalculatorSubWindow(NodeEditorWidget):
         for callback in self._close_event_listeners: callback(self, event)
 
     def onDragEnter(self, event):
-        # print("CalcSubWnd :: ~onDragEnter")
-        # print("text: '%s'" % event.mimeData().text())
         if event.mimeData().hasFormat(LISTBOX_MIMETYPE):
             event.acceptProposedAction()
         else:
@@ -39,8 +39,6 @@ class CalculatorSubWindow(NodeEditorWidget):
             event.setAccepted(False)
 
     def onDrop(self, event):
-        # print("CalcSubWnd :: ~onDrop")
-        # print("text: '%s'" % event.mimeData().text())
         if event.mimeData().hasFormat(LISTBOX_MIMETYPE):
             eventData = event.mimeData().data(LISTBOX_MIMETYPE)
             dataStream = QDataStream(eventData, QIODevice.ReadOnly)
@@ -52,12 +50,12 @@ class CalculatorSubWindow(NodeEditorWidget):
             mouse_position = event.pos()
             scene_position = self.scene.grScene.views()[0].mapToScene(mouse_position)
 
-            print("GOT DROP: [%d] '%s'" % (op_code, text), "mouse:", mouse_position, "scene:", scene_position)
+            if DEBUG: print("GOT DROP: [%d] '%s'" % (op_code, text), "mouse:", mouse_position, "scene:", scene_position)
 
             try:
-                # node = CalcNode(self.scene, op_code, text, inputs=[1,1], outputs=[2])
                 node = get_class_from_opcode(op_code)(self.scene)
                 node.setPos(scene_position.x(), scene_position.y())
+                self.scene.history.storeHistory("Created node %s" % node.__class__.__name__)
             except Exception as e: dumpException(e)
 
 

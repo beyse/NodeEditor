@@ -14,7 +14,7 @@ from examples.example_calculator.calc_conf_nodes import *
 # images for the dark skin
 import examples.example_calculator.qss.nodeeditor_dark_resources
 
-DEBUG = True
+DEBUG = False
 
 
 class CalculatorWindow(NodeEditorWindow):

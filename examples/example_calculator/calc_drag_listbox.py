@@ -21,12 +21,12 @@ class QDMDragListbox(QListWidget):
 
 
     def addMyItems(self):
-        self.addMyItem("Input", "icons/in.png", OP_NODE_INPUT)
-        self.addMyItem("Output", "icons/out.png", OP_NODE_OUTPUT)
-        self.addMyItem("Add", "icons/add.png", OP_NODE_ADD)
-        self.addMyItem("Substract", "icons/sub.png", OP_NODE_SUB)
-        self.addMyItem("Multiply", "icons/mul.png", OP_NODE_MUL)
-        self.addMyItem("Divide", "icons/divide.png", OP_NODE_DIV)
+        keys = list(CALC_NODES.keys())
+        keys.sort()
+        for key in keys:
+            node = get_class_from_opcode(key)
+            self.addMyItem(node.op_title, node.icon, node.op_code)
+
 
     def addMyItem(self, name, icon=None, op_code=0):
         item = QListWidgetItem(name, self) # can be (icon, text, parent, <int>type)
@@ -40,13 +40,11 @@ class QDMDragListbox(QListWidget):
         item.setData(Qt.UserRole, pixmap)
         item.setData(Qt.UserRole + 1, op_code)
 
-    def startDrag(self, *args, **kwargs):
-        # print("ListBox::startDrag")
 
+    def startDrag(self, *args, **kwargs):
         try:
             item = self.currentItem()
             op_code = item.data(Qt.UserRole + 1)
-            # print("dragging item <%d>" % op_code, item)
 
             pixmap = QPixmap(item.data(Qt.UserRole))
 
