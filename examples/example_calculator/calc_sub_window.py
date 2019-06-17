@@ -2,8 +2,8 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from examples.example_calculator.calc_conf import *
 from nodeeditor.node_editor_widget import NodeEditorWidget
-from nodeeditor.node_node import Node
-
+from examples.example_calculator.calc_node_base import *
+from examples.example_calculator.calc_conf import *
 
 class CalculatorSubWindow(NodeEditorWidget):
     def __init__(self):
@@ -55,9 +55,8 @@ class CalculatorSubWindow(NodeEditorWidget):
 
 
             # @TODO Fix me!
-            node = Node(self.scene, text, inputs=[1,1], outputs=[2])
+            node = CalcNode(self.scene, op_code, text, inputs=[1,1], outputs=[2])
             node.setPos(scene_position.x(), scene_position.y())
-            self.scene.addNode(node)
 
 
             event.setDropAction(Qt.MoveAction)
