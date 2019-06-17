@@ -8,9 +8,14 @@ from nodeeditor.node_editor_window import NodeEditorWindow
 from examples.example_calculator.calc_sub_window import CalculatorSubWindow
 from examples.example_calculator.calc_drag_listbox import QDMDragListbox
 from nodeeditor.utils import dumpException, pp
+from examples.example_calculator.calc_conf import *
+from examples.example_calculator.calc_conf_nodes import *
 
 # images for the dark skin
 import examples.example_calculator.qss.nodeeditor_dark_resources
+
+DEBUG = True
+
 
 class CalculatorWindow(NodeEditorWindow):
 
@@ -25,6 +30,10 @@ class CalculatorWindow(NodeEditorWindow):
         )
 
         self.empty_icon = QIcon(".")
+
+        if DEBUG:
+            print("Registered nodes:")
+            pp(CALC_NODES)
 
 
         self.mdiArea = QMdiArea()

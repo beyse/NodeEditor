@@ -3,7 +3,8 @@ from PyQt5.QtCore import *
 from examples.example_calculator.calc_conf import *
 from nodeeditor.node_editor_widget import NodeEditorWidget
 from examples.example_calculator.calc_node_base import *
-from examples.example_calculator.calc_conf import *
+from nodeeditor.utils import dumpException
+
 
 class CalculatorSubWindow(NodeEditorWidget):
     def __init__(self):
@@ -53,10 +54,11 @@ class CalculatorSubWindow(NodeEditorWidget):
 
             print("GOT DROP: [%d] '%s'" % (op_code, text), "mouse:", mouse_position, "scene:", scene_position)
 
-
-            # @TODO Fix me!
-            node = CalcNode(self.scene, op_code, text, inputs=[1,1], outputs=[2])
-            node.setPos(scene_position.x(), scene_position.y())
+            try:
+                # node = CalcNode(self.scene, op_code, text, inputs=[1,1], outputs=[2])
+                node = get_class_from_opcode(op_code)(self.scene)
+                node.setPos(scene_position.x(), scene_position.y())
+            except Exception as e: dumpException(e)
 
 
             event.setDropAction(Qt.MoveAction)
