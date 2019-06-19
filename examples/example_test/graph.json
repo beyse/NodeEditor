@@ -12,19 +12,19 @@
                 {
                     "id": 48520384,
                     "index": 0,
-                    "position": 2,
+                    "position": 1,
                     "socket_type": 0
                 },
                 {
                     "id": 48536656,
                     "index": 1,
-                    "position": 2,
+                    "position": 1,
                     "socket_type": 0
                 },
                 {
                     "id": 48536712,
                     "index": 2,
-                    "position": 2,
+                    "position": 1,
                     "socket_type": 0
                 }
             ],
@@ -32,7 +32,7 @@
                 {
                     "id": 48536768,
                     "index": 0,
-                    "position": 3,
+                    "position": 4,
                     "socket_type": 1
                 }
             ],
@@ -67,7 +67,7 @@
                 {
                     "id": 48537048,
                     "index": 0,
-                    "position": 3,
+                    "position": 5,
                     "socket_type": 1
                 }
             ],
@@ -82,19 +82,19 @@
                 {
                     "id": 48537160,
                     "index": 0,
-                    "position": 2,
+                    "position": 3,
                     "socket_type": 2
                 },
                 {
                     "id": 48537216,
                     "index": 1,
-                    "position": 2,
+                    "position": 3,
                     "socket_type": 2
                 },
                 {
                     "id": 48537272,
                     "index": 2,
-                    "position": 2,
+                    "position": 3,
                     "socket_type": 2
                 }
             ],
@@ -102,7 +102,7 @@
                 {
                     "id": 48537328,
                     "index": 0,
-                    "position": 3,
+                    "position": 6,
                     "socket_type": 1
                 }
             ],
