@@ -4,7 +4,7 @@ from nodeeditor.node_node import Node
 from nodeeditor.node_edge import Edge
 
 
-DEBUG = False
+DEBUG = True
 
 
 class SceneClipboard():
@@ -94,7 +94,7 @@ class SceneClipboard():
 
         # create each node
         for node_data in data['nodes']:
-            new_node = Node(self.scene)
+            new_node = self.scene.getNodeClassFromData(node_data)(self.scene)
             new_node.deserialize(node_data, hashmap, restore_id=False)
 
             # readjust the new node's position

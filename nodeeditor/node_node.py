@@ -184,5 +184,7 @@ class Node(Serializable):
                 self.outputs.append(new_socket)
         except Exception as e: dumpException(e)
 
+        # also deseralize the content of the node
+        res = self.content.deserialize(data['content'], hashmap)
 
-        return True
+        return True & res

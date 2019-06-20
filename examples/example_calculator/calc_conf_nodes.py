@@ -1,6 +1,7 @@
 from PyQt5.QtCore import *
 from examples.example_calculator.calc_conf import *
 from examples.example_calculator.calc_node_base import *
+from nodeeditor.utils import dumpException
 
 
 @register_node(OP_NODE_ADD)
@@ -42,6 +43,21 @@ class CalcInputContent(QDMNodeContentWidget):
         self.edit = QLineEdit("1", self)
         self.edit.setAlignment(Qt.AlignRight)
         self.edit.setObjectName(self.node.content_label_objname)
+
+    def serialize(self):
+        res = super().serialize()
+        res['value'] = self.edit.text()
+        return res
+
+    def deserialize(self, data, hashmap={}):
+        res = super().deserialize(data, hashmap)
+        try:
+            value = data['value']
+            self.edit.setText(value)
+            return True & res
+        except Exception as e:
+            dumpException(e)
+        return res
 
 
 @register_node(OP_NODE_INPUT)
