@@ -74,6 +74,14 @@ class Node(Serializable):
             self.outputs.append(socket)
 
 
+    def onEdgeConnectionChanged(self, new_edge):
+        print("%s::onEdgeConnectionChanged" % self.__class__.__name__, new_edge)
+
+    def onInputChanged(self, new_edge):
+        print("%s::onInputChanged" % self.__class__.__name__, new_edge)
+        self.markDirty()
+        self.markDescendantsDirty()
+
     def __str__(self):
         return "<Node %s..%s>" % (hex(id(self))[2:5], hex(id(self))[-3:])
 

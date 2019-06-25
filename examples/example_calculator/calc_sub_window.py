@@ -7,7 +7,7 @@ from nodeeditor.node_edge import EDGE_TYPE_DIRECT, EDGE_TYPE_BEZIER
 from nodeeditor.utils import dumpException
 
 DEBUG = False
-DEBUG_CONTEXT = True
+DEBUG_CONTEXT = False
 
 
 class CalculatorSubWindow(NodeEditorWidget):
@@ -165,6 +165,6 @@ class CalculatorSubWindow(NodeEditorWidget):
             new_calc_node = get_class_from_opcode(action.data())(self.scene)
             scene_pos = self.scene.getView().mapToScene(event.pos())
             new_calc_node.setPos(scene_pos.x(), scene_pos.y())
-            print("Selected node:", new_calc_node)
+            if DEBUG_CONTEXT: print("Selected node:", new_calc_node)
 
 

@@ -5,6 +5,7 @@ from nodeeditor.node_node import Node
 from nodeeditor.node_content_widget import QDMNodeContentWidget
 from nodeeditor.node_graphics_node import QDMGraphicsNode
 from nodeeditor.node_socket import LEFT_CENTER, RIGHT_CENTER
+from nodeeditor.utils import dumpException
 
 
 class CalcGraphicsNode(QDMGraphicsNode):
@@ -51,6 +52,11 @@ class CalcNode(Node):
     def __init__(self, scene, inputs=[2,2], outputs=[1]):
         super().__init__(scene, self.__class__.op_title, inputs, outputs)
 
+        self.value = None
+
+        # it's really important to mark all nodes Dirty by default
+        self.markDirty()
+
     def initInnerClasses(self):
         self.content = CalcContent(self)
         self.grNode = CalcGraphicsNode(self)
@@ -59,6 +65,33 @@ class CalcNode(Node):
         super().initSettings()
         self.input_socket_position = LEFT_CENTER
         self.output_socket_position = RIGHT_CENTER
+
+    def evalImplementation(self):
+        return 123
+
+    def eval(self):
+        if not self.isDirty() and not self.isInvalid():
+            print(" _> returning cached %s value:" % self.__class__.__name__, self.value)
+            return self.value
+
+        try:
+
+            val = self.evalImplementation()
+            self.markDirty(False)
+            self.markInvalid(False)
+            return val
+
+        except Exception as e:
+            self.markInvalid()
+            dumpException(e)
+
+
+
+    def onInputChanged(self, new_edge):
+        print("%s::__onInputChanged" % self.__class__.__name__)
+        self.markDirty()
+        self.eval()
+
 
     def serialize(self):
         res = super().serialize()

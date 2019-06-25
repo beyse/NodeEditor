@@ -7,7 +7,7 @@ pp = PrettyPrinter(indent=4).pprint
 
 
 def dumpException(e):
-    print("EXCEPTION:", e)
+    print("%s EXCEPTION:" % e.__class__.__name__, e)
     traceback.print_tb(e.__traceback__)
 
 
