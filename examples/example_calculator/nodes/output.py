@@ -25,3 +25,23 @@ class CalcNode_Output(CalcNode):
         self.content = CalcOutputContent(self)
         self.grNode = CalcGraphicsNode(self)
 
+    def evalImplementation(self):
+        input_node = self.getInput(0)
+        if not input_node:
+            self.grNode.setToolTip("Input is not connected")
+            self.markInvalid()
+            return
+
+        val = input_node.eval()
+
+        if not val:
+            self.grNode.setToolTip("Input is NaN")
+            self.markInvalid()
+            return
+
+        self.content.lbl.setText("%d" % val)
+        self.markInvalid(False)
+        self.markDirty(False)
+        self.grNode.setToolTip("")
+
+        return val

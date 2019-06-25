@@ -77,12 +77,14 @@ class CalcNode(Node):
         try:
 
             val = self.evalImplementation()
-            self.markDirty(False)
-            self.markInvalid(False)
             return val
-
+        except ValueError as e:
+            self.markInvalid()
+            self.grNode.setToolTip(str(e))
+            self.markDescendantsDirty()
         except Exception as e:
             self.markInvalid()
+            self.grNode.setToolTip(str(e))
             dumpException(e)
 
 

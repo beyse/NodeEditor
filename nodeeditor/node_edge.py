@@ -1,4 +1,5 @@
 from nodeeditor.node_graphics_edge import *
+from nodeeditor.utils import dumpException
 
 
 EDGE_TYPE_DIRECT = 1
@@ -101,6 +102,8 @@ class Edge(Serializable):
 
 
     def remove(self):
+        old_sockets = [self.start_socket, self.end_socket]
+
         if DEBUG: print("# Removing Edge", self)
         if DEBUG: print(" - remove edge from all sockets")
         self.remove_from_sockets()
@@ -113,6 +116,14 @@ class Edge(Serializable):
         except ValueError:
             pass
         if DEBUG: print(" - everything is done.")
+
+        try:
+            # notify nodes from old sockets
+            for socket in old_sockets:
+                if socket and socket.node:
+                    socket.node.onEdgeConnectionChanged(self)
+                    if socket.is_input: socket.node.onInputChanged(self)
+        except Exception as e: dumpException(e)
 
 
     def serialize(self):
