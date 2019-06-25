@@ -20,7 +20,7 @@ class QDMNodeContentWidget(QWidget, Serializable):
         self.layout.addWidget(QDMTextEdit("foo"))
 
     def setEditingFlag(self, value):
-        self.node.scene.grScene.views()[0].editingFlag = value
+        self.node.scene.getView().editingFlag = value
 
     def serialize(self):
         return OrderedDict([
