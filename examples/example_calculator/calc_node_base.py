@@ -66,8 +66,30 @@ class CalcNode(Node):
         self.input_socket_position = LEFT_CENTER
         self.output_socket_position = RIGHT_CENTER
 
-    def evalImplementation(self):
+    def evalOperation(self, input1, input2):
         return 123
+
+    def evalImplementation(self):
+        i1 = self.getInput(0)
+        i2 = self.getInput(1)
+
+        if i1 is None or i2 is None:
+            self.markInvalid()
+            self.markDescendantsDirty()
+            self.grNode.setToolTip("Connect all inputs")
+            return None
+
+        else:
+            val = self.evalOperation(i1.eval(), i2.eval())
+            self.value = val
+            self.markDirty(False)
+            self.markInvalid(False)
+            self.grNode.setToolTip("")
+
+            self.markDescendantsDirty()
+            self.evalChildren()
+
+            return val
 
     def eval(self):
         if not self.isDirty() and not self.isInvalid():

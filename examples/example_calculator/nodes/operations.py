@@ -12,10 +12,8 @@ class CalcNode_Add(CalcNode):
     content_label = "+"
     content_label_objname = "calc_node_bg"
 
-    def evalImplementation(self):
-        self.markInvalid(False)
-        self.markDirty(False)
-        return 123
+    def evalOperation(self, input1, input2):
+        return input1 + input2
 
 
 @register_node(OP_NODE_SUB)
@@ -26,6 +24,9 @@ class CalcNode_Sub(CalcNode):
     content_label = "-"
     content_label_objname = "calc_node_bg"
 
+    def evalOperation(self, input1, input2):
+        return input1 - input2
+
 @register_node(OP_NODE_MUL)
 class CalcNode_Mul(CalcNode):
     icon = "icons/mul.png"
@@ -33,6 +34,10 @@ class CalcNode_Mul(CalcNode):
     op_title = "Multiply"
     content_label = "*"
     content_label_objname = "calc_node_mul"
+
+    def evalOperation(self, input1, input2):
+        print('foo')
+        return input1 * input2
 
 @register_node(OP_NODE_DIV)
 class CalcNode_Div(CalcNode):
@@ -42,6 +47,8 @@ class CalcNode_Div(CalcNode):
     content_label = "/"
     content_label_objname = "calc_node_div"
 
+    def evalOperation(self, input1, input2):
+        return input1 / input2
 
 # way how to register by function call
 # register_node_now(OP_NODE_ADD, CalcNode_Add)

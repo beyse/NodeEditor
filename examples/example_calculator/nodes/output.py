@@ -34,7 +34,7 @@ class CalcNode_Output(CalcNode):
 
         val = input_node.eval()
 
-        if not val:
+        if val is None:
             self.grNode.setToolTip("Input is NaN")
             self.markInvalid()
             return
