@@ -23,11 +23,17 @@ class Edge(Serializable):
 
         self.scene.addEdge(self)
 
-    def __str__(self):
-        return "<Edge %s..%s>" % (hex(id(self))[2:5], hex(id(self))[-3:])
 
     def getOtherSocket(self, known_socket):
         return self.start_socket if known_socket == self.end_socket else self.end_socket
+
+    def doSelect(self, new_state=True):
+        self.grEdge.doSelect(new_state)
+
+
+    def __str__(self):
+        return "<Edge %s..%s>" % (hex(id(self))[2:5], hex(id(self))[-3:])
+
 
     @property
     def start_socket(self): return self._start_socket

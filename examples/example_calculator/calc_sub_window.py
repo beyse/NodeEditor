@@ -4,6 +4,7 @@ from examples.example_calculator.calc_conf import *
 from nodeeditor.node_editor_widget import NodeEditorWidget
 from examples.example_calculator.calc_node_base import *
 from nodeeditor.node_edge import EDGE_TYPE_DIRECT, EDGE_TYPE_BEZIER
+from nodeeditor.node_graphics_view import MODE_EDGE_DRAG
 from nodeeditor.utils import dumpException
 
 DEBUG = False
@@ -20,6 +21,7 @@ class CalculatorSubWindow(NodeEditorWidget):
         self.initNewNodeActions()
 
         self.scene.addHasBeenModifiedListener(self.setTitle)
+        self.scene.history.addHistoryRestoredListener(self.onHistoryRestored)
         self.scene.addDragEnterListener(self.onDragEnter)
         self.scene.addDropListener(self.onDrop)
         self.scene.setNodeClassSelector(self.getNodeClassFromData)
@@ -30,12 +32,18 @@ class CalculatorSubWindow(NodeEditorWidget):
         if 'op_code' not in data: return Node
         return get_class_from_opcode(data['op_code'])
 
+    def doEvalOutputs(self):
+        # eval all output nodes
+        for node in self.scene.nodes:
+            if node.__class__.__name__ == "CalcNode_Output":
+                node.eval()
+
+    def onHistoryRestored(self):
+        self.doEvalOutputs()
+
     def fileLoad(self, filename):
         if super().fileLoad(filename):
-            # eval all output nodes
-            for node in self.scene.nodes:
-                if node.__class__.__name__ == "CalcNode_Output":
-                    node.eval()
+            self.doEvalOutputs()
             return True
 
         return False
@@ -176,4 +184,12 @@ class CalculatorSubWindow(NodeEditorWidget):
             new_calc_node.setPos(scene_pos.x(), scene_pos.y())
             if DEBUG_CONTEXT: print("Selected node:", new_calc_node)
 
+            if self.scene.getView().mode == MODE_EDGE_DRAG:
+                # if we were dragging an edge...
+                self.scene.getView().edgeDragEnd(new_calc_node.inputs[0].grSocket)
+                new_calc_node.doSelect(True)
+                # new_calc_node.inputs[0].edges[-1].doSelect(True)
+
+            else:
+                self.scene.history.storeHistory("Created %s" % new_calc_node.__class__.__name__)
 

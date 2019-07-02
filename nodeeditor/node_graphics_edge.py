@@ -49,6 +49,11 @@ class QDMGraphicsEdge(QGraphicsPathItem):
     def onSelected(self):
         self.edge.scene.grScene.itemSelected.emit()
 
+    def doSelect(self, new_state=True):
+        self.setSelected(new_state)
+        self._last_selected_state = new_state
+        if new_state: self.onSelected()
+
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
         if self._last_selected_state != self.isSelected():
