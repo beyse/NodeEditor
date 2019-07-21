@@ -1,6 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+A module containing all code for working with Clipboard
+"""
 from collections import OrderedDict
 from nodeeditor.node_graphics_edge import QDMGraphicsEdge
-from nodeeditor.node_node import Node
 from nodeeditor.node_edge import Edge
 
 
@@ -8,10 +11,28 @@ DEBUG = True
 
 
 class SceneClipboard():
-    def __init__(self, scene):
+    """
+    Class contains all the code for serialization/deserialization from Clipboard
+    """
+    def __init__(self, scene:'Scene'):
+        """
+        :param scene: Reference to the :class:`~nodeeditor.node_scene.Scene`
+        :type scene: :class:`~nodeeditor.node_scene.Scene`
+
+        :Instance Attributes:
+
+        - **scene** - reference to the :class:`~nodeeditor.node_scene.Scene`
+        """
         self.scene = scene
 
-    def serializeSelected(self, delete=False):
+    def serializeSelected(self, delete:bool=False) -> OrderedDict:
+        """
+        Serializes selected items in the Scene into ``OrderedDict``
+
+        :param delete: True if you want to delete selected items after serialization. Usefull for Cut operation
+        :type delete: ``bool``
+        :return: Serialized data of current selection in NodeEditor :class:`~nodeeditor.node_scene.Scene`
+        """
         if DEBUG: print("-- COPY TO CLIPBOARD ---")
 
         sel_nodes, sel_edges, sel_sockets = [], [], {}
@@ -67,7 +88,13 @@ class SceneClipboard():
 
         return data
 
-    def deserializeFromClipboard(self, data):
+    def deserializeFromClipboard(self, data:dict):
+        """
+        Deserializes data from Clipboard.
+
+        :param data: ``dict`` data for deserialization to the :class:`nodeeditor.node_scene.Scene`.
+        :type data: ``dict``
+        """
 
         hashmap = {}
 

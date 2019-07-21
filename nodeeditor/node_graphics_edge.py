@@ -1,17 +1,33 @@
+# -*- coding: utf-8 -*-
+"""
+A module containing Graphics representation of Edge
+"""
 import math
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
-
 from nodeeditor.node_socket import *
 
 
-EDGE_CP_ROUNDNESS = 100
+EDGE_CP_ROUNDNESS = 100     #: Bezier controll point distance on the line
 
 
 class QDMGraphicsEdge(QGraphicsPathItem):
-    def __init__(self, edge, parent=None):
+    """Base class for Graphics Edge"""
+    def __init__(self, edge:'Edge', parent:QWidget=None):
+        """
+        :param edge: reference to :class:`~nodeeditor.node_edge.Edge`
+        :type edge: :class:`~nodeeditor.node_edge.Edge`
+        :param parent: parent widget
+        :type parent: ``QWidget``
+
+        :Instance attributes:
+
+            - **edge** - reference to :class:`~nodeeditor.node_edge.Edge`
+            - **posSource** - ``[x, y]`` source position in the `Scene`
+            - **posDestination** - ``[x, y]`` destination position in the `Scene`
+        """
         super().__init__(parent)
 
         self.edge = edge
@@ -28,11 +44,13 @@ class QDMGraphicsEdge(QGraphicsPathItem):
         self.initUI()
 
     def initUI(self):
+        """Set up this ``QGraphicsPathItem``"""
         self.setFlag(QGraphicsItem.ItemIsSelectable)
         self.setAcceptHoverEvents(True)
         self.setZValue(-1)
 
     def initAssets(self):
+        """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
         self._color = QColor("#001000")
         self._color_selected = QColor("#00ff00")
         self._color_hovered = QColor("#FF37A6FF")
@@ -47,14 +65,21 @@ class QDMGraphicsEdge(QGraphicsPathItem):
         self._pen_hovered.setWidthF(5.0)
 
     def onSelected(self):
+        """Our event handling when the node was selected"""
         self.edge.scene.grScene.itemSelected.emit()
 
-    def doSelect(self, new_state=True):
+    def doSelect(self, new_state:bool=True):
+        """Safe version of selecting the `Graphics Node`. Takes care about the selection state flag used internally
+
+        :param new_state: ``True`` to select, ``False`` to deselect
+        :type new_state: ``bool``
+        """
         self.setSelected(new_state)
         self._last_selected_state = new_state
         if new_state: self.onSelected()
 
     def mouseReleaseEvent(self, event):
+        """Overriden Qt's method to handle selecting and deselecting this `Graphics Edge`"""
         super().mouseReleaseEvent(event)
         if self._last_selected_state != self.isSelected():
             self.edge.scene.resetLastSelectedStates()
@@ -62,26 +87,49 @@ class QDMGraphicsEdge(QGraphicsPathItem):
             self.onSelected()
 
     def hoverEnterEvent(self, event: 'QGraphicsSceneHoverEvent') -> None:
+        """Handle hover effect"""
         self.hovered = True
         self.update()
 
     def hoverLeaveEvent(self, event: 'QGraphicsSceneHoverEvent') -> None:
+        """Handle hover effect"""
         self.hovered = False
         self.update()
 
-    def setSource(self, x, y):
+    def setSource(self, x:float, y:float):
+        """ Set source point
+
+        :param x: x position
+        :type x: ``float``
+        :param y: y position
+        :type y: ``float``
+        :return:
+        """
         self.posSource = [x, y]
 
-    def setDestination(self, x, y):
+    def setDestination(self, x:float, y:float):
+        """ Set destination point
+
+        :param x:
+        :param y:
+        :return:
+        """
         self.posDestination = [x, y]
 
-    def boundingRect(self):
+    def boundingRect(self) -> QRectF:
+        """Defining Qt' bounding rectangle"""
         return self.shape().boundingRect()
 
-    def shape(self):
+    def shape(self) -> QPainterPath:
+        """Returns ``QPainterPath`` representation of this `Edge`
+
+        :return: path representation
+        :rtype: ``QPainterPath``
+        """
         return self.calcPath()
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
+        """Qt's overriden method to paint this Graphics Edge. Path calculated in :func:`~nodeeditor.node_graphics_edge.QDMGraphicsEdge.calcPath` method"""
         self.setPath(self.calcPath())
 
         painter.setBrush(Qt.NoBrush)
@@ -97,26 +145,51 @@ class QDMGraphicsEdge(QGraphicsPathItem):
 
         painter.drawPath(self.path())
 
-    def intersectsWith(self, p1, p2):
+    def intersectsWith(self, p1:QPointF, p2:QPointF) -> bool:
+        """Does this Graphics Edge intersect with line between point A and point B ?
+
+        :param p1: point A
+        :type p1: ``QPointF``
+        :param p2: point B
+        :type p2: ``QPointF``
+        :return: ``True`` if this `Graphics Edge` intersects
+        :rtype: ``bool``
+        """
         cutpath = QPainterPath(p1)
         cutpath.lineTo(p2)
         path = self.calcPath()
         return cutpath.intersects(path)
 
-    def calcPath(self):
-        """ Will handle drawing QPainterPath from Point A to B """
+    def calcPath(self) -> QPainterPath:
+        """Will handle drawing QPainterPath from Point A to B
+
+        :returns: ``QPainterPath`` of the edge connecting `source` and `destination`
+        :rtype: ``QPainterPath``
+        """
         raise NotImplemented("This method has to be overriden in a child class")
 
 
 class QDMGraphicsEdgeDirect(QDMGraphicsEdge):
-    def calcPath(self):
+    """Direct line connection Graphics Edge"""
+    def calcPath(self) -> QPainterPath:
+        """Calculate the Direct line connection
+
+        :returns: ``QPainterPath`` of the direct line
+        :rtype: ``QPainterPath``
+        """
         path = QPainterPath(QPointF(self.posSource[0], self.posSource[1]))
         path.lineTo(self.posDestination[0], self.posDestination[1])
         return path
 
 
 class QDMGraphicsEdgeBezier(QDMGraphicsEdge):
-    def calcPath(self):
+    """Cubic line connection Graphics Edge"""
+    def calcPath(self) -> QPainterPath:
+        """Calculate the cubic Bezier line connection with 2 control points
+
+        :returns: ``QPainterPath`` of the cubic Bezier line
+        :rtype: ``QPainterPath``
+        """
         s = self.posSource
         d = self.posDestination
         dist = (d[0] - s[0]) * 0.5

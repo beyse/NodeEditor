@@ -1,12 +1,25 @@
+# -*- coding: utf-8 -*-
+"""
+A module containing all code for working with History (Undo/Redo)
+"""
 from nodeeditor.node_graphics_edge import QDMGraphicsEdge
-
 from nodeeditor.utils import dumpException
 
 DEBUG = False
 
 
 class SceneHistory():
-    def __init__(self, scene):
+    """Class contains all the code for undo/redo operations"""
+    def __init__(self, scene:'Scene'):
+        """
+        :param scene: Reference to the :class:`~nodeeditor.node_scene.Scene`
+        :type scene: :class:`~nodeeditor.node_scene.Scene`
+
+        :Instance Attributes:
+
+        - **scene** - reference to the :class:`~nodeeditor.node_scene.Scene`
+        - **history_limit** - number of history steps that can be stored
+        """
         self.scene = scene
 
         self.clear()
@@ -18,28 +31,55 @@ class SceneHistory():
         self._history_restored_listeners = []
 
     def clear(self):
+        """Reset the history stack"""
         self.history_stack = []
         self.history_current_step = -1
 
     def storeInitialHistoryStamp(self):
+        """Helper function usually used when new or open file requested"""
         self.storeHistory("Initial History Stamp")
 
-    def addHistoryModifiedListener(self, callback):
+    def addHistoryModifiedListener(self, callback:'function'):
+        """
+        Register callback for `HistoryModified` event
+
+        :param callback: callback function
+        """
         self._history_modified_listeners.append(callback)
 
-    def addHistoryStoredListener(self, callback):
+    def addHistoryStoredListener(self, callback:'function'):
+        """
+        Register callback for `HistoryStored` event
+
+        :param callback: callback function
+        """
         self._history_stored_listeners.append(callback)
 
-    def addHistoryRestoredListener(self, callback):
+    def addHistoryRestoredListener(self, callback:'function'):
+        """
+        Register callback for `HistoryRestored` event
+
+        :param callback: callback function
+        """
         self._history_restored_listeners.append(callback)
 
-    def canUndo(self):
+    def canUndo(self) -> bool:
+        """Return ``True`` if Undo is available for current `History Stack`
+
+        :rtype: ``bool``
+        """
         return self.history_current_step > 0
 
-    def canRedo(self):
+    def canRedo(self) -> bool:
+        """
+        Return ``True`` if Redo is available for current `History Stack`
+
+        :rtype: ``bool``
+        """
         return self.history_current_step + 1 < len(self.history_stack)
 
     def undo(self):
+        """Undo operation"""
         if DEBUG: print("UNDO")
 
         if self.canUndo():
@@ -48,6 +88,7 @@ class SceneHistory():
             self.scene.has_been_modified = True
 
     def redo(self):
+        """Redo operation"""
         if DEBUG: print("REDO")
         if self.canRedo():
             self.history_current_step += 1
@@ -56,6 +97,14 @@ class SceneHistory():
 
 
     def restoreHistory(self):
+        """
+        Restore `History Stamp` from `History stack`.
+
+        Triggers:
+
+        - `History Modified` event
+        - `History Restored` event
+        """
         if DEBUG: print("Restoring history",
                         ".... current_step: @%d" % self.history_current_step,
                         "(%d)" % len(self.history_stack))
@@ -64,7 +113,20 @@ class SceneHistory():
         for callback in self._history_restored_listeners: callback()
 
 
-    def storeHistory(self, desc, setModified=False):
+    def storeHistory(self, desc:str, setModified:bool=False):
+        """
+        Store History Stamp into History Stack
+
+        :param desc: Description of current History Stamp
+        :type desc: ``str``
+        :param setModified: if ``True`` marks :class:`~nodeeditor.node_scene.Scene` with `has_been_modified`
+        :type setModified: ``bool``
+
+        Triggers:
+
+        - `History Modified`
+        - `History Stored`
+        """
         if setModified:
             self.scene.has_been_modified = True
 
@@ -92,7 +154,14 @@ class SceneHistory():
         for callback in self._history_stored_listeners: callback()
 
 
-    def createHistoryStamp(self, desc):
+    def createHistoryStamp(self, desc:str) -> dict:
+        """
+        Create History Stamp. Internally serialize whole scene and current selection
+
+        :param desc: Descriptive label for the History Stamp
+        :return: History stamp serializing state of `Scene` and current selection
+        :rtype: ``dict``
+        """
         sel_obj = {
             'nodes': [],
             'edges': [],
@@ -111,7 +180,13 @@ class SceneHistory():
 
         return history_stamp
 
-    def restoreHistoryStamp(self, history_stamp):
+    def restoreHistoryStamp(self, history_stamp:dict):
+        """
+        Restore History Stamp to current `Scene` with selection of items included
+
+        :param history_stamp: History Stamp to restore
+        :type history_stamp: ``dict``
+        """
         if DEBUG: print("RHS: ", history_stamp['desc'])
 
         try:

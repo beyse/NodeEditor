@@ -24,7 +24,7 @@ copyright = '2019, Pavel Křupala'
 author = 'Pavel Křupala'
 
 # The short X.Y version
-version = ''
+version = '0.9.0'
 # The full version, including alpha/beta/rc tags
 release = '0.9.0'
 
@@ -38,8 +38,30 @@ release = '0.9.0'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
+import sphinx_rtd_theme
+
 extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.autosectionlabel',
+    'sphinx_rtd_theme',
+    'sphinx.ext.todo',
+    'sphinx.ext.coverage',
+    'recommonmark',
 ]
+
+autosectionlabel_prefix_document = True
+
+autodoc_member_order = 'bysource'
+autoclass_content = "both"
+
+from recommonmark.transform import AutoStructify
+github_doc_root = 'https://github.com/rtfd/recommonmark/tree/master/doc/'
+def setup(app):
+    app.add_config_value('recommonmark_config', {
+            # 'url_resolver': lambda url: github_doc_root + url,
+            'auto_toc_tree_section': 'Contents',
+            }, True)
+    app.add_transform(AutoStructify)
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -47,8 +69,8 @@ templates_path = ['_templates']
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
-# source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = ['.rst', '.md']
+# source_suffix = '.rst'
 
 # The master toctree document.
 master_doc = 'index'

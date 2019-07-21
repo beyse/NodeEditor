@@ -1,3 +1,7 @@
+# -*- encoding: utf-8 -*-
+"""
+Module with some helper functions
+"""
 import traceback
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
@@ -6,12 +10,25 @@ from pprint import PrettyPrinter
 pp = PrettyPrinter(indent=4).pprint
 
 
-def dumpException(e):
-    print("%s EXCEPTION:" % e.__class__.__name__, e)
-    traceback.print_tb(e.__traceback__)
+def dumpException(e:Exception):
+    """
+    Prints out Exception message with traceback to the console
+
+    :param e: Exception to print out
+    :type e: Exception
+    """
+    # print("%s EXCEPTION:" % e.__class__.__name__, e)
+    # traceback.print_tb(e.__traceback__)
+    traceback.print_exc()
 
 
-def loadStylesheet(filename):
+def loadStylesheet(filename:str):
+    """
+    Loads an qss stylesheet to current QApplication instance
+
+    :param filename: Filename of qss stylesheet
+    :type filename: str
+    """
     print('STYLE loading:', filename)
     file = QFile(filename)
     file.open(QFile.ReadOnly | QFile.Text)
@@ -19,6 +36,12 @@ def loadStylesheet(filename):
     QApplication.instance().setStyleSheet(str(stylesheet, encoding='utf-8'))
 
 def loadStylesheets(*args):
+    """
+    Loads multiple qss stylesheets. Concats them together and applies the final stylesheet to current QApplication instance
+
+    :param args: variable number of filenames of qss stylesheets
+    :type args: str, str,...
+    """
     res = ''
     for arg in args:
         file = QFile(arg)

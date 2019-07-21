@@ -1,11 +1,26 @@
+# -*- coding: utf-8 -*-
+"""
+A module containing Graphics representation of :class:`~nodeeditor.node_node.Node`
+"""
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
 
-
 class QDMGraphicsNode(QGraphicsItem):
-    def __init__(self, node, parent=None):
+    """Class describing Graphics representation of :class:`~nodeeditor.node_node.Node`"""
+    def __init__(self, node:'Node', parent:QWidget=None):
+        """
+        :param node: reference to :class:`~nodeeditor.node_node.Node`
+        :type node: :class:`~nodeeditor.node_node.Node`
+        :param parent: parent widget
+        :type parent: QWidget
+
+        :Instance Attributes:
+
+            - **node** - reference to :class:`~nodeeditor.node_node.Node`
+            - **content** - reference to `Node Content`
+        """
         super().__init__(parent)
         self.node = node
         self.content = self.node.content
@@ -19,7 +34,23 @@ class QDMGraphicsNode(QGraphicsItem):
         self.initAssets()
         self.initUI()
 
+    @property
+    def title(self):
+        """title of this `Node`
+
+        :getter: current Graphics Node title
+        :setter: stores and make visible the new title
+        :type: str
+        """
+        return self._title
+
+    @title.setter
+    def title(self, value):
+        self._title = value
+        self.title_item.setPlainText(self._title)
+
     def initUI(self):
+        """Set up this ``QGraphicsItem``"""
         self.setFlag(QGraphicsItem.ItemIsSelectable)
         self.setFlag(QGraphicsItem.ItemIsMovable)
         self.setAcceptHoverEvents(True)
@@ -31,6 +62,7 @@ class QDMGraphicsNode(QGraphicsItem):
         self.initContent()
 
     def initSizes(self):
+        """Set up internal attributes like `width`, `height`, etc."""
         self.width = 180
         self.height = 240
         self.edge_roundness = 10.0
@@ -40,6 +72,7 @@ class QDMGraphicsNode(QGraphicsItem):
         self.title_vertical_padding = 4.0
 
     def initAssets(self):
+        """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
         self._title_color = Qt.white
         self._title_font = QFont("Ubuntu", 10)
 
@@ -58,14 +91,21 @@ class QDMGraphicsNode(QGraphicsItem):
         self._brush_background = QBrush(QColor("#E3212121"))
 
     def onSelected(self):
+        """Our event handling when the node was selected"""
         self.node.scene.grScene.itemSelected.emit()
 
     def doSelect(self, new_state=True):
+        """Safe version of selecting the `Graphics Node`. Takes care about the selection state flag used internally
+
+        :param new_state: ``True`` to select, ``False`` to deselect
+        :type new_state: ``bool``
+        """
         self.setSelected(new_state)
         self._last_selected_state = new_state
         if new_state: self.onSelected()
 
     def mouseMoveEvent(self, event):
+        """Overriden event to detect that we moved with this Node"""
         super().mouseMoveEvent(event)
 
         # optimize me! just update the selected nodes
@@ -75,6 +115,7 @@ class QDMGraphicsNode(QGraphicsItem):
         self._was_moved = True
 
     def mouseReleaseEvent(self, event):
+        """Overriden event to handle when we moved, selected or deselected this `Node``"""
         super().mouseReleaseEvent(event)
 
         # handle when grNode moved
@@ -99,23 +140,18 @@ class QDMGraphicsNode(QGraphicsItem):
 
 
     def hoverEnterEvent(self, event: 'QGraphicsSceneHoverEvent') -> None:
+        """Handle hover effect"""
         self.hovered = True
         self.update()
 
     def hoverLeaveEvent(self, event: 'QGraphicsSceneHoverEvent') -> None:
+        """Handle hover effect"""
         self.hovered = False
         self.update()
 
 
-    @property
-    def title(self): return self._title
-    @title.setter
-    def title(self, value):
-        self._title = value
-        self.title_item.setPlainText(self._title)
-
-
-    def boundingRect(self):
+    def boundingRect(self) -> QRectF:
+        """Defining Qt' bounding rectangle"""
         return QRectF(
             0,
             0,
@@ -125,6 +161,7 @@ class QDMGraphicsNode(QGraphicsItem):
 
 
     def initTitle(self):
+        """Set up the title Graphics representation: font, color, position, etc."""
         self.title_item = QGraphicsTextItem(self)
         self.title_item.node = self.node
         self.title_item.setDefaultTextColor(self._title_color)
@@ -136,6 +173,7 @@ class QDMGraphicsNode(QGraphicsItem):
         )
 
     def initContent(self):
+        """Set up the `grContent` - ``QGraphicsProxyWidget`` to have a container for `Graphics Content`"""
         self.grContent = QGraphicsProxyWidget(self)
         self.content.setGeometry(self.edge_padding, self.title_height + self.edge_padding,
                                  self.width - 2 * self.edge_padding, self.height - 2 * self.edge_padding - self.title_height)
@@ -143,6 +181,7 @@ class QDMGraphicsNode(QGraphicsItem):
 
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
+        """Painting the rounded rectanglar `Node`"""
         # title
         path_title = QPainterPath()
         path_title.setFillRule(Qt.WindingFill)

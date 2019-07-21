@@ -1,4 +1,4 @@
-include HISTORY.rst
+include CHANGES.rst
 include LICENSE
 include README.rst
 include requirements.txt
@@ -7,4 +7,4 @@ recursive-include tests *
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
 
-recursive-include docs *.rst conf.py Makefile make.bat *.jpg *.png *.gif
+recursive-include docs *.rst *.md conf.py Makefile make.bat *.jpg *.png *.gif

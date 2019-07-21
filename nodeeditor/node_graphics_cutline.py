@@ -1,10 +1,19 @@
+# -*- coding: utf-8 -*-
+"""
+A module containing class for Cutting Line
+"""
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
 
 class QDMCutLine(QGraphicsItem):
-    def __init__(self, parent=None):
+    """Class representing Cutting Line used for cutting multiple `Edges` with one stroke"""
+    def __init__(self, parent:QWidget=None):
+        """
+        :param parent: parent widget
+        :type parent: ``QWidget``
+        """
         super().__init__(parent)
 
         self.line_points = []
@@ -15,10 +24,16 @@ class QDMCutLine(QGraphicsItem):
 
         self.setZValue(2)
 
-    def boundingRect(self):
+    def boundingRect(self) -> QRectF:
+        """Defining Qt' bounding rectangle"""
         return self.shape().boundingRect()
 
-    def shape(self):
+    def shape(self) -> QPainterPath:
+        """Calculate the QPainterPath object from list of line points
+
+        :return: shape function returning ``QPainterPath`` representation of Cutting Line
+        :rtype: ``QPainterPath``
+        """
         poly = QPolygonF(self.line_points)
 
         if len(self.line_points) > 1:
@@ -32,6 +47,7 @@ class QDMCutLine(QGraphicsItem):
         return path
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
+        """Paint the Cutting Line"""
         painter.setRenderHint(QPainter.Antialiasing)
         painter.setBrush(Qt.NoBrush)
         painter.setPen(self._pen)

@@ -1,15 +1,37 @@
+# -*- coding: utf-8 -*-
+"""
+A module containing NodeEditor's class for representing Edge and Edge Type Constants.
+"""
 from nodeeditor.node_graphics_edge import *
 from nodeeditor.utils import dumpException
 
 
-EDGE_TYPE_DIRECT = 1
-EDGE_TYPE_BEZIER = 2
+EDGE_TYPE_DIRECT = 1        #:
+EDGE_TYPE_BEZIER = 2        #:
 
 DEBUG = False
 
 
 class Edge(Serializable):
-    def __init__(self, scene, start_socket=None, end_socket=None, edge_type=EDGE_TYPE_DIRECT):
+    """
+    Class for representing Edge in NodeEditor.
+    """
+    def __init__(self, scene:'Scene', start_socket:Socket=None, end_socket:Socket=None, edge_type=EDGE_TYPE_DIRECT):
+        """
+
+        :param scene: Reference to the :py:class:`~nodeeditor.node_scene.Scene`
+        :type scene: :py:class:`~nodeeditor.node_scene.Scene`
+        :param start_socket: Reference to the starting socket
+        :type start_socket: :py:class:`~nodeeditor.node_socket.Socket`
+        :param end_socket: Reference to the End socket or ``None``
+        :type end_socket: :py:class:`~nodeeditor.node_socket.Socket` or ``None``
+        :param edge_type: Constant determining type of edge. See :ref:`edge-type-constants`
+
+        :Instance Attributes:
+
+            - **scene** - reference to the :class:`~nodeeditor.node_scene.Scene`
+            - **grEdge** - Instance of :class:`~nodeeditor.node_graphics_edge.QDMGraphicsEdge` subclass handling graphical representation in the ``QGraphicsScene``.
+        """
         super().__init__()
         self.scene = scene
 
@@ -23,20 +45,19 @@ class Edge(Serializable):
 
         self.scene.addEdge(self)
 
-
-    def getOtherSocket(self, known_socket):
-        return self.start_socket if known_socket == self.end_socket else self.end_socket
-
-    def doSelect(self, new_state=True):
-        self.grEdge.doSelect(new_state)
-
-
     def __str__(self):
         return "<Edge %s..%s>" % (hex(id(self))[2:5], hex(id(self))[-3:])
 
-
     @property
-    def start_socket(self): return self._start_socket
+    def start_socket(self):
+        """
+        Start socket
+
+        :getter: Returns start :class:`~nodeeditor.node_socket.Socket`
+        :setter: Sets start :class:`~nodeeditor.node_socket.Socket` safely
+        :type: :class:`~nodeeditor.node_socket.Socket`
+        """
+        return self._start_socket
 
     @start_socket.setter
     def start_socket(self, value):
@@ -51,7 +72,15 @@ class Edge(Serializable):
             self.start_socket.addEdge(self)
 
     @property
-    def end_socket(self): return self._end_socket
+    def end_socket(self):
+        """
+        End socket
+
+        :getter: Returns end :class:`~nodeeditor.node_socket.Socket` or ``None`` if not set
+        :setter: Sets end :class:`~nodeeditor.node_socket.Socket` safely
+        :type: :class:`~nodeeditor.node_socket.Socket` or ``None``
+        """
+        return self._end_socket
 
     @end_socket.setter
     def end_socket(self, value):
@@ -66,7 +95,16 @@ class Edge(Serializable):
             self.end_socket.addEdge(self)
 
     @property
-    def edge_type(self): return self._edge_type
+    def edge_type(self):
+        """
+        Edge type
+
+        :getter: get edge type constant for current ``Edge``. See :ref:`edge-type-constants`
+        :setter: sets new edge type. On background, creates new :class:`~nodeeditor.node_graphics_edge.QDMGraphicsEdge`
+            child class if necessary, adds this ``QGraphicsPathItem`` to the ``QGraphicsScene`` and updates edge sockets
+            positions.
+        """
+        return self._edge_type
 
     @edge_type.setter
     def edge_type(self, value):
@@ -87,7 +125,31 @@ class Edge(Serializable):
             self.updatePositions()
 
 
+    def getOtherSocket(self, known_socket:Socket):
+        """
+        Returns the oposite socket on this ``Edge``
+
+        :param known_socket: Provide known :class:`~nodeeditor.node_socket.Socket` to be able to determine the oposite one.
+        :type known_socket: :class:`~nodeeditor.node_socket.Socket`
+        :return: The oposite socket on this ``Edge`` or ``None``
+        :rtype: :class:`~nodeeditor.node_socket.Socket` or ``None``
+        """
+        return self.start_socket if known_socket == self.end_socket else self.end_socket
+
+    def doSelect(self, new_state:bool=True):
+        """
+        Provide the safe selecting/deselecting operation. In the background it takes care about the flags, norifications
+        and storing history for undo/redo.
+
+        :param new_state: ``True`` if you want to select the ``Edge``, ``False`` if you want to deselect the ``Edge``
+        :type new_state: ``bool``
+        """
+        self.grEdge.doSelect(new_state)
+
     def updatePositions(self):
+        """
+        Updates the internal `Graphics Edge` positions according to the start and end :class:`~nodeeditor.node_socket.Socket`
+        """
         source_pos = self.start_socket.getSocketPosition()
         source_pos[0] += self.start_socket.node.grNode.pos().x()
         source_pos[1] += self.start_socket.node.grNode.pos().y()
@@ -103,11 +165,25 @@ class Edge(Serializable):
 
 
     def remove_from_sockets(self):
+        """
+        Helper function which sets start and end :class:`~nodeeditor.node_socket.Socket` to ``None``
+        """
         self.end_socket = None
         self.start_socket = None
 
 
     def remove(self):
+        """
+        Safely remove this Edge.
+
+        Removes `Graphics Edge` from the ``QGraphicsScene`` and it's reference to all GC to clean it up.
+        Notifies nodes previously connected :class:`~nodeeditor.node_node.Node` (s) about this event.
+
+        Triggers Nodes':
+
+        - :py:meth:`~nodeeditor.node_node.Node.onEdgeConnectionChanged`
+        - :py:meth:`~nodeeditor.node_node.Node.onInputChanged`
+        """
         old_sockets = [self.start_socket, self.end_socket]
 
         if DEBUG: print("# Removing Edge", self)
@@ -132,7 +208,7 @@ class Edge(Serializable):
         except Exception as e: dumpException(e)
 
 
-    def serialize(self):
+    def serialize(self) -> OrderedDict:
         return OrderedDict([
             ('id', self.id),
             ('edge_type', self.edge_type),
@@ -140,7 +216,7 @@ class Edge(Serializable):
             ('end', self.end_socket.id),
         ])
 
-    def deserialize(self, data, hashmap={}, restore_id=True):
+    def deserialize(self, data:dict, hashmap:dict={}, restore_id:bool=True) -> bool:
         if restore_id: self.id = data['id']
         self.start_socket = hashmap[data['start']]
         self.end_socket = hashmap[data['end']]
