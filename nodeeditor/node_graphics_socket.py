@@ -6,6 +6,15 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 
+SOCKET_COLORS = [
+    QColor("#FFFF7700"),
+    QColor("#FF52e220"),
+    QColor("#FF0056a6"),
+    QColor("#FFa86db1"),
+    QColor("#FFb54747"),
+    QColor("#FFdbe220"),
+    QColor("#FF888888"),
+]
 
 class QDMGraphicsSocket(QGraphicsItem):
     """Class representing Graphic `Socket` in ``QGraphicsScene``"""
@@ -25,17 +34,17 @@ class QDMGraphicsSocket(QGraphicsItem):
         self.outline_width = 1.0
         self.initAssets()
 
+    def getSocketColor(self, key):
+        """Returns the ``QColor`` for this ``key``"""
+        if type(key) == int: return SOCKET_COLORS[key]
+        elif type(key) == str: return QColor(key)
+        return Qt.transparent
+
     def initAssets(self):
         """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
-        self._colors = [
-            QColor("#FFFF7700"),
-            QColor("#FF52e220"),
-            QColor("#FF0056a6"),
-            QColor("#FFa86db1"),
-            QColor("#FFb54747"),
-            QColor("#FFdbe220"),
-        ]
-        self._color_background = self._colors[self.socket_type]
+
+        # determine socket color
+        self._color_background = self.getSocketColor(self.socket_type)
         self._color_outline = QColor("#FF000000")
 
         self._pen = QPen(self._color_outline)
