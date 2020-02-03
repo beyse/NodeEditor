@@ -10,7 +10,7 @@ from pprint import PrettyPrinter
 pp = PrettyPrinter(indent=4).pprint
 
 
-def dumpException(e:Exception):
+def dumpException(e=None):
     """
     Prints out Exception message with traceback to the console
 
