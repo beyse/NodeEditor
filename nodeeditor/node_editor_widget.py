@@ -14,6 +14,8 @@ from nodeeditor.node_graphics_view import QDMGraphicsView
 
 
 class NodeEditorWidget(QWidget):
+    SceneClass = Scene
+
     """The ``NodeEditorWidget`` class"""
     def __init__(self, parent:QWidget=None):
         """
@@ -39,7 +41,7 @@ class NodeEditorWidget(QWidget):
         self.setLayout(self.layout)
 
         # crate graphics scene
-        self.scene = Scene()
+        self.scene = self.__class__.SceneClass()
 
         # create graphics view
         self.view = QDMGraphicsView(self.scene.grScene, self)
@@ -147,15 +149,16 @@ class NodeEditorWidget(QWidget):
 
     def addNodes(self):
         """Testing method to create 3 `Nodes` with 2 `Edges` connecting them"""
-        node1 = Node(self.scene, "My Awesome Node 1", inputs=[0,0,0], outputs=[1])
+        node1 = Node(self.scene, "My Awesome Node 1", inputs=[0,0,0], outputs=[1,5])
         node2 = Node(self.scene, "My Awesome Node 2", inputs=[3,3,3], outputs=[1])
         node3 = Node(self.scene, "My Awesome Node 3", inputs=[2,2,2], outputs=[1])
         node1.setPos(-350, -250)
         node2.setPos(-75, 0)
-        node3.setPos(200, -150)
+        node3.setPos(200, -200)
 
         edge1 = Edge(self.scene, node1.outputs[0], node2.inputs[0], edge_type=EDGE_TYPE_BEZIER)
         edge2 = Edge(self.scene, node2.outputs[0], node3.inputs[0], edge_type=EDGE_TYPE_BEZIER)
+        edge3 = Edge(self.scene, node1.outputs[0], node3.inputs[2], edge_type=EDGE_TYPE_BEZIER)
 
         self.scene.history.storeInitialHistoryStamp()
 
