@@ -14,6 +14,9 @@ from nodeeditor.node_scene_history import SceneHistory
 from nodeeditor.node_scene_clipboard import SceneClipboard
 
 
+DEBUG_REMOVE_WARNINGS = False
+
+
 class InvalidFile(Exception): pass
 
 
@@ -36,6 +39,9 @@ class Scene(Serializable):
 
         self.scene_width = 64000
         self.scene_height = 64000
+
+        # custom flag used to suppress triggering onItemSelected which does a bunch of stuff
+        self._silent_selection_events = False
 
         self._has_been_modified = False
         self._last_selected_items = []
@@ -82,21 +88,40 @@ class Scene(Serializable):
         self.grScene = QDMGraphicsScene(self)
         self.grScene.setGrScene(self.scene_width, self.scene_height)
 
-    def onItemSelected(self):
-        """Handle Item selection and trigger event `Item Selected`"""
+    def setSilentSelectionEvents(self, value:bool=True):
+        """Calling this can suppress onItemSelected events to be triggered. This is usefull when working with clipboard"""
+        self._silent_selection_events = value
+
+    def onItemSelected(self, silent:bool=False):
+        """
+        Handle Item selection and trigger event `Item Selected`
+
+        :param silent: If ``True`` scene's onItemSelected won't be called and history stamp not stored
+        :type silent: ``bool``
+        """
+        if self._silent_selection_events: return
+
         current_selected_items = self.getSelectedItems()
         if current_selected_items != self._last_selected_items:
             self._last_selected_items = current_selected_items
-            self.history.storeHistory("Selection Changed")
-            for callback in self._item_selected_listeners: callback()
+            if not silent:
+                self.history.storeHistory("Selection Changed")
+                for callback in self._item_selected_listeners: callback()
 
-    def onItemsDeselected(self):
-        """Handle Items deselection and trigger event `Items Deselected`"""
+    def onItemsDeselected(self, silent:bool=False):
+        """
+        Handle Items deselection and trigger event `Items Deselected`
+
+        :param silent: If ``True`` scene's onItemsDeselected won't be called and history stamp not stored
+        :type silent: ``bool``
+        """
         self.resetLastSelectedStates()
         if self._last_selected_items != []:
             self._last_selected_items = []
-            self.history.storeHistory("Deselected Everything")
-            for callback in self._items_deselected_listeners: callback()
+            if not silent:
+                self.history.storeHistory("Deselected Everything")
+                for callback in self._items_deselected_listeners: callback()
+
 
     def isModified(self) -> bool:
         """Is this `Scene` dirty aka `has been modified` ?
@@ -114,6 +139,18 @@ class Scene(Serializable):
         :rtype: list[QGraphicsItem]
         """
         return self.grScene.selectedItems()
+
+    def doDeselectItems(self, silent:bool=False) -> None:
+        """
+        Deselects everything in scene
+
+        :param silent: If ``True`` scene's onItemsDeselected won't be called
+        :type silent: ``bool``
+        """
+        for item in self.getSelectedItems():
+            item.setSelected(False)
+        if not silent:
+            self.onItemsDeselected()
 
     # our helper listener functions
     def addHasBeenModifiedListener(self, callback:'function'):
@@ -205,7 +242,9 @@ class Scene(Serializable):
         :type node: :class:`~nodeeditor.node_node.Node`
         """
         if node in self.nodes: self.nodes.remove(node)
-        else: print("!W:", "Scene::removeNode", "wanna remove node", node, "from self.nodes but it's not in the list!")
+        else:
+            if DEBUG_REMOVE_WARNINGS: print("!W:", "Scene::removeNode", "wanna remove nodeeditor", node,
+                                            "from self.nodes but it's not in the list!")
 
     def removeEdge(self, edge:Edge):
         """Remove :class:`~nodeeditor.node_edge.Edge` from this `Scene`
@@ -214,7 +253,9 @@ class Scene(Serializable):
         :return: :class:`~nodeeditor.node_edge.Edge`
         """
         if edge in self.edges: self.edges.remove(edge)
-        else: print("!W:", "Scene::removeEdge", "wanna remove edge", edge, "from self.edges but it's not in the list!")
+        else:
+            if DEBUG_REMOVE_WARNINGS: print("!W:", "Scene::removeEdge", "wanna remove edge", edge,
+                                            "from self.edges but it's not in the list!")
 
 
     def clear(self):
