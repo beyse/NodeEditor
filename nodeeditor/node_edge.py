@@ -2,7 +2,9 @@
 """
 A module containing NodeEditor's class for representing Edge and Edge Type Constants.
 """
+from collections import OrderedDict
 from nodeeditor.node_graphics_edge import *
+from nodeeditor.node_serializable import Serializable
 from nodeeditor.utils import dumpException
 
 
@@ -16,7 +18,7 @@ class Edge(Serializable):
     """
     Class for representing Edge in NodeEditor.
     """
-    def __init__(self, scene:'Scene', start_socket:Socket=None, end_socket:Socket=None, edge_type=EDGE_TYPE_DIRECT):
+    def __init__(self, scene:'Scene', start_socket:'Socket'=None, end_socket:'Socket'=None, edge_type=EDGE_TYPE_DIRECT):
         """
 
         :param scene: Reference to the :py:class:`~nodeeditor.node_scene.Scene`
@@ -125,7 +127,7 @@ class Edge(Serializable):
             self.updatePositions()
 
 
-    def getOtherSocket(self, known_socket:Socket):
+    def getOtherSocket(self, known_socket:'Socket'):
         """
         Returns the oposite socket on this ``Edge``
 
@@ -148,7 +150,8 @@ class Edge(Serializable):
 
     def updatePositions(self):
         """
-        Updates the internal `Graphics Edge` positions according to the start and end :class:`~nodeeditor.node_socket.Socket`
+        Updates the internal `Graphics Edge` positions according to the start and end :class:`~nodeeditor.node_socket.Socket`.
+        This should be called if you update ``Edge`` positions.
         """
         source_pos = self.start_socket.getSocketPosition()
         source_pos[0] += self.start_socket.node.grNode.pos().x()
@@ -172,7 +175,7 @@ class Edge(Serializable):
         self.start_socket = None
 
 
-    def remove(self):
+    def remove(self, silent_for_socket:'Socket'=None):
         """
         Safely remove this Edge.
 
@@ -183,15 +186,26 @@ class Edge(Serializable):
 
         - :py:meth:`~nodeeditor.node_node.Node.onEdgeConnectionChanged`
         - :py:meth:`~nodeeditor.node_node.Node.onInputChanged`
+
+        :param silent_for_socket: :class:`~nodeeditor.node_socket.Socket` of a :class:`~nodeeditor.node_node.Node` which
+            won't be notified, when this ``Edge`` is going to be removed
+        :type silent_for_socket: :class:`~nodeeditor.node_socket.Socket`
         """
         old_sockets = [self.start_socket, self.end_socket]
+
+        # ugly hack, since I noticed that even when you remove grEdge from scene,
+        # sometimes it stays there! How dare you Qt!
+        if DEBUG: print(" - hide grEdge")
+        self.grEdge.hide()
+
+        if DEBUG: print(" - remove grEdge", self.grEdge)
+        self.scene.grScene.removeItem(self.grEdge)
+
+        self.scene.grScene.update()
 
         if DEBUG: print("# Removing Edge", self)
         if DEBUG: print(" - remove edge from all sockets")
         self.remove_from_sockets()
-        if DEBUG: print(" - remove grEdge")
-        self.scene.grScene.removeItem(self.grEdge)
-        self.grEdge = None
         if DEBUG: print(" - remove edge from scene")
         try:
             self.scene.removeEdge(self)
@@ -203,8 +217,14 @@ class Edge(Serializable):
             # notify nodes from old sockets
             for socket in old_sockets:
                 if socket and socket.node:
+                    if silent_for_socket is not None and socket == silent_for_socket:
+                        # if we requested silence for Socket and it's this one, skip notifications
+                        continue
+
+                    # notify Socket's Node
                     socket.node.onEdgeConnectionChanged(self)
-                    if socket.is_input: socket.node.onInputChanged(self)
+                    if socket.is_input: socket.node.onInputChanged(socket)
+
         except Exception as e: dumpException(e)
 
 
@@ -212,8 +232,8 @@ class Edge(Serializable):
         return OrderedDict([
             ('id', self.id),
             ('edge_type', self.edge_type),
-            ('start', self.start_socket.id),
-            ('end', self.end_socket.id),
+            ('start', self.start_socket.id if self.start_socket is not None else None),
+            ('end', self.end_socket.id if self.end_socket is not None else None),
         ])
 
     def deserialize(self, data:dict, hashmap:dict={}, restore_id:bool=True) -> bool:

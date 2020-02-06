@@ -14,6 +14,10 @@ class Node(Serializable):
     """
     Class representing `Node` in the `Scene`.
     """
+    GraphicsNode_class = QDMGraphicsNode
+    NodeContent_class = QDMNodeContentWidget
+    Socket_class = Socket
+
     def __init__(self, scene:'Scene', title:str="Undefined Node", inputs:list=[], outputs:list=[]):
         """
 
@@ -55,7 +59,7 @@ class Node(Serializable):
         self._is_invalid = False
 
     def __str__(self):
-        return "<Node %s..%s>" % (hex(id(self))[2:5], hex(id(self))[-3:])
+        return "<%s:%s %s..%s>" % (self.title, self.__class__.__name__,hex(id(self))[2:5], hex(id(self))[-3:])
 
     @property
     def title(self):
@@ -95,8 +99,15 @@ class Node(Serializable):
 
     def initInnerClasses(self):
         """Sets up graphics Node (PyQt) and Content Widget"""
-        self.content = QDMNodeContentWidget(self)
-        self.grNode = QDMGraphicsNode(self)
+        self.content = self.getNodeContentClass()(self)
+        self.grNode = self.getGraphicsNodeClass()(self)
+
+    def getNodeContentClass(self):
+        """Returns class representing nodeeditor content"""
+        return self.__class__.NodeContent_class
+
+    def getGraphicsNodeClass(self):
+        return self.__class__.GraphicsNode_class
 
     def initSettings(self):
         """Initialize properties and socket information"""
@@ -106,6 +117,14 @@ class Node(Serializable):
         self.output_socket_position = RIGHT_TOP
         self.input_multi_edged = False
         self.output_multi_edged = True
+        self.socket_offsets = {
+            LEFT_BOTTOM: -1,
+            LEFT_CENTER: -1,
+            LEFT_TOP: -1,
+            RIGHT_BOTTOM: 1,
+            RIGHT_CENTER: 1,
+            RIGHT_TOP: 1,
+        }
 
     def initSockets(self, inputs:list, outputs:list, reset:bool=True):
         """
@@ -131,18 +150,20 @@ class Node(Serializable):
         # create new sockets
         counter = 0
         for item in inputs:
-            socket = Socket(node=self, index=counter, position=self.input_socket_position,
-                            socket_type=item, multi_edges=self.input_multi_edged,
-                            count_on_this_node_side=len(inputs), is_input=True
+            socket = self.__class__.Socket_class(
+                node=self, index=counter, position=self.input_socket_position,
+                socket_type=item, multi_edges=self.input_multi_edged,
+                count_on_this_node_side=len(inputs), is_input=True
             )
             counter += 1
             self.inputs.append(socket)
 
         counter = 0
         for item in outputs:
-            socket = Socket(node=self, index=counter, position=self.output_socket_position,
-                            socket_type=item, multi_edges=self.output_multi_edged,
-                            count_on_this_node_side=len(outputs), is_input=False
+            socket = self.__class__.Socket_class(
+                node=self, index=counter, position=self.output_socket_position,
+                socket_type=item, multi_edges=self.output_multi_edged,
+                count_on_this_node_side=len(outputs), is_input=False
             )
             counter += 1
             self.outputs.append(socket)
@@ -155,18 +176,21 @@ class Node(Serializable):
         :param new_edge: reference to the changed :class:`~nodeeditor.node_edge.Edge`
         :type new_edge: :class:`~nodeeditor.node_edge.Edge`
         """
-        print("%s::onEdgeConnectionChanged" % self.__class__.__name__, new_edge)
+        pass
 
-    def onInputChanged(self, new_edge:'Edge'):
+    def onInputChanged(self, socket:'Socket'):
         """Event handling when Node's input Edge has changed. We auto-mark this `Node` to be `Dirty` with all it's
         descendants
 
-        :param new_edge: reference to the changed :class:`~nodeeditor.node_edge.Edge`
-        :type new_edge: :class:`~nodeeditor.node_edge.Edge`
+        :param socket: reference to the changed :class:`~nodeeditor.node_socket.Socket`
+        :type socket: :class:`~nodeeditor.node_socket.Socket`
         """
-        print("%s::onInputChanged" % self.__class__.__name__, new_edge)
         self.markDirty()
         self.markDescendantsDirty()
+
+    def onDoubleClicked(self, event):
+        """Event handling double click on Graphics Node in `Scene`"""
+        pass
 
     def doSelect(self, new_state:bool=True):
         """Shortcut method for selecting/deselecting the `Node`
@@ -175,6 +199,10 @@ class Node(Serializable):
         :type new_state: ``bool``
         """
         self.grNode.doSelect(new_state)
+
+    def isSelected(self):
+        """Returns ``True`` if current `Node` is selected"""
+        return self.grNode.isSelected()
 
     def getSocketPosition(self, index:int, position:int, num_out_of:int=1) -> '(x, y)':
         """
@@ -190,7 +218,7 @@ class Node(Serializable):
         :return: Position of described Socket on the `Node`
         :rtype: ``x, y``
         """
-        x = 0 if (position in (LEFT_TOP, LEFT_CENTER, LEFT_BOTTOM)) else self.grNode.width
+        x = self.socket_offsets[position] if (position in (LEFT_TOP, LEFT_CENTER, LEFT_BOTTOM)) else self.grNode.width + self.socket_offsets[position]
 
         if position in (LEFT_BOTTOM, RIGHT_BOTTOM):
             # start from bottom
@@ -326,7 +354,7 @@ class Node(Serializable):
             other_node.markInvalid(new_value)
             other_node.markChildrenInvalid(new_value)
 
-    def eval(self):
+    def eval(self, index=0):
         """Evaluate this `Node`. This is supposed to be overriden. See :ref:`evaluation` for more"""
         self.markDirty(False)
         self.markInvalid(False)
@@ -356,26 +384,65 @@ class Node(Serializable):
         return other_nodes
 
 
-    def getInput(self, index:int=0) -> 'Node':
+    def getInput(self, index:int=0) -> ['Node', None]:
         """
         Get the **first**  `Node` connected to the  Input specified by `index`
 
         :param index: Order number of the `Input Socket`
         :type index: ``int``
         :return: :class:`~nodeeditor.node_node.Node` which is connected to the specified `Input` or ``None`` if there is no connection of index is out of range
-        :rtype: :class:`~nodeeditor.node_node.Node`
+        :rtype: :class:`~nodeeditor.node_node.Node` or ``None``
         """
         try:
-            edge = self.inputs[index].edges[0]
-            socket = edge.getOtherSocket(self.inputs[index])
-            return socket.node
-        except IndexError:
-            print("EXC: Trying to get input, but none is attached to", self)
-            return None
+            input_socket = self.inputs[index]
+            if len(input_socket.edges) == 0: return None
+            connecting_edge = input_socket.edges[0]
+            other_socket = connecting_edge.getOtherSocket(self.inputs[index])
+            return other_socket.node
         except Exception as e:
             dumpException(e)
             return None
 
+    def getInputWithSocket(self, index:int=0) -> [('Node', 'Socket'), (None, None)]:
+        """
+        Get the **first**  `Node` connected to the Input specified by `index` and the connection `Socket`
+
+        :param index: Order number of the `Input Socket`
+        :type index: ``int``
+        :return: Tuple containing :class:`~nodeeditor.node_node.Node` and :class:`~nodeeditor.node_socket.Socket` which
+            is connected to the specified `Input` or ``None`` if there is no connection of index is out of range
+        :rtype: (:class:`~nodeeditor.node_node.Node`, :class:`~nodeeditor.node_socket.Socket`)
+        """
+        try:
+            input_socket = self.inputs[index]
+            if len(input_socket.edges) == 0: return None, None
+            connecting_edge = input_socket.edges[0]
+            other_socket = connecting_edge.getOtherSocket(self.inputs[index])
+            return other_socket.node, other_socket
+        except Exception as e:
+            dumpException(e)
+            return None, None
+
+    def getInputWithSocketIndex(self, index:int=0) -> ('Node', int):
+        """
+        Get the **first**  `Node` connected to the Input specified by `index` and the connection `Socket`
+
+        :param index: Order number of the `Input Socket`
+        :type index: ``int``
+        :return: Tuple containing :class:`~nodeeditor.node_node.Node` and :class:`~nodeeditor.node_socket.Socket` which
+            is connected to the specified `Input` or ``None`` if there is no connection of index is out of range
+        :rtype: (:class:`~nodeeditor.node_node.Node`, int)
+        """
+        try:
+            edge = self.inputs[index].edges[0]
+            socket = edge.getOtherSocket(self.inputs[index])
+            return socket.node, socket.index
+        except IndexError:
+            # print("EXC: Trying to get input with socket index %d, but none is attached to" % index, self)
+            return None, None
+        except Exception as e:
+            dumpException(e)
+            return None, None
 
     def getInputs(self, index:int=0) -> 'List[Node]':
         """
@@ -437,21 +504,69 @@ class Node(Serializable):
             num_inputs = len( data['inputs'] )
             num_outputs = len( data['outputs'] )
 
-            self.inputs = []
-            for socket_data in data['inputs']:
-                new_socket = Socket(node=self, index=socket_data['index'], position=socket_data['position'],
-                                    socket_type=socket_data['socket_type'], count_on_this_node_side=num_inputs,
-                                    is_input=True)
-                new_socket.deserialize(socket_data, hashmap, restore_id)
-                self.inputs.append(new_socket)
+            # 1 way to do it is to delete existing sockets
+            #    - but when we do this, deserialization will override even the number of sockets defined
+            #      in the constructor of a node...
+            # 2nd way to do it -- reuse existing sockets, dont create new ones if not necessary
 
-            self.outputs = []
+
+            for socket_data in data['inputs']:
+                ## v1 - delete and create new sockets
+                # new_socket = self.__class__.Socket_class(
+                #     node=self, index=socket_data['index'], position=socket_data['position'],
+                #     socket_type=socket_data['socket_type'], count_on_this_node_side=num_inputs,
+                #     is_input=True
+                # )
+                # new_socket.deserialize(socket_data, hashmap, restore_id)
+                # self.inputs.append(new_socket)
+
+                ## v2 - reuse alredy created sockets
+                found = None
+                for socket in self.inputs:
+                    # print("\t", socket, socket.index, "=?", socket_data['index'])
+                    if socket.index == socket_data['index']:
+                        found = socket
+                        break
+                if found is None:
+                    print("deserialization of socket data has not found output socket with index:", socket_data['index'])
+                    print("actual socket data:", socket_data)
+                    # we can create new socket for this
+                    found = self.__class__.Socket_class(
+                        node=self, index=socket_data['index'], position=socket_data['position'],
+                        socket_type=socket_data['socket_type'], count_on_this_node_side=num_inputs,
+                        is_input=True
+                    )
+                    self.outputs.append(found)  # append newly created output to the list
+                found.deserialize(socket_data, hashmap, restore_id)
+
             for socket_data in data['outputs']:
-                new_socket = Socket(node=self, index=socket_data['index'], position=socket_data['position'],
-                                    socket_type=socket_data['socket_type'], count_on_this_node_side=num_outputs,
-                                    is_input=False)
-                new_socket.deserialize(socket_data, hashmap, restore_id)
-                self.outputs.append(new_socket)
+                ## v1 - delete old and create new sockets
+                # new_socket = self.__class__.Socket_class(
+                #     node=self, index=socket_data['index'], position=socket_data['position'],
+                #     socket_type=socket_data['socket_type'], count_on_this_node_side=num_outputs,
+                #     is_input=False
+                # )
+                # new_socket.deserialize(socket_data, hashmap, restore_id)
+                # self.outputs.append(new_socket)
+
+                ## v2 - reuse alredy created sockets
+                found = None
+                for socket in self.outputs:
+                    # print("\t", socket, socket.index, "=?", socket_data['index'])
+                    if socket.index == socket_data['index']:
+                        found = socket
+                        break
+                if found is None:
+                    # print("deserialization of socket data has not found output socket with index:", socket_data['index'])
+                    # print("actual socket data:", socket_data)
+                    # we can create new socket for this
+                    found = self.__class__.Socket_class(
+                        node=self, index=socket_data['index'], position=socket_data['position'],
+                        socket_type=socket_data['socket_type'], count_on_this_node_side=num_outputs,
+                        is_input=False
+                    )
+                    self.outputs.append(found)  # append newly created output to the list
+                found.deserialize(socket_data, hashmap, restore_id)
         except Exception as e: dumpException(e)
 
         # also deseralize the content of the node
