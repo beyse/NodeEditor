@@ -39,9 +39,12 @@ class NodeEditorWindow(QMainWindow):
         self.createStatusBar()
 
         # set window properties
-        self.setGeometry(200, 200, 800, 600)
+        # self.setGeometry(200, 200, 800, 600)
         self.setTitle()
         self.show()
+
+    def sizeHint(self):
+        return QSize(800, 600)
 
     def createStatusBar(self):
         """Create Status bar and connect to `Graphics View` scenePosChanged event"""
