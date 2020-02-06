@@ -115,7 +115,7 @@ class QDMGraphicsNode(QGraphicsItem):
         self._was_moved = True
 
     def mouseReleaseEvent(self, event):
-        """Overriden event to handle when we moved, selected or deselected this `Node``"""
+        """Overriden event to handle when we moved, selected or deselected this `Node`"""
         super().mouseReleaseEvent(event)
 
         # handle when grNode moved
@@ -124,7 +124,7 @@ class QDMGraphicsNode(QGraphicsItem):
             self.node.scene.history.storeHistory("Node moved", setModified=True)
 
             self.node.scene.resetLastSelectedStates()
-            self._last_selected_state = True
+            self.doSelect()     # also trigger itemSelected when node was moved
 
             # we need to store the last selected state, because moving does also select the nodes
             self.node.scene._last_selected_items = self.node.scene.getSelectedItems()
@@ -138,6 +138,9 @@ class QDMGraphicsNode(QGraphicsItem):
             self._last_selected_state = self.isSelected()
             self.onSelected()
 
+    def mouseDoubleClickEvent(self, event):
+        """Overriden event for doubleclick. Resend to `Node::onDoubleClicked`"""
+        self.node.onDoubleClicked(event)
 
     def hoverEnterEvent(self, event: 'QGraphicsSceneHoverEvent') -> None:
         """Handle hover effect"""
@@ -206,7 +209,7 @@ class QDMGraphicsNode(QGraphicsItem):
 
         # outline
         path_outline = QPainterPath()
-        path_outline.addRoundedRect(0, 0, self.width, self.height, self.edge_roundness, self.edge_roundness)
+        path_outline.addRoundedRect(-1, -1, self.width+2, self.height+2, self.edge_roundness, self.edge_roundness)
         painter.setBrush(Qt.NoBrush)
         if self.hovered:
             painter.setPen(self._pen_hovered)
