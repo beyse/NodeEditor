@@ -7,8 +7,6 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
-from nodeeditor.node_socket import *
-
 
 EDGE_CP_ROUNDNESS = 100     #: Bezier controll point distance on the line
 
@@ -65,7 +63,7 @@ class QDMGraphicsEdge(QGraphicsPathItem):
         self._pen_hovered.setWidthF(5.0)
 
     def onSelected(self):
-        """Our event handling when the node was selected"""
+        """Our event handling when the edge was selected"""
         self.edge.scene.grScene.itemSelected.emit()
 
     def doSelect(self, new_state:bool=True):
@@ -103,16 +101,16 @@ class QDMGraphicsEdge(QGraphicsPathItem):
         :type x: ``float``
         :param y: y position
         :type y: ``float``
-        :return:
         """
         self.posSource = [x, y]
 
     def setDestination(self, x:float, y:float):
         """ Set destination point
 
-        :param x:
-        :param y:
-        :return:
+        :param x: x position
+        :type x: ``float``
+        :param y: y position
+        :type y: ``float``
         """
         self.posDestination = [x, y]
 
@@ -200,9 +198,10 @@ class QDMGraphicsEdgeBezier(QDMGraphicsEdge):
         cpy_d = 0
 
         if self.edge.start_socket is not None:
-            sspos = self.edge.start_socket.position
+            ssin = self.edge.start_socket.is_input
+            ssout = self.edge.start_socket.is_output
 
-            if (s[0] > d[0] and sspos in (RIGHT_TOP, RIGHT_BOTTOM)) or (s[0] < d[0] and sspos in (LEFT_BOTTOM, LEFT_TOP)):
+            if (s[0] > d[0] and ssout) or (s[0] < d[0] and ssin):
                 cpx_d *= -1
                 cpx_s *= -1
 
