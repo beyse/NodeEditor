@@ -7,7 +7,6 @@ import json
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from nodeeditor.node_editor_widget import NodeEditorWidget
-from nodeeditor.utils import pp
 
 
 class NodeEditorWindow(QMainWindow):
@@ -69,8 +68,11 @@ class NodeEditorWindow(QMainWindow):
 
     def createMenus(self):
         """Create Menus for `File` and `Edit`"""
-        menubar = self.menuBar()
+        self.createFileMenu()
+        self.createEditMenu()
 
+    def createFileMenu(self):
+        menubar = self.menuBar()
         self.fileMenu = menubar.addMenu('&File')
         self.fileMenu.addAction(self.actNew)
         self.fileMenu.addSeparator()
@@ -80,6 +82,8 @@ class NodeEditorWindow(QMainWindow):
         self.fileMenu.addSeparator()
         self.fileMenu.addAction(self.actExit)
 
+    def createEditMenu(self):
+        menubar = self.menuBar()
         self.editMenu = menubar.addMenu('&Edit')
         self.editMenu.addAction(self.actUndo)
         self.editMenu.addAction(self.actRedo)
@@ -243,7 +247,7 @@ class NodeEditorWindow(QMainWindow):
                 print("JSON does not contain any nodes!")
                 return
 
-            self.getCurrentNodeEditorWidget().scene.clipboard.deserializeFromClipboard(data)
+            return self.getCurrentNodeEditorWidget().scene.clipboard.deserializeFromClipboard(data)
 
     def readSettings(self):
         """Read the permanent profile settings for this app"""
