@@ -16,9 +16,12 @@ RIGHT_BOTTOM = 6    #:
 
 
 DEBUG = False
+DEBUG_REMOVE_WARNINGS = False
 
 
 class Socket(Serializable):
+    Socket_GR_Class = QDMGraphicsSocket
+
     """Class representing Socket."""
 
     def __init__(self, node:'Node', index:int=0, position:int=LEFT_TOP, socket_type:int=1, multi_edges:bool=True, count_on_this_node_side:int=1, is_input:bool=False):
@@ -61,10 +64,10 @@ class Socket(Serializable):
         self.is_output = not self.is_input
 
 
-        if DEBUG: print("Socket -- creating with", self.index, self.position, "for node", self.node)
+        if DEBUG: print("Socket -- creating with", self.index, self.position, "for nodeeditor", self.node)
 
 
-        self.grSocket = QDMGraphicsSocket(self, self.socket_type)
+        self.grSocket = self.__class__.Socket_GR_Class(self, self.socket_type)
 
         self.setSocketPosition()
 
@@ -72,6 +75,12 @@ class Socket(Serializable):
 
     def __str__(self):
         return "<Socket %s %s..%s>" % ("ME" if self.is_multi_edges else "SE", hex(id(self))[2:5], hex(id(self))[-3:])
+
+    def delete(self):
+        """Delete this `Socket` from graphics scene for sure"""
+        self.grSocket.setParentItem(None)
+        self.node.scene.grScene.removeItem(self.grSocket)
+        del self.grSocket
 
     def setSocketPosition(self):
         """Helper function to set `Graphics Socket` position. Exact socket position is calculated
@@ -84,11 +93,31 @@ class Socket(Serializable):
             :class:`~nodeeditor.node_node.Node`
         :rtype: ``x, y`` position
         """
-        if DEBUG: print("  GSP: ", self.index, self.position, "node:", self.node)
+        if DEBUG: print("  GSP: ", self.index, self.position, "nodeeditor:", self.node)
         res = self.node.getSocketPosition(self.index, self.position, self.count_on_this_node_side)
         if DEBUG: print("  res", res)
         return res
 
+
+    def hasAnyEdge(self) -> bool:
+        """
+        Returns ``True`` if any :class:`~nodeeditor.node_edge.Edge` is connectected to this socket
+
+        :return: ``True`` if any :class:`~nodeeditor.node_edge.Edge` is connected to this socket
+        :rtype: ``bool``
+        """
+        return len(self.edges) > 0
+
+    def isConnected(self, edge:'Edge') -> bool:
+        """
+        Returns ``True`` if :class:`~nodeeditor.node_edge.Edge` is connected to this `Socket`
+
+        :param edge: :class:`~nodeeditor.node_edge.Edge` to check if it is connected to this `Socket`
+        :type edge: :class:`~nodeeditor.node_edge.Edge`
+        :return: ``True`` if `Edge` is connected to this socket
+        :rtype: ``bool``
+        """
+        return edge in self.edges
 
     def addEdge(self, edge:'Edge'):
         """
@@ -106,13 +135,19 @@ class Socket(Serializable):
         :type edge: :class:`~nodeeditor.node_edge.Edge`
         """
         if edge in self.edges: self.edges.remove(edge)
-        else: print("!W:", "Socket::removeEdge", "wanna remove edge", edge, "from self.edges but it's not in the list!")
+        else:
+            if DEBUG_REMOVE_WARNINGS:
+                print("!W:", "Socket::removeEdge", "wanna remove edge", edge,
+                      "from self.edges but it's not in the list!")
 
-    def removeAllEdges(self):
+    def removeAllEdges(self, silent=False):
         """Disconnect all `Edges` from this `Socket`"""
         while self.edges:
             edge = self.edges.pop(0)
-            edge.remove()
+            if silent:
+                edge.remove(silent_for_socket=self)
+            else:
+                edge.remove()       # just remove all with notifications
 
     def determineMultiEdges(self, data:dict) -> bool:
         """
