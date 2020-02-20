@@ -161,6 +161,14 @@ class NodeEditorWindow(QMainWindow):
         """
         self.status_mouse_pos.setText("Scene Pos: [%d, %d]" % (x, y))
 
+    def getFileDialogDirectory(self):
+        """Returns starting directory for ``QFileDialog`` file open/save"""
+        return ''
+
+    def getFileDialogFilter(self):
+        """Returns ``str`` standard file open/save filter for ``QFileDialog``"""
+        return 'Graph (*.json);;All files (*)'
+
     def onFileNew(self):
         """Hande File New operation"""
         if self.maybeSave():
@@ -171,7 +179,7 @@ class NodeEditorWindow(QMainWindow):
     def onFileOpen(self):
         """Handle File Open operation"""
         if self.maybeSave():
-            fname, filter = QFileDialog.getOpenFileName(self, 'Open graph from file')
+            fname, filter = QFileDialog.getOpenFileName(self, 'Open graph from file', self.getFileDialogDirectory(), self.getFileDialogFilter())
             if fname != '' and os.path.isfile(fname):
                 self.getCurrentNodeEditorWidget().fileLoad(fname)
                 self.setTitle()
@@ -194,7 +202,7 @@ class NodeEditorWindow(QMainWindow):
         """Handle File Save As operation"""
         current_nodeeditor = self.getCurrentNodeEditorWidget()
         if current_nodeeditor is not None:
-            fname, filter = QFileDialog.getSaveFileName(self, 'Save graph to file')
+            fname, filter = QFileDialog.getSaveFileName(self, 'Save graph to file', self.getFileDialogDirectory(), self.getFileDialogFilter())
             if fname == '': return False
 
             current_nodeeditor.fileSave(fname)
