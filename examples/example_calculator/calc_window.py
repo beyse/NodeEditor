@@ -67,6 +67,9 @@ class CalculatorWindow(NodeEditorWindow):
         else:
             self.writeSettings()
             event.accept()
+            # hacky fix for PyQt 5.14.x
+            import sys
+            sys.exit(0)
 
 
     def createActions(self):

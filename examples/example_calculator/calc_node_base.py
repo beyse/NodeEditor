@@ -49,6 +49,9 @@ class CalcNode(Node):
     content_label = ""
     content_label_objname = "calc_node_bg"
 
+    GraphicsNode_class = CalcGraphicsNode
+    NodeContent_class = CalcContent
+
     def __init__(self, scene, inputs=[2,2], outputs=[1]):
         super().__init__(scene, self.__class__.op_title, inputs, outputs)
 
@@ -57,9 +60,6 @@ class CalcNode(Node):
         # it's really important to mark all nodes Dirty by default
         self.markDirty()
 
-    def initInnerClasses(self):
-        self.content = CalcContent(self)
-        self.grNode = CalcGraphicsNode(self)
 
     def initSettings(self):
         super().initSettings()
@@ -111,7 +111,7 @@ class CalcNode(Node):
 
 
 
-    def onInputChanged(self, new_edge):
+    def onInputChanged(self, socket=None):
         print("%s::__onInputChanged" % self.__class__.__name__)
         self.markDirty()
         self.eval()
