@@ -58,6 +58,7 @@ class QDMGraphicsView(QGraphicsView):
         self.editingFlag = False
         self.rubberBandDraggingRectangle = False
 
+        self.last_scene_mouse_position = QPoint(0,0)
         self.zoomInFactor = 1.25
         self.zoomClamp = True
         self.zoom = 10
@@ -195,7 +196,7 @@ class QDMGraphicsView(QGraphicsView):
                 return
 
 
-        if type(item) is QDMGraphicsSocket:
+        if isinstance(item, QDMGraphicsSocket):
             if self.mode == MODE_NOOP:
                 self.mode = MODE_EDGE_DRAG
                 self.edgeDragStart(item)
@@ -282,21 +283,24 @@ class QDMGraphicsView(QGraphicsView):
 
     def mouseMoveEvent(self, event:QMouseEvent):
         """Overriden Qt's ``mouseMoveEvent`` handling Scene/View logic"""
+        scenepos = self.mapToScene(event.pos())
+
         if self.mode == MODE_EDGE_DRAG:
-            pos = self.mapToScene(event.pos())
-            self.drag_edge.grEdge.setDestination(pos.x(), pos.y())
-            self.drag_edge.grEdge.update()
+            # according to sentry: 'NoneType' object has no attribute 'grEdge'
+            if self.drag_edge is not None:
+                self.drag_edge.grEdge.setDestination(scenepos.x(), scenepos.y())
+                self.drag_edge.grEdge.update()
+            else:
+                print(">>> Want to update self.drag_edge grEdge, but it's None!!!")
+
 
         if self.mode == MODE_EDGE_CUT:
-            pos = self.mapToScene(event.pos())
-            self.cutline.line_points.append(pos)
+            self.cutline.line_points.append(scenepos)
             self.cutline.update()
 
-        self.last_scene_mouse_position = self.mapToScene(event.pos())
+        self.last_scene_mouse_position = scenepos
 
-        self.scenePosChanged.emit(
-            int(self.last_scene_mouse_position.x()), int(self.last_scene_mouse_position.y())
-        )
+        self.scenePosChanged.emit( int(scenepos.x()), int(scenepos.y()) )
 
         super().mouseMoveEvent(event)
 
@@ -347,6 +351,9 @@ class QDMGraphicsView(QGraphicsView):
             p1 = self.cutline.line_points[ix]
             p2 = self.cutline.line_points[ix + 1]
 
+            # @TODO: we could collect all touched nodes, and notify them once after all edges removed
+            # we could cut 3 edges leading to a single nodeeditor this will notify it 3x
+            # maybe we could use some Notifier class with methods collect() and dispatch()
             for edge in self.grScene.scene.edges:
                 if edge.grEdge.intersectsWith(p1, p2):
                     edge.remove()
@@ -410,7 +417,7 @@ class QDMGraphicsView(QGraphicsView):
         self.drag_edge = None
 
         try:
-            if type(item) is QDMGraphicsSocket:
+            if isinstance(item, QDMGraphicsSocket):
                 if item.socket != self.drag_start_socket:
                     # if we released dragging on a socket (other then the beginning socket)
 
@@ -422,13 +429,15 @@ class QDMGraphicsView(QGraphicsView):
                     if not self.drag_start_socket.is_multi_edges:
                         self.drag_start_socket.removeAllEdges()
 
+                    ## Create new Edge
                     new_edge = Edge(self.grScene.scene, self.drag_start_socket, item.socket, edge_type=EDGE_TYPE_BEZIER)
                     if DEBUG: print("View::edgeDragEnd ~  created new edge:", new_edge, "connecting", new_edge.start_socket, "<-->", new_edge.end_socket)
 
+                    ## Send notifications for the new edge
                     for socket in [self.drag_start_socket, item.socket]:
+                        # @TODO: Add possibility (ie when an input edge was replaced) to be silent and don't trigger change
                         socket.node.onEdgeConnectionChanged(new_edge)
-                        if socket.is_input: socket.node.onInputChanged(new_edge)
-
+                        if socket.is_input: socket.node.onInputChanged(socket)
 
                     self.grScene.scene.history.storeHistory("Created new edge by dragging", setModified=True)
                     return True
