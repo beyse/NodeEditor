@@ -67,7 +67,7 @@ class Socket(Serializable):
         if DEBUG: print("Socket -- creating with", self.index, self.position, "for nodeeditor", self.node)
 
 
-        self.grSocket = self.__class__.Socket_GR_Class(self, self.socket_type)
+        self.grSocket = self.__class__.Socket_GR_Class(self)
 
         self.setSocketPosition()
 
@@ -81,6 +81,17 @@ class Socket(Serializable):
         self.grSocket.setParentItem(None)
         self.node.scene.grScene.removeItem(self.grSocket)
         del self.grSocket
+
+    def changeSocketType(self, new_socket_type:int):
+        """
+        Change the Socket Type
+
+        :param new_socket_type: new socket type
+        :type new_socket_type: ``int``
+        """
+        if self.socket_type != new_socket_type:
+            self.socket_type = new_socket_type
+            self.grSocket.changeSocketType()
 
     def setSocketPosition(self):
         """Helper function to set `Graphics Socket` position. Exact socket position is calculated

@@ -18,27 +18,35 @@ SOCKET_COLORS = [
 
 class QDMGraphicsSocket(QGraphicsItem):
     """Class representing Graphic `Socket` in ``QGraphicsScene``"""
-    def __init__(self, socket:'Socket', socket_type:int=1):
+    def __init__(self, socket:'Socket'):
         """
         :param socket: reference to :class:`~nodeeditor.node_socket.Socket`
         :type socket: :class:`~nodeeditor.node_socket.Socket`
-        :param socket_type: Constant representing `Socket` type.`
-        :type socket_type: ``int``
         """
         super().__init__(socket.node.grNode)
 
         self.socket = socket
-        self.socket_type = socket_type
 
         self.radius = 6.0
         self.outline_width = 1.0
         self.initAssets()
+
+    @property
+    def socket_type(self):
+        return self.socket.socket_type
 
     def getSocketColor(self, key):
         """Returns the ``QColor`` for this ``key``"""
         if type(key) == int: return SOCKET_COLORS[key]
         elif type(key) == str: return QColor(key)
         return Qt.transparent
+
+    def changeSocketType(self):
+        """Change the Socket Type"""
+        self._color_background = self.getSocketColor(self.socket_type)
+        self._brush = QBrush(self._color_background)
+        # print("Socket changed to:", self._color_background.getRgbF())
+        self.update()
 
     def initAssets(self):
         """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
