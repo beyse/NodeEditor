@@ -14,7 +14,7 @@ from nodeeditor.node_graphics_view import QDMGraphicsView
 
 
 class NodeEditorWidget(QWidget):
-    SceneClass = Scene
+    Scene_class = Scene
 
     """The ``NodeEditorWidget`` class"""
     def __init__(self, parent:QWidget=None):
@@ -41,7 +41,7 @@ class NodeEditorWidget(QWidget):
         self.setLayout(self.layout)
 
         # crate graphics scene
-        self.scene = self.__class__.SceneClass()
+        self.scene = self.__class__.Scene_class()
 
         # create graphics view
         self.view = QDMGraphicsView(self.scene.grScene, self)
@@ -148,7 +148,7 @@ class NodeEditorWidget(QWidget):
 
 
     def addNodes(self):
-        """Testing method to create 3 `Nodes` with 2 `Edges` connecting them"""
+        """Testing method to create 3 `Nodes` with 3 `Edges` connecting them"""
         node1 = Node(self.scene, "My Awesome Node 1", inputs=[0,0,0], outputs=[1,5])
         node2 = Node(self.scene, "My Awesome Node 2", inputs=[3,3,3], outputs=[1])
         node3 = Node(self.scene, "My Awesome Node 3", inputs=[2,2,2], outputs=[1])
@@ -162,6 +162,24 @@ class NodeEditorWidget(QWidget):
 
         self.scene.history.storeInitialHistoryStamp()
 
+    def addCustomNode(self):
+        """Testing method to create a custom Node with custom content"""
+        from nodeeditor.node_content_widget import QDMNodeContentWidget
+        from nodeeditor.node_serializable import Serializable
+
+        class NNodeContent(QLabel):  # , Serializable):
+            def __init__(self, node, parent=None):
+                super().__init__("FooBar")
+                self.node = node
+                self.setParent(parent)
+
+        class NNode(Node):
+            NodeContent_class = NNodeContent
+
+        self.scene.setNodeClassSelector(lambda data: NNode)
+        node = NNode(self.scene, "A Custom Node 1", inputs=[0, 1, 2])
+
+        print("node content:", node.content)
 
     def addDebugContent(self):
         """Testing method to put random QGraphicsItems and elements into QGraphicsScene"""

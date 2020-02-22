@@ -5,7 +5,7 @@ A module containing NodeEditor's class for representing `Node`.
 from nodeeditor.node_graphics_node import QDMGraphicsNode
 from nodeeditor.node_content_widget import QDMNodeContentWidget
 from nodeeditor.node_socket import *
-from nodeeditor.utils import dumpException
+from nodeeditor.utils import dumpException, pp
 
 DEBUG = False
 
@@ -40,6 +40,10 @@ class Node(Serializable):
         super().__init__()
         self._title = title
         self.scene = scene
+
+        # just to be sure, init these variables
+        self.content = None
+        self.grNode = None
 
         self.initInnerClasses()
         self.initSettings()
@@ -99,8 +103,10 @@ class Node(Serializable):
 
     def initInnerClasses(self):
         """Sets up graphics Node (PyQt) and Content Widget"""
-        self.content = self.getNodeContentClass()(self)
-        self.grNode = self.getGraphicsNodeClass()(self)
+        node_content_class = self.getNodeContentClass()
+        graphics_node_class = self.getGraphicsNodeClass()
+        if node_content_class is not None: self.content = node_content_class(self)
+        if graphics_node_class is not None: self.grNode = graphics_node_class(self)
 
     def getNodeContentClass(self):
         """Returns class representing nodeeditor content"""
@@ -481,6 +487,7 @@ class Node(Serializable):
         inputs, outputs = [], []
         for socket in self.inputs: inputs.append(socket.serialize())
         for socket in self.outputs: outputs.append(socket.serialize())
+        ser_content = self.content.serialize() if isinstance(self.content, Serializable) else {}
         return OrderedDict([
             ('id', self.id),
             ('title', self.title),
@@ -488,7 +495,7 @@ class Node(Serializable):
             ('pos_y', self.grNode.scenePos().y()),
             ('inputs', inputs),
             ('outputs', outputs),
-            ('content', self.content.serialize()),
+            ('content', ser_content),
         ])
 
     def deserialize(self, data:dict, hashmap:dict={}, restore_id:bool=True) -> bool:
@@ -504,23 +511,13 @@ class Node(Serializable):
             num_inputs = len( data['inputs'] )
             num_outputs = len( data['outputs'] )
 
-            # 1 way to do it is to delete existing sockets
-            #    - but when we do this, deserialization will override even the number of sockets defined
-            #      in the constructor of a node...
-            # 2nd way to do it -- reuse existing sockets, dont create new ones if not necessary
+            # print("> deserialize node,   num inputs:", num_inputs, "num outputs:", num_outputs)
+            # pp(data)
 
+            # possible way to do it is reuse existing sockets...
+            # dont create new ones if not necessary
 
             for socket_data in data['inputs']:
-                ## v1 - delete and create new sockets
-                # new_socket = self.__class__.Socket_class(
-                #     node=self, index=socket_data['index'], position=socket_data['position'],
-                #     socket_type=socket_data['socket_type'], count_on_this_node_side=num_inputs,
-                #     is_input=True
-                # )
-                # new_socket.deserialize(socket_data, hashmap, restore_id)
-                # self.inputs.append(new_socket)
-
-                ## v2 - reuse alredy created sockets
                 found = None
                 for socket in self.inputs:
                     # print("\t", socket, socket.index, "=?", socket_data['index'])
@@ -528,28 +525,19 @@ class Node(Serializable):
                         found = socket
                         break
                 if found is None:
-                    print("deserialization of socket data has not found output socket with index:", socket_data['index'])
-                    print("actual socket data:", socket_data)
+                    # print("deserialization of socket data has not found input socket with index:", socket_data['index'])
+                    # print("actual socket data:", socket_data)
                     # we can create new socket for this
                     found = self.__class__.Socket_class(
                         node=self, index=socket_data['index'], position=socket_data['position'],
                         socket_type=socket_data['socket_type'], count_on_this_node_side=num_inputs,
                         is_input=True
                     )
-                    self.outputs.append(found)  # append newly created output to the list
+                    self.inputs.append(found)  # append newly created input to the list
                 found.deserialize(socket_data, hashmap, restore_id)
 
-            for socket_data in data['outputs']:
-                ## v1 - delete old and create new sockets
-                # new_socket = self.__class__.Socket_class(
-                #     node=self, index=socket_data['index'], position=socket_data['position'],
-                #     socket_type=socket_data['socket_type'], count_on_this_node_side=num_outputs,
-                #     is_input=False
-                # )
-                # new_socket.deserialize(socket_data, hashmap, restore_id)
-                # self.outputs.append(new_socket)
 
-                ## v2 - reuse alredy created sockets
+            for socket_data in data['outputs']:
                 found = None
                 for socket in self.outputs:
                     # print("\t", socket, socket.index, "=?", socket_data['index'])
@@ -567,9 +555,14 @@ class Node(Serializable):
                     )
                     self.outputs.append(found)  # append newly created output to the list
                 found.deserialize(socket_data, hashmap, restore_id)
+
         except Exception as e: dumpException(e)
 
         # also deseralize the content of the node
-        res = self.content.deserialize(data['content'], hashmap)
+        # so far the rest was ok, now as last step the content...
+        if isinstance(self.content, Serializable):
+            res = self.content.deserialize(data['content'], hashmap)
+            return res
 
-        return True & res
+
+        return True

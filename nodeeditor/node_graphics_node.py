@@ -19,11 +19,9 @@ class QDMGraphicsNode(QGraphicsItem):
         :Instance Attributes:
 
             - **node** - reference to :class:`~nodeeditor.node_node.Node`
-            - **content** - reference to `Node Content`
         """
         super().__init__(parent)
         self.node = node
-        self.content = self.node.content
 
         # init our flags
         self.hovered = False
@@ -33,6 +31,11 @@ class QDMGraphicsNode(QGraphicsItem):
         self.initSizes()
         self.initAssets()
         self.initUI()
+
+    @property
+    def content(self):
+        """Reference to `Node Content`"""
+        return self.node.content if self.node else None
 
     @property
     def title(self):
@@ -105,7 +108,7 @@ class QDMGraphicsNode(QGraphicsItem):
         if new_state: self.onSelected()
 
     def mouseMoveEvent(self, event):
-        """Overriden event to detect that we moved with this Node"""
+        """Overriden event to detect that we moved with this `Node`"""
         super().mouseMoveEvent(event)
 
         # optimize me! just update the selected nodes
@@ -177,10 +180,13 @@ class QDMGraphicsNode(QGraphicsItem):
 
     def initContent(self):
         """Set up the `grContent` - ``QGraphicsProxyWidget`` to have a container for `Graphics Content`"""
-        self.grContent = QGraphicsProxyWidget(self)
-        self.content.setGeometry(self.edge_padding, self.title_height + self.edge_padding,
+        if self.content is not None:
+            self.content.setGeometry(self.edge_padding, self.title_height + self.edge_padding,
                                  self.width - 2 * self.edge_padding, self.height - 2 * self.edge_padding - self.title_height)
-        self.grContent.setWidget(self.content)
+
+        # get the QGraphicsProxyWidget when inserted into the grScene
+        self.grContent = self.node.scene.grScene.addWidget(self.content)
+        self.grContent.setParentItem(self)
 
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):

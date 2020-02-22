@@ -10,6 +10,8 @@ from nodeeditor.node_editor_widget import NodeEditorWidget
 
 
 class NodeEditorWindow(QMainWindow):
+    NodeEditorWidget_class = NodeEditorWidget
+
     """Class representing NodeEditor's Main Window"""
     def __init__(self):
         """
@@ -32,7 +34,7 @@ class NodeEditorWindow(QMainWindow):
         self.createMenus()
 
         # create node editor widget
-        self.nodeeditor = NodeEditorWidget(self)
+        self.nodeeditor = self.__class__.NodeEditorWidget_class(self)
         self.nodeeditor.scene.addHasBeenModifiedListener(self.setTitle)
         self.setCentralWidget(self.nodeeditor)
 
