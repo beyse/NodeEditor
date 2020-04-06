@@ -413,7 +413,7 @@ class QDMGraphicsView(QGraphicsView):
         self.mode = MODE_NOOP
 
         if DEBUG: print('View::edgeDragEnd ~ End dragging edge')
-        self.drag_edge.remove()
+        self.drag_edge.remove(silent=True)      # don't notify sockets about removing drag_edge
         self.drag_edge = None
 
         try:

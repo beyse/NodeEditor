@@ -175,7 +175,7 @@ class Edge(Serializable):
         self.start_socket = None
 
 
-    def remove(self, silent_for_socket:'Socket'=None):
+    def remove(self, silent_for_socket:'Socket'=None, silent=False):
         """
         Safely remove this Edge.
 
@@ -190,6 +190,8 @@ class Edge(Serializable):
         :param silent_for_socket: :class:`~nodeeditor.node_socket.Socket` of a :class:`~nodeeditor.node_node.Node` which
             won't be notified, when this ``Edge`` is going to be removed
         :type silent_for_socket: :class:`~nodeeditor.node_socket.Socket`
+        :param silent: ``True`` if no events should be triggered during removing
+        :type silent: ``bool``
         """
         old_sockets = [self.start_socket, self.end_socket]
 
@@ -217,6 +219,8 @@ class Edge(Serializable):
             # notify nodes from old sockets
             for socket in old_sockets:
                 if socket and socket.node:
+                    if silent:
+                        continue
                     if silent_for_socket is not None and socket == silent_for_socket:
                         # if we requested silence for Socket and it's this one, skip notifications
                         continue
