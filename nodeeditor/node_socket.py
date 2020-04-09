@@ -189,5 +189,6 @@ class Socket(Serializable):
     def deserialize(self, data:dict, hashmap:dict={}, restore_id:bool=True) -> bool:
         if restore_id: self.id = data['id']
         self.is_multi_edges = self.determineMultiEdges(data)
+        self.changeSocketType(data['socket_type'])
         hashmap[data['id']] = self
         return True
