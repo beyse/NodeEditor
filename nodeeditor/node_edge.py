@@ -48,8 +48,10 @@ class Edge(Serializable):
         self.scene.addEdge(self)
 
     def __str__(self):
-        return "<Edge %s..%s>" % (hex(id(self))[2:5], hex(id(self))[-3:])
-
+        return "<Edge %s..%s -- S:%s E:%s>" % (
+            hex(id(self))[2:5], hex(id(self))[-3:],
+            self.start_socket, self.end_socket
+        )
     @property
     def start_socket(self):
         """

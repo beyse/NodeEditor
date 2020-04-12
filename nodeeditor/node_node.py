@@ -252,6 +252,17 @@ class Node(Serializable):
 
         return [x, y]
 
+    def getSocketScenePosition(self, socket:'Socket') -> '(x, y)':
+        """
+        Get absolute Socket position in the Scene
+
+        :param socket: `Socket` which position we want to know
+        :return: (x, y) Socket's scene position
+        """
+        nodepos = self.grNode.pos()
+        socketpos = self.getSocketPosition(socket.index, socket.position, socket.count_on_this_node_side)
+        return (nodepos.x() + socketpos[0], nodepos.y() + socketpos[1])
+
     def updateConnectedEdges(self):
         """Recalculate (Refresh) positions of all connected `Edges`. Used for updating Graphics Edges"""
         for socket in self.inputs + self.outputs:
