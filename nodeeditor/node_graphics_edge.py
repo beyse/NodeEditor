@@ -49,7 +49,7 @@ class QDMGraphicsEdge(QGraphicsPathItem):
 
     def initAssets(self):
         """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
-        self._color = QColor("#001000")
+        self._color = self._default_color = QColor("#001000")
         self._color_selected = QColor("#00ff00")
         self._color_hovered = QColor("#FF37A6FF")
         self._pen = QPen(self._color)
@@ -61,6 +61,20 @@ class QDMGraphicsEdge(QGraphicsPathItem):
         self._pen_selected.setWidthF(3.0)
         self._pen_dragging.setWidthF(3.0)
         self._pen_hovered.setWidthF(5.0)
+
+    def changeColor(self, color):
+        """Change color of the edge from string hex value '#00ff00'"""
+        print("^Called change color to:", color.red(), color.green(), color.blue(), "on edge:", self.edge)
+        self._color = QColor(color) if type(color) == str else color
+        self._pen = QPen(self._color)
+        self._pen.setWidthF(3.0)
+
+    def setColorFromSockets(self) -> bool:
+        """Change color according to connected sockets. Returns ``True`` if color can be determined"""
+        socket_type_start = self.edge.start_socket.socket_type
+        socket_type_end = self.edge.end_socket.socket_type
+        if socket_type_start != socket_type_end: return False
+        self.changeColor(self.edge.start_socket.grSocket.getSocketColor(socket_type_start))
 
     def onSelected(self):
         """Our event handling when the edge was selected"""
