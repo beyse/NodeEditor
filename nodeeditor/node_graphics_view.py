@@ -13,15 +13,16 @@ from nodeeditor.node_graphics_cutline import QDMCutLine
 from nodeeditor.utils import dumpException
 
 
-MODE_NOOP = 1           #: Mode representing ready state
-MODE_EDGE_DRAG = 2      #: Mode representing when we drag edge state
-MODE_EDGE_CUT = 3       #: Mode representing when we draw a cutting edge
+MODE_NOOP = 1               #: Mode representing ready state
+MODE_EDGE_DRAG = 2          #: Mode representing when we drag edge state
+MODE_EDGE_CUT = 3           #: Mode representing when we draw a cutting edge
 
 #: Distance when click on socket to enable `Drag Edge`
-EDGE_DRAG_START_THRESHOLD = 10
+EDGE_DRAG_START_THRESHOLD = 50
 
 
 DEBUG = False
+DEBUG_MMB_SCENE_ITEMS = False
 
 
 class QDMGraphicsView(QGraphicsView):
@@ -143,17 +144,27 @@ class QDMGraphicsView(QGraphicsView):
         item = self.getItemAtClick(event)
 
         # debug print out
-        if DEBUG:
-            if isinstance(item, QDMGraphicsEdge): print('RMB DEBUG:', item.edge, ' connecting sockets:',
-                                                        item.edge.start_socket, '<-->', item.edge.end_socket)
-            if type(item) is QDMGraphicsSocket: print('RMB DEBUG:', item.socket, 'has edges:', item.socket.edges)
+        if DEBUG_MMB_SCENE_ITEMS:
+            if isinstance(item, QDMGraphicsEdge):
+                print("MMB DEBUG:", item.edge,"\n\t", item.edge.grEdge if item.edge.grEdge is not None else None)
 
-            if item is None:
-                print('SCENE:')
-                print('  Nodes:')
-                for node in self.grScene.scene.nodes: print('    ', node)
-                print('  Edges:')
-                for edge in self.grScene.scene.edges: print('    ', edge)
+            if isinstance(item, QDMGraphicsSocket):
+                print("MMB DEBUG:", item.socket, "socket_type:", item.socket.socket_type,
+                      "has edges:", "no" if item.socket.edges == [] else "")
+                if item.socket.edges:
+                    for edge in item.socket.edges: print("\t", edge)
+
+        if DEBUG_MMB_SCENE_ITEMS and (item is None):
+            print("SCENE:")
+            print("  Nodes:")
+            for node in self.grScene.scene.nodes: print("\t", node)
+            print("  Edges:")
+            for edge in self.grScene.scene.edges: print("\t", edge, "\n\t\tgrEdge:", edge.grEdge if edge.grEdge is not None else None)
+
+            if event.modifiers() & Qt.CTRL:
+                print("  Graphic Items in GraphicScene:")
+                for item in self.grScene.items():
+                    print('    ', item)
 
         # faking events for enable MMB dragging the scene
         releaseEvent = QMouseEvent(QEvent.MouseButtonRelease, event.localPos(), event.screenPos(),
@@ -226,46 +237,49 @@ class QDMGraphicsView(QGraphicsView):
         # get item which we release mouse button on
         item = self.getItemAtClick(event)
 
-        # logic
-        if hasattr(item, "node") or isinstance(item, QDMGraphicsEdge) or item is None:
-            if event.modifiers() & Qt.ShiftModifier:
-                event.ignore()
-                fakeEvent = QMouseEvent(event.type(), event.localPos(), event.screenPos(),
-                                        Qt.LeftButton, Qt.NoButton,
-                                        event.modifiers() | Qt.ControlModifier)
-                super().mouseReleaseEvent(fakeEvent)
+        try:
+            # logic
+            if hasattr(item, "node") or isinstance(item, QDMGraphicsEdge) or item is None:
+                if event.modifiers() & Qt.ShiftModifier:
+                    event.ignore()
+                    fakeEvent = QMouseEvent(event.type(), event.localPos(), event.screenPos(),
+                                            Qt.LeftButton, Qt.NoButton,
+                                            event.modifiers() | Qt.ControlModifier)
+                    super().mouseReleaseEvent(fakeEvent)
+                    return
+
+            if self.mode == MODE_EDGE_DRAG:
+                if self.distanceBetweenClickAndReleaseIsOff(event):
+                    res = self.edgeDragEnd(item)
+                    if res: return
+
+            if self.mode == MODE_EDGE_CUT:
+                self.cutIntersectingEdges()
+                self.cutline.line_points = []
+                self.cutline.update()
+                QApplication.setOverrideCursor(Qt.ArrowCursor)
+                self.mode = MODE_NOOP
                 return
 
-        if self.mode == MODE_EDGE_DRAG:
-            if self.distanceBetweenClickAndReleaseIsOff(event):
-                res = self.edgeDragEnd(item)
-                if res: return
 
-        if self.mode == MODE_EDGE_CUT:
-            self.cutIntersectingEdges()
-            self.cutline.line_points = []
-            self.cutline.update()
-            QApplication.setOverrideCursor(Qt.ArrowCursor)
-            self.mode = MODE_NOOP
-            return
+            if self.rubberBandDraggingRectangle:
+                self.rubberBandDraggingRectangle = False
+                current_selected_items = self.grScene.selectedItems()
 
+                if current_selected_items != self.grScene.scene._last_selected_items:
+                    if current_selected_items == []:
+                        self.grScene.itemsDeselected.emit()
+                    else:
+                        self.grScene.itemSelected.emit()
+                    self.grScene.scene._last_selected_items = current_selected_items
 
-        if self.rubberBandDraggingRectangle:
-            self.rubberBandDraggingRectangle = False
-            current_selected_items = self.grScene.selectedItems()
+                return
 
-            if current_selected_items != self.grScene.scene._last_selected_items:
-                if current_selected_items == []:
-                    self.grScene.itemsDeselected.emit()
-                else:
-                    self.grScene.itemSelected.emit()
-                self.grScene.scene._last_selected_items = current_selected_items
+            # otherwise deselect everything
+            if item is None:
+                self.grScene.itemsDeselected.emit()
 
-            return
-
-        # otherwise deselect everything
-        if item is None:
-            self.grScene.itemsDeselected.emit()
+        except: dumpException()
 
         super().mouseReleaseEvent(event)
 
@@ -278,6 +292,13 @@ class QDMGraphicsView(QGraphicsView):
 
     def rightMouseButtonRelease(self, event:QMouseEvent):
         """When Right mouse button was release"""
+
+        ## cannot be because with dragging RMB we spawn Create New Node Context Menu
+        ## However, you could use this if you want to cancel with RMB
+        # if self.mode == MODE_EDGE_DRAG:
+        #     self.cancelDragEdge(event)
+        #     return
+
         super().mouseReleaseEvent(event)
 
 
@@ -287,14 +308,14 @@ class QDMGraphicsView(QGraphicsView):
 
         if self.mode == MODE_EDGE_DRAG:
             # according to sentry: 'NoneType' object has no attribute 'grEdge'
-            if self.drag_edge is not None:
+            if self.drag_edge is not None and self.drag_edge.grEdge is not None:
                 self.drag_edge.grEdge.setDestination(scenepos.x(), scenepos.y())
                 self.drag_edge.grEdge.update()
             else:
                 print(">>> Want to update self.drag_edge grEdge, but it's None!!!")
 
 
-        if self.mode == MODE_EDGE_CUT:
+        if self.mode == MODE_EDGE_CUT and self.cutline is not None:
             self.cutline.line_points.append(scenepos)
             self.cutline.update()
 
@@ -421,13 +442,15 @@ class QDMGraphicsView(QGraphicsView):
                 if item.socket != self.drag_start_socket:
                     # if we released dragging on a socket (other then the beginning socket)
 
-                    # we wanna keep all the edges comming from target socket
-                    if not item.socket.is_multi_edges:
-                        item.socket.removeAllEdges()
+                    ## First remove old edges / send notifications
+                    for socket in (item.socket, self.drag_start_socket):
+                        if not socket.is_multi_edges:
+                            if socket.is_input:
+                                # print("removing SILENTLY edges from input socket (is_input and !is_multi_edges) [DragStart]:", item.socket.edges)
+                                socket.removeAllEdges(silent=True)
+                            else:
+                                socket.removeAllEdges(silent=False)
 
-                    # we wanna keep all the edges comming from start socket
-                    if not self.drag_start_socket.is_multi_edges:
-                        self.drag_start_socket.removeAllEdges()
 
                     ## Create new Edge
                     new_edge = Edge(self.grScene.scene, self.drag_start_socket, item.socket, edge_type=EDGE_TYPE_BEZIER)
