@@ -84,16 +84,20 @@ class Socket(Serializable):
         self.node.scene.grScene.removeItem(self.grSocket)
         del self.grSocket
 
-    def changeSocketType(self, new_socket_type:int):
+    def changeSocketType(self, new_socket_type:int) -> bool:
         """
         Change the Socket Type
 
         :param new_socket_type: new socket type
         :type new_socket_type: ``int``
+        :return: Returns ``True`` if the socket type was actually changed
+        :rtype: ``bool``
         """
         if self.socket_type != new_socket_type:
             self.socket_type = new_socket_type
             self.grSocket.changeSocketType()
+            return True
+        return False
 
     def setSocketPosition(self):
         """Helper function to set `Graphics Socket` position. Exact socket position is calculated
