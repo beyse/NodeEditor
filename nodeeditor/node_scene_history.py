@@ -6,6 +6,7 @@ from nodeeditor.node_graphics_edge import QDMGraphicsEdge
 from nodeeditor.utils import dumpException
 
 DEBUG = False
+DEBUG_SELECTION = False
 
 
 class SceneHistory():
@@ -24,6 +25,8 @@ class SceneHistory():
 
         self.clear()
         self.history_limit = 32
+
+        self.undo_selection_has_changed = False
 
         # listeners
         self._history_modified_listeners = []
@@ -154,6 +157,21 @@ class SceneHistory():
         for callback in self._history_stored_listeners: callback()
 
 
+    def captureCurrentSelection(self) -> dict:
+        """
+        Create dictionary with list of selected nodes and list of selected edges
+        :return: ``dict`` 'nodes' - list of selected nodes, 'edges' - list of selected edges
+        :rtype: ``dict``
+        """
+        sel_obj = {
+            'nodes': [],
+            'edges': [],
+        }
+        for item in self.scene.grScene.selectedItems():
+            if hasattr(item, 'node'): sel_obj['nodes'].append(item.node.id)
+            elif hasattr(item, 'edge'): sel_obj['edges'].append(item.edge.id)
+        return sel_obj
+
     def createHistoryStamp(self, desc:str) -> dict:
         """
         Create History Stamp. Internally serialize whole scene and current selection
@@ -162,20 +180,10 @@ class SceneHistory():
         :return: History stamp serializing state of `Scene` and current selection
         :rtype: ``dict``
         """
-        sel_obj = {
-            'nodes': [],
-            'edges': [],
-        }
-        for item in self.scene.grScene.selectedItems():
-            if hasattr(item, 'node'):
-                sel_obj['nodes'].append(item.node.id)
-            elif isinstance(item, QDMGraphicsEdge):
-                sel_obj['edges'].append(item.edge.id)
-
         history_stamp = {
             'desc': desc,
             'snapshot': self.scene.serialize(),
-            'selection': sel_obj,
+            'selection': self.captureCurrentSelection(),
         }
 
         return history_stamp
@@ -190,19 +198,38 @@ class SceneHistory():
         if DEBUG: print("RHS: ", history_stamp['desc'])
 
         try:
+            self.undo_selection_has_changed = False
+            previous_selection = self.captureCurrentSelection()
+            if DEBUG_SELECTION: print("selected nodes before restore:", previous_selection['nodes'])
+
             self.scene.deserialize(history_stamp['snapshot'])
 
             # restore selection
+
+            # first clear all selection on edges
+            for edge in self.scene.edges: edge.grEdge.setSelected(False)
+            # now restore selected edges from history_stamp
             for edge_id in history_stamp['selection']['edges']:
                 for edge in self.scene.edges:
                     if edge.id == edge_id:
                         edge.grEdge.setSelected(True)
                         break
 
+            # first clear all selection on nodes
+            for node in self.scene.nodes: node.grNode.setSelected(False)
+            # now restore selected nodes from history_stamp
             for node_id in history_stamp['selection']['nodes']:
                 for node in self.scene.nodes:
                     if node.id == node_id:
                         node.grNode.setSelected(True)
                         break
+
+            current_selection = self.captureCurrentSelection()
+            if DEBUG_SELECTION: print("selected nodes after restore:", current_selection['nodes'])
+
+            # if the selection of nodes differ before and after restoration, set flag
+            if current_selection['nodes'] != previous_selection['nodes'] or current_selection['edges'] != previous_selection['edges']:
+                if DEBUG_SELECTION: print("\nSCENE: Selection has changed")
+                self.undo_selection_has_changed = True
 
         except Exception as e: dumpException(e)
