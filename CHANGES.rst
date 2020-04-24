@@ -5,4 +5,4 @@ Changelog (PyNodeEditor)
 ------------------
 
 - First version of the library
-- After 52 tutorials: https://www.blenderfreak.com/tutorials/node-editor-tutorial-series/
+- After 54 tutorials: https://www.blenderfreak.com/tutorials/node-editor-tutorial-series/
