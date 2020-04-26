@@ -8,10 +8,19 @@ Welcome to PyQtNodeEditor
     :alt: Documentation Status
 
 
-This package was created from the Node Editor Tutorial Series located my website.
+This package was created from the Node Editor written in PyQt5. The intention was to create tutorial series
+describing the path to create reusable nodeeditor which can be reused in different projects.
 The tutorials are published on youtube for free. The full list of tutorials can be located here:
 https://www.blenderfreak.com/tutorials/node-editor-tutorial-series/
 
+Features
+--------
+
+- provides full framework for creating customizable graph, nodes, sockets and edges
+- full support for undo / redo and serialization into files in VCS friendly way
+- support for implementing evaluation logic
+- hovering effects, dragging edges, cutting lines and bunch more...
+- provided 2 examples how node editor can be implemented
 
 Requirements
 ------------
@@ -24,12 +33,30 @@ Installation
 
 ::
 
+    $ pip install nodeeditor
+
+
+Or directly from source code to get the latest version
+
+
+::
+
     $ pip install git+https://gitlab.com/pavel.krupala/pyqt-node-editor.git
 
 
 Or download the source code from gitlab::
 
     git clone https://gitlab.com/pavel.krupala/pyqt-node-editor.git
+
+
+Screenshots
+-----------
+
+.. image:: ../screenshot-calculator.png
+  :alt: Screenshot of Calculator Example
+
+.. image:: ../screenshot-example.png
+  :alt: Screenshot of Node Editor
 
 Other links
 -----------
