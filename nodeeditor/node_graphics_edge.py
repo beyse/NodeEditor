@@ -64,7 +64,7 @@ class QDMGraphicsEdge(QGraphicsPathItem):
 
     def changeColor(self, color):
         """Change color of the edge from string hex value '#00ff00'"""
-        print("^Called change color to:", color.red(), color.green(), color.blue(), "on edge:", self.edge)
+        # print("^Called change color to:", color.red(), color.green(), color.blue(), "on edge:", self.edge)
         self._color = QColor(color) if type(color) == str else color
         self._pen = QPen(self._color)
         self._pen.setWidthF(3.0)

@@ -45,6 +45,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://gitlab.com/pavel.krupala/pyqt-node-editor-tutorials.git',
-    version='0.9.22',
+    version='0.9.23',
     zip_safe=False,
 )
