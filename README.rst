@@ -52,10 +52,10 @@ Or download the source code from gitlab::
 Screenshots
 -----------
 
-.. image:: ../screenshot-calculator.png
+.. image:: https://www.blenderfreak.com/media/products/NodeEditor/screenshot-calculator.png
   :alt: Screenshot of Calculator Example
 
-.. image:: ../screenshot-example.png
+.. image:: https://www.blenderfreak.com/media/products/NodeEditor/screenshot-example.png
   :alt: Screenshot of Node Editor
 
 Other links
