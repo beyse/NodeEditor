@@ -2,6 +2,8 @@
 Welcome to PyQtNodeEditor
 ==========================
 
+.. image:: https://badge.fury.io/py/nodeeditor.svg
+    :target: https://badge.fury.io/py/nodeeditor
 
 .. image:: https://readthedocs.org/projects/pyqt-node-editor/badge/?version=latest
     :target: https://pyqt-node-editor.readthedocs.io/en/latest/?badge=latest
