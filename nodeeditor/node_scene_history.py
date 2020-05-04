@@ -227,6 +227,9 @@ class SceneHistory():
             current_selection = self.captureCurrentSelection()
             if DEBUG_SELECTION: print("selected nodes after restore:", current_selection['nodes'])
 
+            # reset the last_selected_items - since we're comparing change to the last_selected state
+            self.scene._last_selected_items = self.scene.getSelectedItems()
+
             # if the selection of nodes differ before and after restoration, set flag
             if current_selection['nodes'] != previous_selection['nodes'] or current_selection['edges'] != previous_selection['edges']:
                 if DEBUG_SELECTION: print("\nSCENE: Selection has changed")
