@@ -6,6 +6,7 @@ nodeeditor Package
 
    nodeeditor.node_content_widget
    nodeeditor.node_edge
+   nodeeditor.node_edge_dragging
    nodeeditor.node_editor_widget
    nodeeditor.node_editor_window
    nodeeditor.node_graphics_cutline

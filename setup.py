@@ -22,7 +22,7 @@ setup(
     author="Pavel Křupala",
     author_email='pavel.krupala@gmail.com',
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
@@ -30,6 +30,7 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
     ],
     description="Python Node Editor using PyQt5",
     install_requires=requirements,
@@ -44,7 +45,7 @@ setup(
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
-    url='https://gitlab.com/pavel.krupala/pyqt-node-editor-tutorials.git',
-    version='0.9.23',
+    url='https://gitlab.com/pavel.krupala/pyqt-node-editor.git',
+    version='0.9.4',
     zip_safe=False,
 )
