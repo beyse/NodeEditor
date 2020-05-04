@@ -116,8 +116,7 @@ class Edge(Serializable):
             self.scene.grScene.removeItem(self.grEdge)
 
         self._edge_type = value
-        edgeClass = self.determineEdgeClass(self.edge_type)
-        self.grEdge = edgeClass(self)
+        self.grEdge = self.createEdgeClassInstance(self.edge_type)
 
         self.scene.grScene.addItem(self.grEdge)
 
@@ -131,10 +130,21 @@ class Edge(Serializable):
         :return: grEdge class
         :rtype: class of `grEdge`
         """
-        edge_class = QDMGraphicsEdgeBezier
         if edge_type == EDGE_TYPE_DIRECT:
-            edge_class = QDMGraphicsEdgeDirect
-        return edge_class
+            return QDMGraphicsEdgeDirect
+        else:
+            return QDMGraphicsEdgeBezier
+
+    def createEdgeClassInstance(self, edge_type:int):
+        """
+        Create instance of grEdge class
+        :param edge_type: edge type
+        :type edge_type: ``int``
+        :return: Instance of `grEdge` class representing the Graphics Edge in the grScene
+        """
+        edgeClass = self.determineEdgeClass(edge_type)
+        edge = edgeClass(self)
+        return edge
 
     def getOtherSocket(self, known_socket:'Socket'):
         """

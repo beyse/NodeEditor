@@ -303,6 +303,10 @@ class Scene(Serializable):
             except Exception as e:
                 dumpException(e)
 
+    def getEdgeClass(self):
+        """Return the class representing Edge. Override me if needed"""
+        return Edge
+
     def setNodeClassSelector(self, class_selecting_function:'functon') -> 'Node class type':
         """
         Set the function which decides what `Node` class to instantiate when deserializating `Scene`.
