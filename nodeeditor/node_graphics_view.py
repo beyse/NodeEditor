@@ -23,6 +23,7 @@ EDGE_DRAG_START_THRESHOLD = 50
 
 DEBUG = False
 DEBUG_MMB_SCENE_ITEMS = False
+DEBUG_MMB_LAST_SELECTIONS = False
 
 
 class QDMGraphicsView(QGraphicsView):
@@ -152,13 +153,15 @@ class QDMGraphicsView(QGraphicsView):
         # debug print out
         if DEBUG_MMB_SCENE_ITEMS:
             if isinstance(item, QDMGraphicsEdge):
-                print("MMB DEBUG:", item.edge,"\n\t", item.edge.grEdge if item.edge.grEdge is not None else None)
+                print("MMB DEBUG:", item.edge, "\n\t", item.edge.grEdge if item.edge.grEdge is not None else None)
+                return
 
             if isinstance(item, QDMGraphicsSocket):
                 print("MMB DEBUG:", item.socket, "socket_type:", item.socket.socket_type,
                       "has edges:", "no" if item.socket.edges == [] else "")
                 if item.socket.edges:
                     for edge in item.socket.edges: print("\t", edge)
+                return
 
         if DEBUG_MMB_SCENE_ITEMS and (item is None):
             print("SCENE:")
@@ -171,6 +174,10 @@ class QDMGraphicsView(QGraphicsView):
                 print("  Graphic Items in GraphicScene:")
                 for item in self.grScene.items():
                     print('    ', item)
+
+        if DEBUG_MMB_LAST_SELECTIONS and event.modifiers() & Qt.SHIFT:
+            print("scene _last_selected_items:", self.grScene.scene._last_selected_items)
+            return
 
         # faking events for enable MMB dragging the scene
         releaseEvent = QMouseEvent(QEvent.MouseButtonRelease, event.localPos(), event.screenPos(),
