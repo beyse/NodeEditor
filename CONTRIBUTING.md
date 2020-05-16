@@ -3,6 +3,10 @@
 Bug fixes, feature additions, tests, documentation and more can be contributed 
 via [issues](https://gitlab.com/pavel.krupala/pyqt-node-editor/issues) and/or [merge_requests](https://gitlab.com/pavel.krupala/pyqt-node-editor/merge_requests). All contributions are welcome.
 
+## Contributors
+
+- Richard Boltze 
+
 ## Bug fixes, feature additions, etc.
 
 Please send a merge request to the master branch. Please include [documentation](https://pyqt-node-editor.readthedocs.io/en/latest/). Tests or documentation without bug fixes or feature additions are welcome too. Feel free to ask questions [via issues](https://gitlab.com/pavel.krupala/pyqt-node-editor/issues/new), 
