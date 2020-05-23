@@ -62,6 +62,11 @@ class QDMGraphicsEdge(QGraphicsPathItem):
         self._pen_dragging.setWidthF(3.0)
         self._pen_hovered.setWidthF(5.0)
 
+    def makeUnselectable(self):
+        """Used for drag edge to disable click detection over this graphics item"""
+        self.setFlag(QGraphicsItem.ItemIsSelectable, False)
+        self.setAcceptHoverEvents(False)
+
     def changeColor(self, color):
         """Change color of the edge from string hex value '#00ff00'"""
         # print("^Called change color to:", color.red(), color.green(), color.blue(), "on edge:", self.edge)

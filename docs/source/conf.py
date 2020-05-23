@@ -24,9 +24,9 @@ copyright = '2019, Pavel Křupala'
 author = 'Pavel Křupala'
 
 # The short X.Y version
-version = '0.9.4'
+version = '0.9.5'
 # The full version, including alpha/beta/rc tags
-release = '0.9.4'
+release = '0.9.5'
 
 
 # -- General configuration ---------------------------------------------------

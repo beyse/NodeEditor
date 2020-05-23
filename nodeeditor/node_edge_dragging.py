@@ -41,6 +41,7 @@ class EdgeDragging:
             if DEBUG: print('View::edgeDragStart ~   assign Start Socket to:', item.socket)
             self.drag_start_socket = item.socket
             self.drag_edge = self.getEdgeClass()(item.socket.node.scene, item.socket, None, EDGE_TYPE_BEZIER)
+            self.drag_edge.grEdge.makeUnselectable()
             if DEBUG: print('View::edgeDragStart ~   dragEdge:', self.drag_edge)
         except Exception as e: dumpException(e)
 
