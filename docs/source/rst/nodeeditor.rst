@@ -11,6 +11,7 @@ nodeeditor Package
    nodeeditor.node_editor_window
    nodeeditor.node_graphics_cutline
    nodeeditor.node_graphics_edge
+   nodeeditor.node_graphics_edge_path
    nodeeditor.node_graphics_node
    nodeeditor.node_graphics_scene
    nodeeditor.node_graphics_socket

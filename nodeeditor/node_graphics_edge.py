@@ -2,13 +2,11 @@
 """
 A module containing Graphics representation of Edge
 """
-import math
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
-
-EDGE_CP_ROUNDNESS = 100     #: Bezier controll point distance on the line
+from nodeeditor.node_graphics_edge_path import GraphicsEdgePathBezier, GraphicsEdgePathDirect
 
 
 class QDMGraphicsEdge(QGraphicsPathItem):
@@ -29,6 +27,9 @@ class QDMGraphicsEdge(QGraphicsPathItem):
         super().__init__(parent)
 
         self.edge = edge
+
+        # create instance of our path class
+        self.pathCalculator = self.determineEdgePathClass()(self)
 
         # init our flags
         self._last_selected_state = False
@@ -61,6 +62,21 @@ class QDMGraphicsEdge(QGraphicsPathItem):
         self._pen_selected.setWidthF(3.0)
         self._pen_dragging.setWidthF(3.0)
         self._pen_hovered.setWidthF(5.0)
+
+    def createEdgePathCalculator(self):
+        """Create instance of :class:`~nodeeditor.node_graphics_edge_path.GraphicsEdgePathBase`"""
+        self.pathCalculator = self.determineEdgePathClass()(self)
+        return self.pathCalculator
+
+    def determineEdgePathClass(self):
+        """Decide which GraphicsEdgePath class should be used to calculate path according to edge.edge_type value"""
+        from nodeeditor.node_edge import EDGE_TYPE_BEZIER, EDGE_TYPE_DIRECT
+        if self.edge.edge_type == EDGE_TYPE_BEZIER:
+            return GraphicsEdgePathBezier
+        if self.edge.edge_type == EDGE_TYPE_DIRECT:
+            return GraphicsEdgePathDirect
+        else:
+            return GraphicsEdgePathBezier
 
     def makeUnselectable(self):
         """Used for drag edge to disable click detection over this graphics item"""
@@ -178,65 +194,12 @@ class QDMGraphicsEdge(QGraphicsPathItem):
         return cutpath.intersects(path)
 
     def calcPath(self) -> QPainterPath:
-        """Will handle drawing QPainterPath from Point A to B
+        """Will handle drawing QPainterPath from Point A to B. Internally there exist self.pathCalculator which
+        is an instance of derived :class:`~nodeeditor.node_graphics_edge_path.GraphicsEdgePathBase` class
+        containing the actual `calcPath()` function - computing how the edge should look like.
 
         :returns: ``QPainterPath`` of the edge connecting `source` and `destination`
         :rtype: ``QPainterPath``
         """
-        raise NotImplemented("This method has to be overriden in a child class")
+        return self.pathCalculator.calcPath()
 
-
-class QDMGraphicsEdgeDirect(QDMGraphicsEdge):
-    """Direct line connection Graphics Edge"""
-    def calcPath(self) -> QPainterPath:
-        """Calculate the Direct line connection
-
-        :returns: ``QPainterPath`` of the direct line
-        :rtype: ``QPainterPath``
-        """
-        path = QPainterPath(QPointF(self.posSource[0], self.posSource[1]))
-        path.lineTo(self.posDestination[0], self.posDestination[1])
-        return path
-
-
-class QDMGraphicsEdgeBezier(QDMGraphicsEdge):
-    """Cubic line connection Graphics Edge"""
-    def calcPath(self) -> QPainterPath:
-        """Calculate the cubic Bezier line connection with 2 control points
-
-        :returns: ``QPainterPath`` of the cubic Bezier line
-        :rtype: ``QPainterPath``
-        """
-        s = self.posSource
-        d = self.posDestination
-        dist = (d[0] - s[0]) * 0.5
-
-        cpx_s = +dist
-        cpx_d = -dist
-        cpy_s = 0
-        cpy_d = 0
-
-        if self.edge.start_socket is not None:
-            ssin = self.edge.start_socket.is_input
-            ssout = self.edge.start_socket.is_output
-
-            if (s[0] > d[0] and ssout) or (s[0] < d[0] and ssin):
-                cpx_d *= -1
-                cpx_s *= -1
-
-                cpy_d = (
-                    (s[1] - d[1]) / math.fabs(
-                        (s[1] - d[1]) if (s[1] - d[1]) != 0 else 0.00001
-                    )
-                ) * EDGE_CP_ROUNDNESS
-                cpy_s = (
-                    (d[1] - s[1]) / math.fabs(
-                        (d[1] - s[1]) if (d[1] - s[1]) != 0 else 0.00001
-                    )
-                ) * EDGE_CP_ROUNDNESS
-
-
-        path = QPainterPath(QPointF(self.posSource[0], self.posSource[1]))
-        path.cubicTo( s[0] + cpx_s, s[1] + cpy_s, d[0] + cpx_d, d[1] + cpy_d, self.posDestination[0], self.posDestination[1])
-
-        return path
