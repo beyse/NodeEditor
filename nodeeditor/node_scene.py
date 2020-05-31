@@ -387,15 +387,21 @@ class Scene(Serializable):
                     break
 
             if not found:
-                new_node = self.getNodeClassFromData(node_data)(self)
-                new_node.deserialize(node_data, hashmap, restore_id)
-                new_node.onDeserialized(node_data)
-                # print("New node for", node_data['title'])
+                try:
+                    new_node = self.getNodeClassFromData(node_data)(self)
+                    new_node.deserialize(node_data, hashmap, restore_id)
+                    new_node.onDeserialized(node_data)
+                    # print("New node for", node_data['title'])
+                except:
+                    dumpException()
             else:
-                found.deserialize(node_data, hashmap, restore_id)
-                found.onDeserialized(node_data)
-                all_nodes.remove(found)
-                # print("Reused", node_data['title'])
+                try:
+                    found.deserialize(node_data, hashmap, restore_id)
+                    found.onDeserialized(node_data)
+                    all_nodes.remove(found)
+                    # print("Reused", node_data['title'])
+                except:
+                    dumpException()
 
         # remove nodes which are left in the scene and were NOT in the serialized data!
         # that means they were not in the graph before...
