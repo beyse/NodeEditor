@@ -124,6 +124,13 @@ class Edge(Serializable):
         if self.start_socket is not None:
             self.updatePositions()
 
+    def reconnect(self, from_socket:'Socket', to_socket:'Socket'):
+        """Helper function which reconnects edge `from_socket` to `to_socket`"""
+        if self.start_socket == from_socket:
+            self.start_socket = to_socket
+        elif self.end_socket == from_socket:
+            self.end_socket = to_socket
+
     def getGraphicsEdgeClass(self):
         """Returns the class representing Graphics Edge"""
         return QDMGraphicsEdge
