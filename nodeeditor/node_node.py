@@ -514,7 +514,7 @@ class Node(Serializable):
             ('content', ser_content),
         ])
 
-    def deserialize(self, data:dict, hashmap:dict={}, restore_id:bool=True) -> bool:
+    def deserialize(self, data:dict, hashmap:dict={}, restore_id:bool=True, *args, **kwargs) -> bool:
         try:
             if restore_id: self.id = data['id']
             hashmap[data['id']] = self

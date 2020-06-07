@@ -260,7 +260,7 @@ class Edge(Serializable):
             ('end', self.end_socket.id if self.end_socket is not None else None),
         ])
 
-    def deserialize(self, data:dict, hashmap:dict={}, restore_id:bool=True) -> bool:
+    def deserialize(self, data:dict, hashmap:dict={}, restore_id:bool=True, *args, **kwargs) -> bool:
         if restore_id: self.id = data['id']
         self.start_socket = hashmap[data['start']]
         self.end_socket = hashmap[data['end']]
