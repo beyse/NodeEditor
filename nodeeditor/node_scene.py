@@ -366,7 +366,7 @@ class Scene(Serializable):
             ('edges', edges),
         ])
 
-    def deserialize(self, data:dict, hashmap:dict={}, restore_id:bool=True) -> bool:
+    def deserialize(self, data:dict, hashmap:dict={}, restore_id:bool=True, *args, **kwargs) -> bool:
         hashmap = {}
 
         if restore_id: self.id = data['id']
@@ -389,19 +389,18 @@ class Scene(Serializable):
             if not found:
                 try:
                     new_node = self.getNodeClassFromData(node_data)(self)
-                    new_node.deserialize(node_data, hashmap, restore_id)
+                    new_node.deserialize(node_data, hashmap, restore_id, *args, **kwargs)
                     new_node.onDeserialized(node_data)
                     # print("New node for", node_data['title'])
                 except:
                     dumpException()
             else:
                 try:
-                    found.deserialize(node_data, hashmap, restore_id)
+                    found.deserialize(node_data, hashmap, restore_id, *args, **kwargs)
                     found.onDeserialized(node_data)
                     all_nodes.remove(found)
                     # print("Reused", node_data['title'])
-                except:
-                    dumpException()
+                except: dumpException()
 
         # remove nodes which are left in the scene and were NOT in the serialized data!
         # that means they were not in the graph before...
@@ -427,10 +426,10 @@ class Scene(Serializable):
                     break
 
             if not found:
-                new_edge = Edge(self).deserialize(edge_data, hashmap, restore_id)
+                new_edge = Edge(self).deserialize(edge_data, hashmap, restore_id, *args, **kwargs)
                 # print("New edge for", edge_data)
             else:
-                found.deserialize(edge_data, hashmap, restore_id)
+                found.deserialize(edge_data, hashmap, restore_id, *args, **kwargs)
                 all_edges.remove(found)
 
         # remove nodes which are left in the scene and were NOT in the serialized data!
