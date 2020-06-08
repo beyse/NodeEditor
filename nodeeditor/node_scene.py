@@ -38,6 +38,9 @@ class Scene(Serializable):
         self.nodes = []
         self.edges = []
 
+        # current filename assigned to this scene
+        self.filename = None
+
         self.scene_width = 64000
         self.scene_height = 64000
 
@@ -304,6 +307,7 @@ class Scene(Serializable):
             print("saving to", filename, "was successfull.")
 
             self.has_been_modified = False
+            self.filename = filename
 
     def loadFromFile(self, filename:str):
         """
@@ -318,6 +322,7 @@ class Scene(Serializable):
             raw_data = file.read()
             try:
                 data = json.loads(raw_data, encoding='utf-8')
+                self.filename = filename
                 self.deserialize(data)
                 self.has_been_modified = False
             except json.JSONDecodeError:
