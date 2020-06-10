@@ -207,6 +207,7 @@ class NodeEditorWindow(QMainWindow):
             fname, filter = QFileDialog.getSaveFileName(self, 'Save graph to file', self.getFileDialogDirectory(), self.getFileDialogFilter())
             if fname == '': return False
 
+            self.onBeforeSaveAs(current_nodeeditor, fname)
             current_nodeeditor.fileSave(fname)
             self.statusBar().showMessage("Successfully saved as %s" % current_nodeeditor.filename, 5000)
 
@@ -214,6 +215,13 @@ class NodeEditorWindow(QMainWindow):
             if hasattr(current_nodeeditor, "setTitle"): current_nodeeditor.setTitle()
             else: self.setTitle()
             return True
+
+    def onBeforeSaveAs(self, current_nodeeditor: 'NodeEditorWidget', filename: str):
+        """
+        Event triggered after choosing filename and before actual fileSave(). We are passing current_nodeeditor because
+        we will loose focus after asking with QFileDialog and therefore getCurrentNodeEditorWidget will return None
+        """
+        pass
 
     def onEditUndo(self):
         """Handle Edit Undo operation"""
