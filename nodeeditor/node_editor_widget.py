@@ -11,6 +11,7 @@ from nodeeditor.node_scene import Scene, InvalidFile
 from nodeeditor.node_node import Node
 from nodeeditor.node_edge import Edge, EDGE_TYPE_BEZIER
 from nodeeditor.node_graphics_view import QDMGraphicsView
+from nodeeditor.utils import dumpException
 
 
 class NodeEditorWidget(QWidget):
@@ -126,9 +127,13 @@ class NodeEditorWidget(QWidget):
             self.scene.history.clear()
             self.scene.history.storeInitialHistoryStamp()
             return True
+        except FileNotFoundError as e:
+            dumpException(e)
+            QMessageBox.warning(self, "Error loading %s" % os.path.basename(filename), str(e).replace('[Errno 2]',''))
+            return False
         except InvalidFile as e:
-            print(e)
-            QApplication.restoreOverrideCursor()
+            dumpException(e)
+            # QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, "Error loading %s" % os.path.basename(filename), str(e))
             return False
         finally:
