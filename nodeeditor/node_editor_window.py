@@ -120,7 +120,8 @@ class NodeEditorWindow(QMainWindow):
         :return: ``True`` if current :class:`~nodeeditor.node_scene.Scene` has been modified
         :rtype: ``bool``
         """
-        return self.getCurrentNodeEditorWidget().scene.isModified()
+        nodeeditor = self.getCurrentNodeEditorWidget()
+        return nodeeditor.scene.isModified() if nodeeditor else False
 
     def getCurrentNodeEditorWidget(self) -> NodeEditorWidget:
         """get current :class:`~nodeeditor.node_editor_widget`
