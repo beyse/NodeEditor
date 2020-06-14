@@ -7,7 +7,7 @@ from nodeeditor.node_edge import Edge, EDGE_TYPE_BEZIER
 from nodeeditor.utils import dumpException
 
 
-DEBUG = False
+DEBUG = True
 
 
 
@@ -53,14 +53,31 @@ class EdgeDragging:
         :param item: Item in the `Graphics Scene` where we ended dragging an `Edge`
         :type item: ``QGraphicsItem``
         """
-        self.grView.resetMode()
 
-        if DEBUG: print('View::edgeDragEnd ~ End dragging edge')
-        self.drag_edge.remove(silent=True)      # don't notify sockets about removing drag_edge
-        self.drag_edge = None
+        # early out - clicked on something else than Socket
+        if not isinstance(item, QDMGraphicsSocket):
+            self.grView.resetMode()
+            if DEBUG: print('View::edgeDragEnd ~ End dragging edge early')
+            self.drag_edge.remove(silent=True)      # don't notify sockets about removing drag_edge
+            self.drag_edge = None
 
-        try:
-            if isinstance(item, QDMGraphicsSocket):
+
+        # clicked on socket
+        if isinstance(item, QDMGraphicsSocket):
+
+            # check if edge would be valid
+            if not self.drag_edge.validateEdge(self.drag_start_socket, item.socket):
+                print("NOT VALID EDGE")
+                return False
+
+            # regular processing of drag edge
+            self.grView.resetMode()
+
+            if DEBUG: print('View::edgeDragEnd ~ End dragging edge')
+            self.drag_edge.remove(silent=True)      # don't notify sockets about removing drag_edge
+            self.drag_edge = None
+
+            try:
                 if item.socket != self.drag_start_socket:
                     # if we released dragging on a socket (other then the beginning socket)
 
@@ -86,7 +103,7 @@ class EdgeDragging:
 
                     self.grView.grScene.scene.history.storeHistory("Created new edge by dragging", setModified=True)
                     return True
-        except Exception as e: dumpException(e)
+            except Exception as e: dumpException(e)
 
 
         if DEBUG: print('View::edgeDragEnd ~ everything done.')

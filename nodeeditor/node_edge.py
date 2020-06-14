@@ -18,6 +18,9 @@ class Edge(Serializable):
     """
     Class for representing Edge in NodeEditor.
     """
+
+    edge_validators = []        #: class variable containing list of registered edge validators
+
     def __init__(self, scene:'Scene', start_socket:'Socket'=None, end_socket:'Socket'=None, edge_type=EDGE_TYPE_DIRECT):
         """
 
@@ -124,7 +127,37 @@ class Edge(Serializable):
         if self.start_socket is not None:
             self.updatePositions()
 
-    def reconnect(self, from_socket:'Socket', to_socket:'Socket'):
+    @classmethod
+    def getEdgeValidators(cls):
+        """Return the list of Edge Validator Callbacks"""
+        return cls.edge_validators
+
+    @classmethod
+    def registerEdgeValidator(cls, validator_callback: 'function'):
+        """Register Edge Validator Callback
+
+        :param validator_callback: A function handle to validate Edge
+        :type validator_callback: `function`
+        """
+        cls.edge_validators.append(validator_callback)
+
+    @classmethod
+    def validateEdge(cls, start_socket: 'Socket', end_socket: 'Socket') -> bool:
+        """Validate Edge agains all registered `Edge Validator Callbacks`
+
+        :param start_socket: Starting :class:`~nodeeditor.node_socket.Socket` of Edge to check
+        :type start_socket: :class:`~nodeeditor.node_socket.Socket`
+        :param end_socket: Target/End :class:`~nodeeditor.node_socket.Socket` of Edge to check
+        :type end_socket: :class:`~nodeeditor.node_socket.Socket`
+        :return: ``True`` if the Edge is valid or ``False`` if not
+        :rtype: ``bool``
+        """
+        for validator in cls.getEdgeValidators():
+            if not validator(start_socket, end_socket):
+                return False
+        return True
+
+    def reconnect(self, from_socket: 'Socket', to_socket: 'Socket'):
         """Helper function which reconnects edge `from_socket` to `to_socket`"""
         if self.start_socket == from_socket:
             self.start_socket = to_socket
@@ -265,3 +298,13 @@ class Edge(Serializable):
         self.start_socket = hashmap[data['start']]
         self.end_socket = hashmap[data['end']]
         self.edge_type = data['edge_type']
+
+
+# Example: using validators for Edge
+# You can register edge validators wherever you want, even here...
+# However if you do use overriden Edge, you should call registerEdgeValidator on that overriden class
+#
+# from nodeeditor.node_edge_validators import *
+# Edge.registerEdgeValidator(edge_validator_debug)
+# Edge.registerEdgeValidator(edge_cannot_connect_two_outputs_or_two_inputs)
+# Edge.registerEdgeValidator(edge_cannot_connect_input_and_output_of_same_node)
