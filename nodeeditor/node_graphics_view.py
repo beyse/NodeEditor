@@ -22,6 +22,9 @@ MODE_EDGES_REROUTING = 4    #: Mode representing when we re-route existing edges
 #: Distance when click on socket to enable `Drag Edge`
 EDGE_DRAG_START_THRESHOLD = 50
 
+#: Enable UnrealEngine style rerouting
+EDGE_REROUTING_UE = True
+
 
 DEBUG = False
 DEBUG_MMB_SCENE_ITEMS = False
@@ -279,6 +282,15 @@ class QDMGraphicsView(QGraphicsView):
                     if res: return
 
             if self.mode == MODE_EDGES_REROUTING:
+
+                if not EDGE_REROUTING_UE:
+                    # version 2 -- more consistent with the nodeeditor?
+                    if not self.rerouting.first_mb_release:
+                        # for confirmation of first MB release
+                        self.rerouting.first_mb_release = True
+                        # skip any re-routing until first MB was released
+                        return
+
                 self.rerouting.stopRerouting(item.socket if isinstance(item, QDMGraphicsSocket) else None)
 
                 # don't forget to end the REROUTING MODE

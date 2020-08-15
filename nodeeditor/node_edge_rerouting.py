@@ -8,6 +8,7 @@ class EdgeRerouting:
         self.start_socket = None        # store where we started re-routing the edges
         self.rerouting_edges = []       # edges representing the re-routing (dashed edges)
         self.is_rerouting = False       # are we currently re-routing?
+        self.first_mb_release = False
 
     def print(self, *args):
         if DEBUG_REROUTING: print("REROUTING:", *args)
@@ -29,6 +30,7 @@ class EdgeRerouting:
     def resetRerouting(self):
         self.is_rerouting = False
         self.start_socket = None
+        self.first_mb_release = False
         # holding all rerouting edges should be empty at this point...
         # self.rerouting_edges = []
 
