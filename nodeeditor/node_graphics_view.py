@@ -382,7 +382,7 @@ class QDMGraphicsView(QGraphicsView):
             # @TODO: we could collect all touched nodes, and notify them once after all edges removed
             # we could cut 3 edges leading to a single nodeeditor this will notify it 3x
             # maybe we could use some Notifier class with methods collect() and dispatch()
-            for edge in self.grScene.scene.edges:
+            for edge in self.grScene.scene.edges.copy():
                 if edge.grEdge.intersectsWith(p1, p2):
                     edge.remove()
         self.grScene.scene.history.storeHistory("Delete cutted edges", setModified=True)

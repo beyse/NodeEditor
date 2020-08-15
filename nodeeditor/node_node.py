@@ -283,7 +283,7 @@ class Node(Serializable):
         if DEBUG: print(" - remove all edges from sockets")
         for socket in (self.inputs+self.outputs):
             # if socket.hasEdge():
-            for edge in socket.edges:
+            for edge in socket.edges.copy():
                 if DEBUG: print("    - removing from socket:", socket, "edge:", edge)
                 edge.remove()
         if DEBUG: print(" - remove grNode")
