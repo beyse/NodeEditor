@@ -3,12 +3,11 @@
 A module containing the Edge Dragging functionality
 """
 from nodeeditor.node_graphics_socket import QDMGraphicsSocket
-from nodeeditor.node_edge import Edge, EDGE_TYPE_BEZIER
+from nodeeditor.node_edge import EDGE_TYPE_BEZIER
 from nodeeditor.utils import dumpException
 
 
 DEBUG = False
-
 
 
 class EdgeDragging:

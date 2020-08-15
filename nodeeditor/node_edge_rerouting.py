@@ -1,5 +1,10 @@
-DEBUG_REROUTING = True
+# -*- coding: utf-8 -*-
+"""
+A module containing the Edge Rerouting functionality
+"""
 
+
+DEBUG_REROUTING = True
 
 
 class EdgeRerouting:
@@ -8,26 +13,41 @@ class EdgeRerouting:
         self.start_socket = None        # store where we started re-routing the edges
         self.rerouting_edges = []       # edges representing the re-routing (dashed edges)
         self.is_rerouting = False       # are we currently re-routing?
-        self.first_mb_release = False
+        self.first_mb_release = False   # flag for detecting if we already clicked with the rerouting LMB release
 
     def print(self, *args):
+        """Helper function to better control debug printing to console for this feature"""
         if DEBUG_REROUTING: print("REROUTING:", *args)
 
     def getEdgeClass(self):
+        """Helper function to get the Edge class. Using what Scene class provides"""
         return self.grView.grScene.scene.getEdgeClass()
 
-    def getAffectedEdges(self):
+    def getAffectedEdges(self) -> list:
+        """
+        Get list of all edges connected to the `self.start_socket` where we started the re-routing
+
+        :return: List of all edges affected by the rerouting started from this `self.start_socket` :class:`~nodeeditor.node_socket.Socket`
+        :rtype: ``list``
+        """
         if self.start_socket is None:
             return []       # no starting socket assigned, so no edges for us
         # return edges connected to the socket
         return self.start_socket.edges.copy()
 
-    def setAffectedEdgesVisible(self, visibility=True):
+    def setAffectedEdgesVisible(self, visibility: bool=True):
+        """
+        Show/Hide all edges connected to the `self.start_socket` where we started the re-routing
+
+        :param visibility: ``True`` if all the affected :class:`~nodeeditor.node_edge.Edge` (s) should be shown or hidden
+        :type visibility: ``bool``
+        """
         for edge in self.getAffectedEdges():
             if visibility: edge.grEdge.show()
             else: edge.grEdge.hide()
 
     def resetRerouting(self):
+        """Reset to default state. Init this feature internal variables"""
         self.is_rerouting = False
         self.start_socket = None
         self.first_mb_release = False
@@ -35,13 +55,22 @@ class EdgeRerouting:
         # self.rerouting_edges = []
 
     def clearReroutingEdges(self):
+        """Remove the helping dashed edges from the :class:`~nodeeditor.node_scene.Scene`"""
         self.print("clean called")
         while self.rerouting_edges != []:
             edge = self.rerouting_edges.pop()
             self.print("\twant to clean:", edge)
             edge.remove()
 
-    def updateScenePos(self, x, y):
+    def updateScenePos(self, x: float, y: float):
+        """
+        Update position of all the rerouting edges (dashed ones). Called from mouseMove event to update to new mouse position
+
+        :param x: new X position
+        :type x: ``float``
+        :param y: new Y position
+        :type y: ``float``
+        """
         if self.is_rerouting:
             for edge in self.rerouting_edges:
                 if edge and edge.grEdge:
@@ -49,6 +78,12 @@ class EdgeRerouting:
                     edge.grEdge.update()
 
     def startRerouting(self, socket: 'Socket'):
+        """
+        Method to start the re-routing. Called from the grView's state machine.
+
+        :param socket: :class:`~nodeeditor.node_socket.Socket` where we started the re-routing
+        :type socket: :class:`~nodeeditor.node_socket.Socket`
+        """
         self.print("startRerouting", socket)
         self.is_rerouting = True
         self.start_socket = socket
@@ -70,6 +105,12 @@ class EdgeRerouting:
 
 
     def stopRerouting(self, target: 'Socket'=None):
+        """
+        Method for stopping the re-routing
+
+        :param target: Target where we ended the rerouting (usually released mouse button). Provide ``Socket`` or ``None`` to cancel
+        :type target: :class:`~nodeeditor.node_socket.Socket` or ``None``
+        """
         self.print("stopRerouting on:", target, "no change" if target==self.start_socket else "")
 
         if self.start_socket is not None:
@@ -134,4 +175,3 @@ class EdgeRerouting:
 
         # reset variables of this rerouting state
         self.resetRerouting()
-

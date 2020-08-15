@@ -4,7 +4,7 @@
 ======================================
 
 .. automodule:: nodeeditor.node_graphics_view
-    :members: MODE_NOOP, MODE_EDGE_DRAG, MODE_EDGE_CUT, EDGE_DRAG_START_THRESHOLD
+    :members: MODE_NOOP, MODE_EDGE_DRAG, MODE_EDGE_CUT, MODE_EDGES_REROUTING, EDGE_DRAG_START_THRESHOLD
 
     Constants
     ---------
