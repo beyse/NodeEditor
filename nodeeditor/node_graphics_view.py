@@ -337,12 +337,19 @@ class QDMGraphicsView(QGraphicsView):
         """Overriden Qt's ``mouseMoveEvent`` handling Scene/View logic"""
         scenepos = self.mapToScene(event.pos())
 
-        if self.mode == MODE_EDGE_DRAG:
-            self.dragging.updateDestination(scenepos.x(), scenepos.y())
+        try:
+            if self.mode == MODE_EDGE_DRAG:
+                self.dragging.updateDestination(scenepos.x(), scenepos.y())
 
-        if self.mode == MODE_EDGE_CUT and self.cutline is not None:
-            self.cutline.line_points.append(scenepos)
-            self.cutline.update()
+            if self.mode == MODE_EDGES_REROUTING:
+                self.rerouting.updateScenePos(scenepos.x(), scenepos.y())
+
+            if self.mode == MODE_EDGE_CUT and self.cutline is not None:
+                self.cutline.line_points.append(scenepos)
+                self.cutline.update()
+
+        except Exception as e:
+            dumpException()
 
         self.last_scene_mouse_position = scenepos
 
