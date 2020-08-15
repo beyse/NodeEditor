@@ -9,6 +9,7 @@ from PyQt5.QtGui import *
 from nodeeditor.node_graphics_socket import QDMGraphicsSocket
 from nodeeditor.node_graphics_edge import QDMGraphicsEdge
 from nodeeditor.node_edge_dragging import EdgeDragging
+from nodeeditor.node_edge_rerouting import EdgeRerouting
 from nodeeditor.node_graphics_cutline import QDMCutLine
 from nodeeditor.utils import dumpException
 
@@ -16,6 +17,7 @@ from nodeeditor.utils import dumpException
 MODE_NOOP = 1               #: Mode representing ready state
 MODE_EDGE_DRAG = 2          #: Mode representing when we drag edge state
 MODE_EDGE_CUT = 3           #: Mode representing when we draw a cutting edge
+MODE_EDGES_REROUTING = 4    #: Mode representing when we re-route existing edges
 
 #: Distance when click on socket to enable `Drag Edge`
 EDGE_DRAG_START_THRESHOLD = 50
@@ -62,6 +64,9 @@ class QDMGraphicsView(QGraphicsView):
 
         # edge dragging
         self.dragging = EdgeDragging(self)
+
+        # edges re-routing
+        self.rerouting = EdgeRerouting(self)
 
         # cutline
         self.cutline = QDMCutLine()
@@ -221,6 +226,13 @@ class QDMGraphicsView(QGraphicsView):
 
 
         if isinstance(item, QDMGraphicsSocket):
+            if self.mode == MODE_NOOP and event.modifiers() & Qt.CTRL:
+                socket = item.socket
+                if socket.hasAnyEdge():
+                    self.mode = MODE_EDGES_REROUTING
+                    self.rerouting.startRerouting(socket)
+                    return
+
             if self.mode == MODE_NOOP:
                 self.mode = MODE_EDGE_DRAG
                 self.dragging.edgeDragStart(item)
@@ -265,6 +277,12 @@ class QDMGraphicsView(QGraphicsView):
                 if self.distanceBetweenClickAndReleaseIsOff(event):
                     res = self.dragging.edgeDragEnd(item)
                     if res: return
+
+            if self.mode == MODE_EDGES_REROUTING:
+                self.rerouting.stopRerouting(item.socket if isinstance(item, QDMGraphicsSocket) else None)
+
+                # don't forget to end the REROUTING MODE
+                self.mode = MODE_NOOP
 
             if self.mode == MODE_EDGE_CUT:
                 self.cutIntersectingEdges()
