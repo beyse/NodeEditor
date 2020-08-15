@@ -5,7 +5,8 @@ via [issues](https://gitlab.com/pavel.krupala/pyqt-node-editor/issues) and/or [m
 
 ## Contributors
 
-- Richard Boltze 
+- Richard Boltze
+- RoniPerson 
 
 ## Bug fixes, feature additions, etc.
 
