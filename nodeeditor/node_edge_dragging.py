@@ -7,13 +7,16 @@ from nodeeditor.node_edge import Edge, EDGE_TYPE_BEZIER
 from nodeeditor.utils import dumpException
 
 
-DEBUG = True
+DEBUG = False
 
 
 
 class EdgeDragging:
     def __init__(self, grView:'QGraphicsView'):
         self.grView = grView
+        # initializing these variable to know we're using them in this class...
+        self.drag_edge = None
+        self.drag_start_socket = None
 
     def getEdgeClass(self):
         """Helper function to get the Edge class. Using what Scene class provides"""

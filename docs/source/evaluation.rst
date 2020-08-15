@@ -5,7 +5,7 @@ Evaluation
 
 TL;DR: The evaluation system uses
 :func:`~nodeeditor.node_node.Node.eval` and
-:func:`~nodeeditor.node_node.Node.evalChildren`. ``eval`` is supposed to be overriden by your own
+:func:`~nodeeditor.node_node.Node.evalChildren`. ``eval()`` method is supposed to be overriden by your own
 implementation. The evaluation logic uses Flags for marking the `Nodes` to be `Dirty` and/or `Invalid`.
 
 Evaluation Functions

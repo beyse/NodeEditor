@@ -18,6 +18,8 @@ setup_requirements = [ ]
 
 test_requirements = [ ]
 
+import nodeeditor
+
 setup(
     author="Pavel Křupala",
     author_email='pavel.krupala@gmail.com',
@@ -46,6 +48,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://gitlab.com/pavel.krupala/pyqt-node-editor.git',
-    version='0.9.7',
+    version=nodeeditor.__version__,
     zip_safe=False,
 )
