@@ -19,7 +19,7 @@ class OpCodeNotRegistered(ConfException): pass
 
 def register_node_now(op_code, class_reference):
     if op_code in CALC_NODES:
-        raise InvalidNodeRegistration("Duplicite node registration of '%s'. There is already %s" %(
+        raise InvalidNodeRegistration("Duplicate node registration of '%s'. There is already %s" %(
             op_code, CALC_NODES[op_code]
         ))
     CALC_NODES[op_code] = class_reference
