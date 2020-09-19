@@ -316,6 +316,8 @@ class QDMGraphicsView(QGraphicsView):
                         self.grScene.itemSelected.emit()
                     self.grScene.scene._last_selected_items = current_selected_items
 
+                # the rubber band rectangle don't disappears without handling the event
+                super().mouseReleaseEvent(event)
                 return
 
             # otherwise deselect everything
