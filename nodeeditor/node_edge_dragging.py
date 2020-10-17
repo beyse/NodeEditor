@@ -37,7 +37,7 @@ class EdgeDragging:
 
 
     def edgeDragStart(self, item:'QGraphicsItem'):
-        """Code handling the start of dragging an `Edge` operation"""
+        """Code handling the start of a dragging an `Edge` operation"""
         try:
             if DEBUG: print('View::edgeDragStart ~ Start dragging edge')
             if DEBUG: print('View::edgeDragStart ~   assign Start Socket to:', item.socket)
@@ -49,7 +49,7 @@ class EdgeDragging:
 
 
     def edgeDragEnd(self, item:'QGraphicsItem'):
-        """Code handling the end of dragging an `Edge` operation. In this code return True if skip the
+        """Code handling the end of the dragging an `Edge` operation. If this code returns True then skip the
         rest of the mouse event processing. Can be called with ``None`` to cancel the edge dragging mode
 
         :param item: Item in the `Graphics Scene` where we ended dragging an `Edge`

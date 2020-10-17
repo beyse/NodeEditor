@@ -59,9 +59,9 @@ class NodeEditorWidget(QWidget):
         return self.scene.isModified()
 
     def isFilenameSet(self) -> bool:
-        """Do we have graph loaded from file or new one?
+        """Do we have a graph loaded from file or are we creating a new one?
 
-        :return: ``True`` if filename is set. ``False`` if its a graph not saved to a file
+        :return: ``True`` if filename is set. ``False`` if it is a new graph not yet saved to a file
         :rtype: ''bool''
         """
         return self.filename is not None
@@ -99,7 +99,7 @@ class NodeEditorWidget(QWidget):
         return self.scene.history.canRedo()
 
     def getUserFriendlyFilename(self) -> str:
-        """Get user friendly filename. Used in window title
+        """Get user friendly filename. Used in the window title
 
         :return: just a base name of the file or `'New Graph'`
         :rtype: ``str``
@@ -141,7 +141,7 @@ class NodeEditorWidget(QWidget):
 
 
     def fileSave(self, filename:str=None):
-        """Save serialized graph to JSON file. When called with empty parameter, we won't store/remember the filename
+        """Save serialized graph to JSON file. When called with an empty parameter, we won't store/remember the filename
 
         :param filename: file to store the graph
         :type filename: ``str``
