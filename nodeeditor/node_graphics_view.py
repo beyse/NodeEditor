@@ -12,14 +12,16 @@ from nodeeditor.node_edge_dragging import EdgeDragging
 from nodeeditor.node_edge_rerouting import EdgeRerouting
 from nodeeditor.node_edge_intersect import EdgeIntersect
 from nodeeditor.node_graphics_cutline import QDMCutLine
-from nodeeditor.utils import dumpException
+from nodeeditor.utils import dumpException, pp
 
 
 MODE_NOOP = 1               #: Mode representing ready state
 MODE_EDGE_DRAG = 2          #: Mode representing when we drag edge state
 MODE_EDGE_CUT = 3           #: Mode representing when we draw a cutting edge
 MODE_EDGES_REROUTING = 4    #: Mode representing when we re-route existing edges
-MODE_NODE_DRAG = 5          #: Mode representing when we drag a node
+MODE_NODE_DRAG = 5          #: Mode representing when we drag a node to calculate dropping on intersecting edge
+
+STATE_STRING = ['', 'Noop', 'Edge Drag', 'Edge Cut', 'Edge Rerouting', 'Node Drag']
 
 #: Distance when click on socket to enable `Drag Edge`
 EDGE_DRAG_START_THRESHOLD = 50
@@ -31,6 +33,8 @@ EDGE_REROUTING_UE = True
 DEBUG = False
 DEBUG_MMB_SCENE_ITEMS = False
 DEBUG_MMB_LAST_SELECTIONS = False
+DEBUG_EDGE_INTERSECT = False
+DEBUG_STATE = False
 
 
 class QDMGraphicsView(QGraphicsView):
@@ -233,9 +237,11 @@ class QDMGraphicsView(QGraphicsView):
                 return
 
         if hasattr(item, "node"):
-            if DEBUG: print('View::leftMouseButtonPress - Start dragging a node')
+            if DEBUG_EDGE_INTERSECT: print('View::leftMouseButtonPress - Start dragging a node')
             if self.mode == MODE_NOOP:
                 self.mode = MODE_NODE_DRAG
+                self.edgeIntersect.enterState(item.node)
+                if DEBUG_EDGE_INTERSECT: print(">> edgeIntersect start:", self.edgeIntersect.draggedNode)
 
         if isinstance(item, QDMGraphicsSocket):
             if self.mode == MODE_NOOP and event.modifiers() & Qt.CTRL:
@@ -268,7 +274,7 @@ class QDMGraphicsView(QGraphicsView):
         super().mousePressEvent(event)
 
 
-    def leftMouseButtonRelease(self, event:QMouseEvent):
+    def leftMouseButtonRelease(self, event: QMouseEvent):
         """When Left  mouse button was released"""
 
         # get item which we release mouse button on
@@ -315,9 +321,10 @@ class QDMGraphicsView(QGraphicsView):
                 return
 
             if self.mode == MODE_NODE_DRAG:
-                if hasattr(item, 'node'):
-                    self.edgeIntersect.dropNode(item.node)
+                scenepos = self.mapToScene(event.pos())
+                self.edgeIntersect.leaveState(scenepos.x(), scenepos.y())
                 self.mode = MODE_NOOP
+                self.update()
 
             if self.rubberBandDraggingRectangle:
                 self.rubberBandDraggingRectangle = False
@@ -368,6 +375,9 @@ class QDMGraphicsView(QGraphicsView):
         try:
             if self.mode == MODE_EDGE_DRAG:
                 self.dragging.updateDestination(scenepos.x(), scenepos.y())
+
+            if self.mode == MODE_NODE_DRAG:
+                self.edgeIntersect.update(scenepos.x(), scenepos.y())
 
             if self.mode == MODE_EDGES_REROUTING:
                 self.rerouting.updateScenePos(scenepos.x(), scenepos.y())

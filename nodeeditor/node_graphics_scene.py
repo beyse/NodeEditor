@@ -6,6 +6,8 @@ import math
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
+from nodeeditor.utils import dumpException
+from nodeeditor.node_graphics_view import STATE_STRING, DEBUG_STATE
 
 
 class QDMGraphicsScene(QGraphicsScene):
@@ -49,11 +51,15 @@ class QDMGraphicsScene(QGraphicsScene):
         self._color_background = QColor("#393939")
         self._color_light = QColor("#2f2f2f")
         self._color_dark = QColor("#292929")
+        self._color_state = QColor("#ccc")
 
         self._pen_light = QPen(self._color_light)
         self._pen_light.setWidth(1)
         self._pen_dark = QPen(self._color_dark)
         self._pen_dark.setWidth(2)
+
+        self._pen_state = QPen(self._color_state)
+        self._font_state = QFont("Ubuntu", 16)
 
 
     # the drag events won't be allowed until dragMoveEvent is overriden
@@ -95,3 +101,13 @@ class QDMGraphicsScene(QGraphicsScene):
 
         painter.setPen(self._pen_dark)
         painter.drawLines(*lines_dark)
+
+        if DEBUG_STATE:
+            try:
+                painter.setFont(self._font_state)
+                painter.setPen(self._pen_state)
+                painter.setRenderHint(QPainter.TextAntialiasing)
+                offset = 14
+                rect_state = QRect(rect.x()+offset, rect.y()+offset, rect.width()-2*offset, rect.height()-2*offset)
+                painter.drawText(rect_state, Qt.AlignRight | Qt.AlignTop, STATE_STRING[self.views()[0].mode].upper())
+            except: dumpException()

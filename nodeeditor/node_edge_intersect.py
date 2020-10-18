@@ -16,17 +16,46 @@ class EdgeIntersect:
     def __init__(self, grView:'QGraphicsView'):
         self.grScene = grView.grScene
         self.grView = grView
+        self.draggedNode = None
+        self.hoveredList = []
 
-    def dropNode(self, node):
+    def enterState(self, node: "Node"):
+        """
+        Initialize when we enter the state
+
+        :param node: :class:`~nodeeditor.node_node.Node` which we started to drag
+        :type node: :class:`~nodeeditor.node_node.Node`
+        """
+        self.hoveredList = []
+        self.draggedNode = node
+
+    def leaveState(self, scene_pos_x: float, scene_pos_y: float):
+        """
+        Deinit when we leave this state
+
+        :param scene_pos_x: scene position x
+        :type scene_pos_x: `float`
+        :param scene_pos_y: scene position y
+        :type scene_pos_y: `float`
+        """
+        self.dropNode(self.draggedNode, scene_pos_x, scene_pos_y)
+        self.draggedNode = None
+        self.hoveredList = []
+
+    def dropNode(self, node: "Node", scene_pos_x: float, scene_pos_y: float):
         """
         Code handling the dropping of a node on an existing edge.
+
+        :param scene_pos_x: scene position x
+        :type scene_pos_x: `float`
+        :param scene_pos_y: scene position y
+        :type scene_pos_y: `float`
         """
 
-        node_box = self.hotZone(node)
-        edges = self.grScene.scene.edges
+        node_box = self.hotZoneRect(node)
 
         # check if the node is dropped on an existing edge
-        edge = self.intersect(node_box, edges)
+        edge = self.intersect(node_box)
         if edge is None: return
 
         if self.isConnected(node): return
@@ -52,37 +81,55 @@ class EdgeIntersect:
         self.grView.grScene.scene.history.storeHistory('Created new edges by dropping node', setModified=True)
 
 
-    def hotZone(self, node):
-        """A list of points creating a box around a node"""
-        points = []
+    def hotZoneRect(self, node: 'Node') -> 'QRectF':
+        """
+        Returns A QRectF of creating a box around a node
+
+        :param node: :class:`~nodeeditor.node_node.Node` for which we want to get `QRectF` describing its position and area
+        :type node: :class:`~nodeeditor.node_node.Node`
+        :return: `QRectF` describing node's position and area
+        :rtype: `QRectF`
+        """
         nodePos = node.grNode.scenePos()
         x = nodePos.x()
         y = nodePos.y()
         w = node.grNode.width
         h = node.grNode.height
+        return QRectF(x, y, w, h)
 
-        # Collision box points
-        points.append(QPointF(x, y))
-        points.append(QPointF(x + w, y))
-        points.append(QPointF(x + w, y + h))
-        points.append(QPointF(x, y + h))
-        points.append(QPointF(x, y))
 
-        return points
-
-    def intersect(self, node_box, edges):
+    def update(self, scene_pos_x: float, scene_pos_y: float):
         """
-        Code checking for intersection of a series of line points with all edges in the scene
-        return the intersecting edge or None
+        Updating during mouse move when grView is in this state
+
+        :param scene_pos_x: scene position x
+        :type scene_pos_x: `float`
+        :param scene_pos_y: scene position y
+        :type scene_pos_y: `float`
+        """
+        rect = self.hotZoneRect(self.draggedNode)
+        grItems = self.grScene.items(rect)
+        for grEdge in self.hoveredList: grEdge.hovered = False
+        self.hoveredList = []
+        for grItem in grItems:
+            if hasattr(grItem, 'edge') and not self.draggedNode.hasConnectedEdge(grItem.edge):
+                self.hoveredList.append(grItem)
+                grItem.hovered = True
+
+    def intersect(self, node_box: 'QRectF') -> 'Edge':
+        """
+        Checking for intersection of a rectangle (usually a `Node`) with edges in the scene
+
+        :param node: `QRectF`for which we want find intersecting `Edges`
+        :type node: `QRectF`
+        :return: :class:`~nodeeditor.node_edge.Edge` or `None` if the node is being cut by an `Edge`
+        :rtype: :class:`~nodeeditor.node_edge.Edge`
         """
         # returns the first edge that intersects with the dropped node, ignores the rest
-        for point in range(len(node_box) - 1):
-            p1 = node_box[point]
-            p2 = node_box[point + 1]
-
-            for edge in edges:
-                if edge.grEdge.intersectsWith(p1, p2):
-                    return edge
+        grItems = self.grScene.items(node_box)
+        for grItem in grItems:
+            if hasattr(grItem, 'edge') and not self.draggedNode.hasConnectedEdge(grItem.edge):
+                return grItem.edge
         return None
 
     def isConnected(self, node):
