@@ -186,6 +186,7 @@ class QDMGraphicsNode(QGraphicsItem):
 
         # get the QGraphicsProxyWidget when inserted into the grScene
         self.grContent = self.node.scene.grScene.addWidget(self.content)
+        self.grContent.node = self.node
         self.grContent.setParentItem(self)
 
 
