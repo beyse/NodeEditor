@@ -18,7 +18,7 @@ class Node(Serializable):
     NodeContent_class = QDMNodeContentWidget
     Socket_class = Socket
 
-    def __init__(self, scene:'Scene', title:str="Undefined Node", inputs:list=[], outputs:list=[]):
+    def __init__(self, scene: 'Scene', title: str="Undefined Node", inputs: list=[], outputs: list=[]):
         """
 
         :param scene: reference to the :class:`~nodeeditor.node_scene.Scene`
@@ -91,7 +91,7 @@ class Node(Serializable):
         """
         return self.grNode.pos()        # QPointF
 
-    def setPos(self, x:float, y:float):
+    def setPos(self, x: float, y: float):
         """
         Sets position of the Graphics Node
 
@@ -132,7 +132,7 @@ class Node(Serializable):
             RIGHT_TOP: 1,
         }
 
-    def initSockets(self, inputs:list, outputs:list, reset:bool=True):
+    def initSockets(self, inputs: list, outputs: list, reset: bool=True):
         """
         Create sockets for inputs and outputs
 
@@ -175,7 +175,7 @@ class Node(Serializable):
             self.outputs.append(socket)
 
 
-    def onEdgeConnectionChanged(self, new_edge:'Edge'):
+    def onEdgeConnectionChanged(self, new_edge: 'Edge'):
         """
         Event handling that any connection (`Edge`) has changed. Currently not used...
 
@@ -184,7 +184,7 @@ class Node(Serializable):
         """
         pass
 
-    def onInputChanged(self, socket:'Socket'):
+    def onInputChanged(self, socket: 'Socket'):
         """Event handling when Node's input Edge has changed. We auto-mark this `Node` to be `Dirty` with all it's
         descendants
 
@@ -194,7 +194,7 @@ class Node(Serializable):
         self.markDirty()
         self.markDescendantsDirty()
 
-    def onDeserialized(self, data:dict):
+    def onDeserialized(self, data: dict):
         """Event manually called when this node was deserialized. Currently called when node is deserialized from scene
         Passing `data` containing the data which have been deserialized """
         pass
@@ -203,7 +203,7 @@ class Node(Serializable):
         """Event handling double click on Graphics Node in `Scene`"""
         pass
 
-    def doSelect(self, new_state:bool=True):
+    def doSelect(self, new_state: bool=True):
         """Shortcut method for selecting/deselecting the `Node`
 
         :param new_state: ``True`` if you want to select the `Node`. ``False`` if you want to deselect the `Node`
@@ -215,7 +215,15 @@ class Node(Serializable):
         """Returns ``True`` if current `Node` is selected"""
         return self.grNode.isSelected()
 
-    def getSocketPosition(self, index:int, position:int, num_out_of:int=1) -> '(x, y)':
+    def hasConnectedEdge(self, edge: 'Edge'):
+        """Returns ``True`` if edge is connected to any :class:`~nodeeditor.node_socket.Socket` of this `Node`"""
+        for socket in (self.inputs + self.outputs):
+            if socket.isConnected(edge):
+                return True
+        return False
+
+
+    def getSocketPosition(self, index: int, position: int, num_out_of: int=1) -> '(x, y)':
         """
         Get the relative `x, y` position of a :class:`~nodeeditor.node_socket.Socket`. This is used for placing
         the `Graphics Sockets` on `Graphics Node`.
@@ -257,7 +265,7 @@ class Node(Serializable):
 
         return [x, y]
 
-    def getSocketScenePosition(self, socket:'Socket') -> '(x, y)':
+    def getSocketScenePosition(self, socket: 'Socket') -> '(x, y)':
         """
         Get absolute Socket position in the Scene
 
@@ -304,7 +312,7 @@ class Node(Serializable):
         """
         return self._is_dirty
 
-    def markDirty(self, new_value:bool=True):
+    def markDirty(self, new_value: bool=True):
         """Mark this `Node` as `Dirty`. See :ref:`evaluation` for more
 
         :param new_value: ``True`` if this `Node` should be `Dirty`. ``False`` if you want to un-dirty this `Node`
@@ -317,7 +325,7 @@ class Node(Serializable):
         """Called when this `Node` has been marked as `Dirty`. This method is supposed to be overriden"""
         pass
 
-    def markChildrenDirty(self, new_value:bool=True):
+    def markChildrenDirty(self, new_value: bool=True):
         """Mark all first level children of this `Node` to be `Dirty`. Not this `Node` it self. Not other descendants
 
         :param new_value: ``True`` if children should be `Dirty`. ``False`` if you want to un-dirty children
@@ -326,7 +334,7 @@ class Node(Serializable):
         for other_node in self.getChildrenNodes():
             other_node.markDirty(new_value)
 
-    def markDescendantsDirty(self, new_value:bool=True):
+    def markDescendantsDirty(self, new_value: bool=True):
         """Mark all children and descendants of this `Node` to be `Dirty`. Not this `Node` it self
 
         :param new_value: ``True`` if children and descendants should be `Dirty`. ``False`` if you want to un-dirty children and descendants
@@ -344,7 +352,7 @@ class Node(Serializable):
         """
         return self._is_invalid
 
-    def markInvalid(self, new_value:bool=True):
+    def markInvalid(self, new_value: bool=True):
         """Mark this `Node` as `Invalid`. See :ref:`evaluation` for more
 
         :param new_value: ``True`` if this `Node` should be `Invalid`. ``False`` if you want to make this `Node` valid
@@ -357,7 +365,7 @@ class Node(Serializable):
         """Called when this `Node` has been marked as `Invalid`. This method is supposed to be overriden"""
         pass
 
-    def markChildrenInvalid(self, new_value:bool=True):
+    def markChildrenInvalid(self, new_value: bool=True):
         """Mark all first level children of this `Node` to be `Invalid`. Not this `Node` it self. Not other descendants
 
         :param new_value: ``True`` if children should be `Invalid`. ``False`` if you want to make children valid
@@ -366,7 +374,7 @@ class Node(Serializable):
         for other_node in self.getChildrenNodes():
             other_node.markInvalid(new_value)
 
-    def markDescendantsInvalid(self, new_value:bool=True):
+    def markDescendantsInvalid(self, new_value: bool=True):
         """Mark all children and descendants of this `Node` to be `Invalid`. Not this `Node` it self
 
         :param new_value: ``True`` if children and descendants should be `Invalid`. ``False`` if you want to make children and descendants valid
@@ -406,7 +414,7 @@ class Node(Serializable):
         return other_nodes
 
 
-    def getInput(self, index:int=0) -> ['Node', None]:
+    def getInput(self, index: int=0) -> ['Node', None]:
         """
         Get the **first**  `Node` connected to the  Input specified by `index`
 
@@ -425,7 +433,7 @@ class Node(Serializable):
             dumpException(e)
             return None
 
-    def getInputWithSocket(self, index:int=0) -> [('Node', 'Socket'), (None, None)]:
+    def getInputWithSocket(self, index: int=0) -> [('Node', 'Socket'), (None, None)]:
         """
         Get the **first**  `Node` connected to the Input specified by `index` and the connection `Socket`
 
@@ -445,7 +453,7 @@ class Node(Serializable):
             dumpException(e)
             return None, None
 
-    def getInputWithSocketIndex(self, index:int=0) -> ('Node', int):
+    def getInputWithSocketIndex(self, index: int=0) -> ('Node', int):
         """
         Get the **first**  `Node` connected to the Input specified by `index` and the connection `Socket`
 
@@ -466,7 +474,7 @@ class Node(Serializable):
             dumpException(e)
             return None, None
 
-    def getInputs(self, index:int=0) -> 'List[Node]':
+    def getInputs(self, index: int=0) -> 'List[Node]':
         """
         Get **all** `Nodes` connected to the Input specified by `index`
 
@@ -481,7 +489,7 @@ class Node(Serializable):
             ins.append(other_socket.node)
         return ins
 
-    def getOutputs(self, index:int=0) -> 'List[Node]':
+    def getOutputs(self, index: int=0) -> 'List[Node]':
         """
         Get **all** `Nodes` connected to the Output specified by `index`
 
@@ -514,7 +522,7 @@ class Node(Serializable):
             ('content', ser_content),
         ])
 
-    def deserialize(self, data:dict, hashmap:dict={}, restore_id:bool=True, *args, **kwargs) -> bool:
+    def deserialize(self, data: dict, hashmap: dict={}, restore_id: bool=True, *args, **kwargs) -> bool:
         try:
             if restore_id: self.id = data['id']
             hashmap[data['id']] = self
