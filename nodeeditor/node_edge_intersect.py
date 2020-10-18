@@ -120,8 +120,8 @@ class EdgeIntersect:
         """
         Checking for intersection of a rectangle (usually a `Node`) with edges in the scene
 
-        :param node: `QRectF`for which we want find intersecting `Edges`
-        :type node: `QRectF`
+        :param node_box: `QRectF` for which we want find intersecting `Edges`
+        :type node_box: `QRectF`
         :return: :class:`~nodeeditor.node_edge.Edge` or `None` if the node is being cut by an `Edge`
         :rtype: :class:`~nodeeditor.node_edge.Edge`
         """
@@ -132,7 +132,14 @@ class EdgeIntersect:
                 return grItem.edge
         return None
 
-    def isConnected(self, node):
+    def isConnected(self, node: 'Node'):
+        """
+        Return ``True`` if node got any connections
+
+        :param node: :class:`~nodeeditor.node_node.Node` which connections to check
+        :type node: :class:`~nodeeditor.node_node.Node`
+        :return:
+        """
         # Nodes with only inputs or outputs are excluded
         if node.inputs == [] or node.outputs == []: return True
 

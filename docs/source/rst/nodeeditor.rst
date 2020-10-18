@@ -7,6 +7,7 @@ nodeeditor Package
    nodeeditor.node_content_widget
    nodeeditor.node_edge
    nodeeditor.node_edge_dragging
+   nodeeditor.node_edge_intersect
    nodeeditor.node_edge_rerouting
    nodeeditor.node_edge_validators
    nodeeditor.node_editor_widget
