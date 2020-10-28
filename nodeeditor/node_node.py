@@ -31,8 +31,8 @@ class Node(Serializable):
         :Instance Attributes:
 
             - **scene** - reference to the :class:`~nodeeditor.node_scene.Scene`
-            - **grNode** - Instance of :class:`~nodeeditor.node_graphics_node.QDMGraphicsNode` handling graphical representation in the ``QGraphicsScene``. Automatically created in constructor
-            - **content** - Instance of :class:`~nodeeditor.node_graphics_content.QDMGraphicsContent` which is child of ``QWidget`` representing container for all inner widgets inside of the Node. Automatically created in constructor
+            - **grNode** - Instance of :class:`~nodeeditor.node_graphics_node.QDMGraphicsNode` handling graphical representation in the ``QGraphicsScene``. Automatically created in the constructor
+            - **content** - Instance of :class:`~nodeeditor.node_graphics_content.QDMGraphicsContent` which is child of ``QWidget`` representing container for all inner widgets inside of the Node. Automatically created in the constructor
             - **inputs** - list containin Input :class:`~nodeeditor.node_socket.Socket` instances
             - **outputs** - list containin Output :class:`~nodeeditor.node_socket.Socket` instances
 
@@ -322,7 +322,7 @@ class Node(Serializable):
         if self._is_dirty: self.onMarkedDirty()
 
     def onMarkedDirty(self):
-        """Called when this `Node` has been marked as `Dirty`. This method is supposed to be overriden"""
+        """Called when this `Node` has been marked as `Dirty`. This method is supposed to be overridden"""
         pass
 
     def markChildrenDirty(self, new_value: bool=True):
@@ -362,7 +362,7 @@ class Node(Serializable):
         if self._is_invalid: self.onMarkedInvalid()
 
     def onMarkedInvalid(self):
-        """Called when this `Node` has been marked as `Invalid`. This method is supposed to be overriden"""
+        """Called when this `Node` has been marked as `Invalid`. This method is supposed to be overridden"""
         pass
 
     def markChildrenInvalid(self, new_value: bool=True):
@@ -385,7 +385,7 @@ class Node(Serializable):
             other_node.markDescendantsInvalid(new_value)
 
     def eval(self, index=0):
-        """Evaluate this `Node`. This is supposed to be overriden. See :ref:`evaluation` for more"""
+        """Evaluate this `Node`. This is supposed to be overridden. See :ref:`evaluation` for more"""
         self.markDirty(False)
         self.markInvalid(False)
         return 0
@@ -420,7 +420,8 @@ class Node(Serializable):
 
         :param index: Order number of the `Input Socket`
         :type index: ``int``
-        :return: :class:`~nodeeditor.node_node.Node` which is connected to the specified `Input` or ``None`` if there is no connection of index is out of range
+        :return: :class:`~nodeeditor.node_node.Node` which is connected to the specified `Input` or ``None`` if
+            there is no connection or the index is out of range
         :rtype: :class:`~nodeeditor.node_node.Node` or ``None``
         """
         try:
@@ -440,7 +441,7 @@ class Node(Serializable):
         :param index: Order number of the `Input Socket`
         :type index: ``int``
         :return: Tuple containing :class:`~nodeeditor.node_node.Node` and :class:`~nodeeditor.node_socket.Socket` which
-            is connected to the specified `Input` or ``None`` if there is no connection of index is out of range
+            is connected to the specified `Input` or ``None`` if there is no connection or the index is out of range
         :rtype: (:class:`~nodeeditor.node_node.Node`, :class:`~nodeeditor.node_socket.Socket`)
         """
         try:
@@ -460,7 +461,7 @@ class Node(Serializable):
         :param index: Order number of the `Input Socket`
         :type index: ``int``
         :return: Tuple containing :class:`~nodeeditor.node_node.Node` and :class:`~nodeeditor.node_socket.Socket` which
-            is connected to the specified `Input` or ``None`` if there is no connection of index is out of range
+            is connected to the specified `Input` or ``None`` if there is no connection or the index is out of range
         :rtype: (:class:`~nodeeditor.node_node.Node`, int)
         """
         try:
@@ -480,7 +481,8 @@ class Node(Serializable):
 
         :param index: Order number of the `Input Socket`
         :type index: ``int``
-        :return: all :class:`~nodeeditor.node_node.Node` instances which are connected to the specified `Input` or ``[]`` if there is no connection of index is out of range
+        :return: all :class:`~nodeeditor.node_node.Node` instances which are connected to the
+            specified `Input` or ``[]`` if there is no connection or the index is out of range
         :rtype: List[:class:`~nodeeditor.node_node.Node`]
         """
         ins = []
@@ -495,7 +497,8 @@ class Node(Serializable):
 
         :param index: Order number of the `Output Socket`
         :type index: ``int``
-        :return: all :class:`~nodeeditor.node_node.Node` instances which are connected to the specified `Output` or ``[]`` if there is no connection of index is out of range
+        :return: all :class:`~nodeeditor.node_node.Node` instances which are connected to the
+            specified `Output` or ``[]`` if there is no connection or the index is out of range
         :rtype: List[:class:`~nodeeditor.node_node.Node`]
         """
         outs = []
@@ -582,7 +585,7 @@ class Node(Serializable):
 
         except Exception as e: dumpException(e)
 
-        # also deseralize the content of the node
+        # also deserialize the content of the node
         # so far the rest was ok, now as last step the content...
         if isinstance(self.content, Serializable):
             res = self.content.deserialize(data['content'], hashmap)

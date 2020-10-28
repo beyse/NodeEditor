@@ -30,7 +30,7 @@ class SceneClipboard():
         """
         Serializes selected items in the Scene into ``OrderedDict``
 
-        :param delete: True if you want to delete selected items after serialization. Usefull for Cut operation
+        :param delete: True if you want to delete selected items after serialization. Useful for Cut operation
         :type delete: ``bool``
         :return: Serialized data of current selection in NodeEditor :class:`~nodeeditor.node_scene.Scene`
         """

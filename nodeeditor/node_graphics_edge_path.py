@@ -3,7 +3,7 @@ from PyQt5.QtCore import QPointF
 from PyQt5.QtGui import QPainterPath
 
 
-EDGE_CP_ROUNDNESS = 100     #: Bezier controll point distance on the line
+EDGE_CP_ROUNDNESS = 100     #: Bezier control point distance on the line
 
 
 class GraphicsEdgePathBase:

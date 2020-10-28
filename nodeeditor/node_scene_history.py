@@ -159,7 +159,7 @@ class SceneHistory():
 
     def captureCurrentSelection(self) -> dict:
         """
-        Create dictionary with list of selected nodes and list of selected edges
+        Create dictionary with a list of selected nodes and a list of selected edges
         :return: ``dict`` 'nodes' - list of selected nodes, 'edges' - list of selected edges
         :rtype: ``dict``
         """
@@ -174,7 +174,7 @@ class SceneHistory():
 
     def createHistoryStamp(self, desc:str) -> dict:
         """
-        Create History Stamp. Internally serialize whole scene and current selection
+        Create History Stamp. Internally serialize whole scene and the current selection
 
         :param desc: Descriptive label for the History Stamp
         :return: History stamp serializing state of `Scene` and current selection

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-A module containing Graphics representation of Edge
+A module containing the Graphics representation of an Edge
 """
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
@@ -112,7 +112,7 @@ class QDMGraphicsEdge(QGraphicsPathItem):
         if new_state: self.onSelected()
 
     def mouseReleaseEvent(self, event):
-        """Overriden Qt's method to handle selecting and deselecting this `Graphics Edge`"""
+        """Overridden Qt's method to handle selecting and deselecting this `Graphics Edge`"""
         super().mouseReleaseEvent(event)
         if self._last_selected_state != self.isSelected():
             self.edge.scene.resetLastSelectedStates()
@@ -162,7 +162,8 @@ class QDMGraphicsEdge(QGraphicsPathItem):
         return self.calcPath()
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
-        """Qt's overriden method to paint this Graphics Edge. Path calculated in :func:`~nodeeditor.node_graphics_edge.QDMGraphicsEdge.calcPath` method"""
+        """Qt's overridden method to paint this Graphics Edge. Path calculated
+            in :func:`~nodeeditor.node_graphics_edge.QDMGraphicsEdge.calcPath` method"""
         self.setPath(self.calcPath())
 
         painter.setBrush(Qt.NoBrush)
@@ -179,7 +180,7 @@ class QDMGraphicsEdge(QGraphicsPathItem):
         painter.drawPath(self.path())
 
     def intersectsWith(self, p1:QPointF, p2:QPointF) -> bool:
-        """Does this Graphics Edge intersect with line between point A and point B ?
+        """Does this Graphics Edge intersect with the line between point A and point B ?
 
         :param p1: point A
         :type p1: ``QPointF``

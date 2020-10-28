@@ -167,7 +167,7 @@ class QDMGraphicsView(QGraphicsView):
 
         item = self.getItemAtClick(event)
 
-        # debug print out
+        # debug printout
         if DEBUG_MMB_SCENE_ITEMS:
             if isinstance(item, QDMGraphicsEdge):
                 print("MMB DEBUG:", item.edge, "\n\t", item.edge.grEdge if item.edge.grEdge is not None else None)
@@ -218,7 +218,7 @@ class QDMGraphicsView(QGraphicsView):
     def leftMouseButtonPress(self, event:QMouseEvent):
         """When Left  mouse button was pressed"""
 
-        # get item which we clicked on
+        # get the item we clicked on
         item = self.getItemAtClick(event)
 
         # we store the position of last LMB click
@@ -277,7 +277,7 @@ class QDMGraphicsView(QGraphicsView):
     def leftMouseButtonRelease(self, event: QMouseEvent):
         """When Left  mouse button was released"""
 
-        # get item which we release mouse button on
+        # get the item on which we release the mouse button on
         item = self.getItemAtClick(event)
 
         try:
@@ -337,7 +337,7 @@ class QDMGraphicsView(QGraphicsView):
                         self.grScene.itemSelected.emit()
                     self.grScene.scene._last_selected_items = current_selected_items
 
-                # the rubber band rectangle don't disappears without handling the event
+                # the rubber band rectangle doesn't disappear without handling the event
                 super().mouseReleaseEvent(event)
                 return
 
@@ -348,7 +348,6 @@ class QDMGraphicsView(QGraphicsView):
         except: dumpException()
 
         super().mouseReleaseEvent(event)
-
 
 
     def rightMouseButtonPress(self, event:QMouseEvent):
@@ -399,10 +398,10 @@ class QDMGraphicsView(QGraphicsView):
     def keyPressEvent(self, event:QKeyEvent):
         """
         .. note::
-            This overriden Qt's method was used for handling key shortcuts, before we implemented propper
-            ``QWindow`` with Actions and Menu. Still the commented code serves as an example how to handle
-            key presses without Qt's framework for Actions and shortcuts. There can be also found an example
-            how to solve the problem when Node does contain Text/LineEdit and we press `Delete`
+            This overridden Qt's method was used for handling key shortcuts, before we implemented proper
+            ``QWindow`` with Actions and Menu. Still the commented code serves as an example on how to handle
+            key presses without Qt's framework for Actions and shortcuts. There is also an example on
+            how to solve the problem when a Node contains Text/LineEdit and we press the `Delete`
             key (also serving to delete `Node`)
 
         :param event: Qt's Key event
@@ -499,7 +498,7 @@ class QDMGraphicsView(QGraphicsView):
 
 
     def wheelEvent(self, event:QWheelEvent):
-        """overriden Qt's ``wheelEvent``. This handles zooming"""
+        """overridden Qt's ``wheelEvent``. This handles zooming"""
         # calculate our zoom Factor
         zoomOutFactor = 1 / self.zoomInFactor
 

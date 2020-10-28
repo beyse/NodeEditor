@@ -12,7 +12,7 @@ pp = PrettyPrinter(indent=4).pprint
 
 def dumpException(e=None):
     """
-    Prints out Exception message with traceback to the console
+    Prints out an Exception message with a traceback to the console
 
     :param e: Exception to print out
     :type e: Exception
@@ -24,7 +24,7 @@ def dumpException(e=None):
 
 def loadStylesheet(filename:str):
     """
-    Loads an qss stylesheet to current QApplication instance
+    Loads an qss stylesheet to the current QApplication instance
 
     :param filename: Filename of qss stylesheet
     :type filename: str
@@ -37,7 +37,7 @@ def loadStylesheet(filename:str):
 
 def loadStylesheets(*args):
     """
-    Loads multiple qss stylesheets. Concats them together and applies the final stylesheet to current QApplication instance
+    Loads multiple qss stylesheets. Concatenates them together and applies the final stylesheet to the current QApplication instance
 
     :param args: variable number of filenames of qss stylesheets
     :type args: str, str,...

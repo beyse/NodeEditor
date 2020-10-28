@@ -106,7 +106,7 @@ class Socket(Serializable):
 
     def getSocketPosition(self):
         """
-        :return: Returns this `Socket` position according the implementation stored in
+        :return: Returns this `Socket` position according to the implementation stored in
             :class:`~nodeeditor.node_node.Node`
         :rtype: ``x, y`` position
         """
@@ -118,7 +118,7 @@ class Socket(Serializable):
 
     def hasAnyEdge(self) -> bool:
         """
-        Returns ``True`` if any :class:`~nodeeditor.node_edge.Edge` is connectected to this socket
+        Returns ``True`` if any :class:`~nodeeditor.node_edge.Edge` is connected to this socket
 
         :return: ``True`` if any :class:`~nodeeditor.node_edge.Edge` is connected to this socket
         :rtype: ``bool``
@@ -168,7 +168,7 @@ class Socket(Serializable):
 
     def determineMultiEdges(self, data:dict) -> bool:
         """
-        Deserialization helper function. In our tutorials we create new version of graph data format.
+        Deserialization helper function. In our tutorials we created a new version of graph data format.
         This function is here to help solve the issue of opening older files in the newer format.
         If the 'multi_edges' param is missing in the dictionary, we determine if this `Socket`
         should support multiple `Edges`.

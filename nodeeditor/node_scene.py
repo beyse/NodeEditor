@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-A module containing the representation of Scene
+A module containing the representation of the NodeEditor's Scene
 """
 import os
 import json
@@ -50,7 +50,7 @@ class Scene(Serializable):
         self._has_been_modified = False
         self._last_selected_items = None
 
-        # initialiaze all listeners
+        # initialize all listeners
         self._has_been_modified_listeners = []
         self._item_selected_listeners = []
         self._items_deselected_listeners = []
@@ -107,7 +107,7 @@ class Scene(Serializable):
 
 
     def setSilentSelectionEvents(self, value:bool=True):
-        """Calling this can suppress onItemSelected events to be triggered. This is usefull when working with clipboard"""
+        """Calling this can suppress onItemSelected events to be triggered. This is useful when working with clipboard"""
         self._silent_selection_events = value
 
     def onItemSelected(self, silent:bool=False):
@@ -336,7 +336,7 @@ class Scene(Serializable):
 
     def setNodeClassSelector(self, class_selecting_function:'functon') -> 'Node class type':
         """
-        Set the function which decides what `Node` class to instantiate when deserializating `Scene`.
+        Set the function which decides what `Node` class to instantiate when deserializing `Scene`.
         If not set, we will always instantiate :class:`~nodeeditor.node_node.Node` for each `Node` in the `Scene`
 
         :param class_selecting_function: function which returns `Node` class type (not instance) from `Node` serialized ``dict`` data
