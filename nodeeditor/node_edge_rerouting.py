@@ -20,12 +20,12 @@ class EdgeRerouting:
         if DEBUG_REROUTING: print("REROUTING:", *args)
 
     def getEdgeClass(self):
-        """Helper function to get the Edge class. Using what Scene class provides"""
+        """Helper function to get the Edge class. Using what the Scene class provides"""
         return self.grView.grScene.scene.getEdgeClass()
 
     def getAffectedEdges(self) -> list:
         """
-        Get list of all edges connected to the `self.start_socket` where we started the re-routing
+        Get a list of all edges connected to the `self.start_socket` where we started the re-routing
 
         :return: List of all edges affected by the rerouting started from this `self.start_socket` :class:`~nodeeditor.node_socket.Socket`
         :rtype: ``list``

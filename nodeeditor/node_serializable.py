@@ -14,8 +14,8 @@ class Serializable():
 
     def serialize(self) -> OrderedDict:
         """
-        Serialization method to serialize this class data into ``OrderedDict`` which can be stored
-        in memory or file easily.
+        Serialization method to serialize this class data into ``OrderedDict`` which can be easily stored
+        in memory or file.
 
         :return: data serialized in ``OrderedDict``
         :rtype: ``OrderedDict``
@@ -31,10 +31,10 @@ class Serializable():
         :type data: ``dict``
         :param hashmap: Helper dictionary containing references (by id == key) to existing objects
         :type hashmap: ``dict``
-        :param restore_id: True if we are creating new Sockets. False is usefull when loading existing
-            Sockets which we want to keep the existing object's `id`.
+        :param restore_id: True if we are creating new Sockets. False is useful when loading existing
+            Sockets of which we want to keep the existing object's `id`.
         :type restore_id: bool
-        :return: ``True`` if deserialization was successfull, otherwise ``False``
+        :return: ``True`` if deserialization was successful, otherwise ``False``
         :rtype: ``bool``
         """
         raise NotImplemented()

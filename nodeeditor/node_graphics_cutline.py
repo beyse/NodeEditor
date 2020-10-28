@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-A module containing class for Cutting Line
+A module containing the class for Cutting Line
 """
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *

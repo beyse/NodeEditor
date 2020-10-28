@@ -108,7 +108,7 @@ class QDMGraphicsNode(QGraphicsItem):
         if new_state: self.onSelected()
 
     def mouseMoveEvent(self, event):
-        """Overriden event to detect that we moved with this `Node`"""
+        """Overridden event to detect that we moved with this `Node`"""
         super().mouseMoveEvent(event)
 
         # optimize me! just update the selected nodes

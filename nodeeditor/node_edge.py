@@ -181,9 +181,9 @@ class Edge(Serializable):
 
     def getOtherSocket(self, known_socket:'Socket'):
         """
-        Returns the oposite socket on this ``Edge``
+        Returns the opposite socket on this ``Edge``
 
-        :param known_socket: Provide known :class:`~nodeeditor.node_socket.Socket` to be able to determine the oposite one.
+        :param known_socket: Provide known :class:`~nodeeditor.node_socket.Socket` to be able to determine the opposite one.
         :type known_socket: :class:`~nodeeditor.node_socket.Socket`
         :return: The oposite socket on this ``Edge`` or ``None``
         :rtype: :class:`~nodeeditor.node_socket.Socket` or ``None``
@@ -192,7 +192,7 @@ class Edge(Serializable):
 
     def doSelect(self, new_state:bool=True):
         """
-        Provide the safe selecting/deselecting operation. In the background it takes care about the flags, norifications
+        Provide the safe selecting/deselecting operation. In the background it takes care about the flags, notifications
         and storing history for undo/redo.
 
         :param new_state: ``True`` if you want to select the ``Edge``, ``False`` if you want to deselect the ``Edge``
@@ -302,7 +302,7 @@ class Edge(Serializable):
 
 # Example: using validators for Edge
 # You can register edge validators wherever you want, even here...
-# However if you do use overriden Edge, you should call registerEdgeValidator on that overriden class
+# However if you do use overridden Edge, you should call registerEdgeValidator on that overridden class
 #
 # from nodeeditor.node_edge_validators import *
 # Edge.registerEdgeValidator(edge_validator_debug)

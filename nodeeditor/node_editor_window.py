@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-A module containing Main Window class
+A module containing the Main Window class
 """
 import os
 import json

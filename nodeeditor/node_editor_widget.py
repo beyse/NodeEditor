@@ -141,7 +141,7 @@ class NodeEditorWidget(QWidget):
 
 
     def fileSave(self, filename:str=None):
-        """Save serialized graph to JSON file. When called with an empty parameter, we won't store/remember the filename
+        """Save serialized graph to JSON file. When called with an empty parameter, we won't store/remember the filename.
 
         :param filename: file to store the graph
         :type filename: ``str``
