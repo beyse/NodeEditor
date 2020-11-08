@@ -11,6 +11,7 @@ from nodeeditor.node_graphics_edge import QDMGraphicsEdge
 from nodeeditor.node_edge_dragging import EdgeDragging
 from nodeeditor.node_edge_rerouting import EdgeRerouting
 from nodeeditor.node_edge_intersect import EdgeIntersect
+from nodeeditor.node_edge_snapping import EdgeSnapping
 from nodeeditor.node_graphics_cutline import QDMCutLine
 from nodeeditor.utils import dumpException, pp
 
@@ -29,6 +30,10 @@ EDGE_DRAG_START_THRESHOLD = 50
 #: Enable UnrealEngine style rerouting
 EDGE_REROUTING_UE = True
 
+#: Socket snapping distance
+EDGE_SNAPPING_RADIUS = 24
+#: Enable socket snapping feature
+EDGE_SNAPPING = True
 
 DEBUG = False
 DEBUG_MMB_SCENE_ITEMS = False
@@ -80,6 +85,9 @@ class QDMGraphicsView(QGraphicsView):
         # drop a node on an existing edge
         self.edgeIntersect = EdgeIntersect(self)
 
+        # edge snapping
+        self.snapping = EdgeSnapping(self, snapping_radius=EDGE_SNAPPING_RADIUS)
+
         # cutline
         self.cutline = QDMCutLine()
         self.grScene.addItem(self.cutline)
@@ -110,6 +118,10 @@ class QDMGraphicsView(QGraphicsView):
 
         # enable dropping
         self.setAcceptDrops(True)
+
+    def isSnappingEnabled(self, event: 'QInputEvent' = None) -> bool:
+        """Returns ``True`` if snapping is currently enabled"""
+        return EDGE_SNAPPING and (event.modifiers() & Qt.CTRL) if event else True
 
     def resetMode(self):
         """Helper function to re-set the grView's State Machine state to the default"""
@@ -180,7 +192,7 @@ class QDMGraphicsView(QGraphicsView):
                     for edge in item.socket.edges: print("\t", edge)
                 return
 
-        if DEBUG_MMB_SCENE_ITEMS and (item is None):
+        if DEBUG_MMB_SCENE_ITEMS and (item is None or self.mode == MODE_EDGES_REROUTING):
             print("SCENE:")
             print("  Nodes:")
             for node in self.grScene.scene.nodes: print("\t", node)
@@ -243,6 +255,10 @@ class QDMGraphicsView(QGraphicsView):
                 self.edgeIntersect.enterState(item.node)
                 if DEBUG_EDGE_INTERSECT: print(">> edgeIntersect start:", self.edgeIntersect.draggedNode)
 
+        # support for snapping
+        if self.isSnappingEnabled(event):
+            item = self.snapping.getSnappedSocketItem(event)
+
         if isinstance(item, QDMGraphicsSocket):
             if self.mode == MODE_NOOP and event.modifiers() & Qt.CTRL:
                 socket = item.socket
@@ -293,10 +309,15 @@ class QDMGraphicsView(QGraphicsView):
 
             if self.mode == MODE_EDGE_DRAG:
                 if self.distanceBetweenClickAndReleaseIsOff(event):
+                    if self.isSnappingEnabled(event):
+                        item = self.snapping.getSnappedSocketItem(event)
+
                     res = self.dragging.edgeDragEnd(item)
                     if res: return
 
             if self.mode == MODE_EDGES_REROUTING:
+                if self.isSnappingEnabled(event):
+                    item = self.snapping.getSnappedSocketItem(event)
 
                 if not EDGE_REROUTING_UE:
                     # version 2 -- more consistent with the nodeeditor?
@@ -372,6 +393,11 @@ class QDMGraphicsView(QGraphicsView):
         scenepos = self.mapToScene(event.pos())
 
         try:
+            modified = self.setSocketHighlights(scenepos, highlighted=False, radius=EDGE_SNAPPING_RADIUS+100)
+            if self.isSnappingEnabled(event):
+                _, scenepos = self.snapping.getSnappedToSocketPosition(scenepos)
+            if modified: self.update()
+
             if self.mode == MODE_EDGE_DRAG:
                 self.dragging.updateDestination(scenepos.x(), scenepos.y())
 
@@ -450,6 +476,13 @@ class QDMGraphicsView(QGraphicsView):
         self.grScene.scene.history.storeHistory("Delete cutted edges", setModified=True)
 
 
+    def setSocketHighlights(self, scenepos: QPointF, highlighted: bool = True, radius: float = 50):
+        """Set/disable socket highlights in Scene area defined by `scenepos` and `radius`"""
+        scanrect = QRectF(scenepos.x() - radius, scenepos.y() - radius, radius * 2, radius * 2)
+        items = self.grScene.items(scanrect)
+        items = list(filter(lambda x: isinstance(x, QDMGraphicsSocket), items))
+        for grSocket in items: grSocket.isHighlighted = highlighted
+        return items
 
     def deleteSelected(self):
         """Shortcut for safe deleting every object selected in the `Scene`."""
