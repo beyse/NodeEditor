@@ -9,6 +9,7 @@ nodeeditor Package
    nodeeditor.node_edge_dragging
    nodeeditor.node_edge_intersect
    nodeeditor.node_edge_rerouting
+   nodeeditor.node_edge_snapping
    nodeeditor.node_edge_validators
    nodeeditor.node_editor_widget
    nodeeditor.node_editor_window
