@@ -16,7 +16,7 @@ application start with calling this:
     Edge.registerEdgeValidator(edge_validator_debug)
     Edge.registerEdgeValidator(edge_cannot_connect_two_outputs_or_two_inputs)
     Edge.registerEdgeValidator(edge_cannot_connect_input_and_output_of_same_node)
-    Edge.registerEdgeValidator(edge_cannot_connect_input_and_output_of_different_color)
+    Edge.registerEdgeValidator(edge_cannot_connect_input_and_output_of_different_type)
 
 
 """
@@ -58,7 +58,7 @@ def edge_cannot_connect_input_and_output_of_same_node(input: 'Socket', output:'S
 
     return True
 
-def edge_cannot_connect_input_and_output_of_different_color(input: 'Socket', output:'Socket') -> bool:
+def edge_cannot_connect_input_and_output_of_different_type(input: 'Socket', output: 'Socket') -> bool:
     """Edge is invalid if it connects sockets with different colors"""
 
     if input.socket_type != output.socket_type:
