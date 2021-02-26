@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 
-from nodeeditor.node_graphics_edge_path import GraphicsEdgePathBezier, GraphicsEdgePathDirect
+from nodeeditor.node_graphics_edge_path import GraphicsEdgePathBezier, GraphicsEdgePathDirect, GraphicsEdgePathSquare
 
 
 class QDMGraphicsEdge(QGraphicsPathItem):
@@ -70,11 +70,13 @@ class QDMGraphicsEdge(QGraphicsPathItem):
 
     def determineEdgePathClass(self):
         """Decide which GraphicsEdgePath class should be used to calculate path according to edge.edge_type value"""
-        from nodeeditor.node_edge import EDGE_TYPE_BEZIER, EDGE_TYPE_DIRECT
+        from nodeeditor.node_edge import EDGE_TYPE_BEZIER, EDGE_TYPE_DIRECT, EDGE_TYPE_SQUARE
         if self.edge.edge_type == EDGE_TYPE_BEZIER:
             return GraphicsEdgePathBezier
         if self.edge.edge_type == EDGE_TYPE_DIRECT:
             return GraphicsEdgePathDirect
+        if self.edge.edge_type == EDGE_TYPE_SQUARE:
+            return GraphicsEdgePathSquare
         else:
             return GraphicsEdgePathBezier
 

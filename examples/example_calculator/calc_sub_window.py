@@ -3,7 +3,7 @@ from PyQt5.QtCore import *
 from examples.example_calculator.calc_conf import *
 from nodeeditor.node_editor_widget import NodeEditorWidget
 from examples.example_calculator.calc_node_base import *
-from nodeeditor.node_edge import EDGE_TYPE_DIRECT, EDGE_TYPE_BEZIER
+from nodeeditor.node_edge import EDGE_TYPE_DIRECT, EDGE_TYPE_BEZIER, EDGE_TYPE_SQUARE
 from nodeeditor.node_graphics_view import MODE_EDGE_DRAG#, MODE_EDGES_REROUTING
 from nodeeditor.utils import dumpException
 
@@ -162,6 +162,7 @@ class CalculatorSubWindow(NodeEditorWidget):
         context_menu = QMenu(self)
         bezierAct = context_menu.addAction("Bezier Edge")
         directAct = context_menu.addAction("Direct Edge")
+        squareAct = context_menu.addAction("Square Edge")
         action = context_menu.exec_(self.mapToGlobal(event.pos()))
 
         selected = None
@@ -171,7 +172,7 @@ class CalculatorSubWindow(NodeEditorWidget):
 
         if selected and action == bezierAct: selected.edge_type = EDGE_TYPE_BEZIER
         if selected and action == directAct: selected.edge_type = EDGE_TYPE_DIRECT
-
+        if selected and action == squareAct: selected.edge_type = EDGE_TYPE_SQUARE
 
     # helper functions
     def determine_target_socket_of_node(self, was_dragged_flag, new_calc_node):

@@ -3,7 +3,7 @@
 A module containing the Edge Dragging functionality
 """
 from nodeeditor.node_graphics_socket import QDMGraphicsSocket
-from nodeeditor.node_edge import EDGE_TYPE_BEZIER
+from nodeeditor.node_edge import EDGE_TYPE_DEFAULT
 from nodeeditor.utils import dumpException
 
 
@@ -42,7 +42,7 @@ class EdgeDragging:
             if DEBUG: print('View::edgeDragStart ~ Start dragging edge')
             if DEBUG: print('View::edgeDragStart ~   assign Start Socket to:', item.socket)
             self.drag_start_socket = item.socket
-            self.drag_edge = self.getEdgeClass()(item.socket.node.scene, item.socket, None, EDGE_TYPE_BEZIER)
+            self.drag_edge = self.getEdgeClass()(item.socket.node.scene, item.socket, None, EDGE_TYPE_DEFAULT)
             self.drag_edge.grEdge.makeUnselectable()
             if DEBUG: print('View::edgeDragStart ~   dragEdge:', self.drag_edge)
         except Exception as e: dumpException(e)
@@ -94,7 +94,7 @@ class EdgeDragging:
 
 
                     ## Create new Edge
-                    new_edge = self.getEdgeClass()(item.socket.node.scene, self.drag_start_socket, item.socket, edge_type=EDGE_TYPE_BEZIER)
+                    new_edge = self.getEdgeClass()(item.socket.node.scene, self.drag_start_socket, item.socket, edge_type=EDGE_TYPE_DEFAULT)
                     if DEBUG: print("View::edgeDragEnd ~  created new edge:", new_edge, "connecting", new_edge.start_socket, "<-->", new_edge.end_socket)
 
                     ## Send notifications for the new edge
