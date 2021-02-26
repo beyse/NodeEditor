@@ -10,6 +10,8 @@ from nodeeditor.utils import dumpException
 
 EDGE_TYPE_DIRECT = 1        #:
 EDGE_TYPE_BEZIER = 2        #:
+EDGE_TYPE_SQUARE = 3        #:
+EDGE_TYPE_DEFAULT = EDGE_TYPE_BEZIER
 
 DEBUG = False
 
@@ -308,3 +310,4 @@ class Edge(Serializable):
 # Edge.registerEdgeValidator(edge_validator_debug)
 # Edge.registerEdgeValidator(edge_cannot_connect_two_outputs_or_two_inputs)
 # Edge.registerEdgeValidator(edge_cannot_connect_input_and_output_of_same_node)
+# Edge.registerEdgeValidator(edge_cannot_connect_input_and_output_of_different_color)
