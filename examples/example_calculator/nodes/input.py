@@ -1,6 +1,8 @@
-from PyQt5.QtCore import *
-from examples.example_calculator.calc_conf import *
-from examples.example_calculator.calc_node_base import *
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QLineEdit
+from examples.example_calculator.calc_conf import register_node, OP_NODE_INPUT
+from examples.example_calculator.calc_node_base import CalcNode, CalcGraphicsNode
+from nodeeditor.node_content_widget import QDMNodeContentWidget
 from nodeeditor.utils import dumpException
 
 

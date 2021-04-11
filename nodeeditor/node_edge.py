@@ -3,7 +3,7 @@
 A module containing NodeEditor's class for representing Edge and Edge Type Constants.
 """
 from collections import OrderedDict
-from nodeeditor.node_graphics_edge import *
+from nodeeditor.node_graphics_edge import QDMGraphicsEdge
 from nodeeditor.node_serializable import Serializable
 from nodeeditor.utils import dumpException
 

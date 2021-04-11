@@ -2,7 +2,6 @@
 """
 A module containing all code for working with History (Undo/Redo)
 """
-from nodeeditor.node_graphics_edge import QDMGraphicsEdge
 from nodeeditor.utils import dumpException
 
 DEBUG = False
@@ -11,7 +10,7 @@ DEBUG_SELECTION = False
 
 class SceneHistory():
     """Class contains all the code for undo/redo operations"""
-    def __init__(self, scene:'Scene'):
+    def __init__(self, scene: 'Scene'):
         """
         :param scene: Reference to the :class:`~nodeeditor.node_scene.Scene`
         :type scene: :class:`~nodeeditor.node_scene.Scene`
@@ -42,7 +41,7 @@ class SceneHistory():
         """Helper function usually used when new or open file requested"""
         self.storeHistory("Initial History Stamp")
 
-    def addHistoryModifiedListener(self, callback:'function'):
+    def addHistoryModifiedListener(self, callback: 'function'):
         """
         Register callback for `HistoryModified` event
 
@@ -50,7 +49,7 @@ class SceneHistory():
         """
         self._history_modified_listeners.append(callback)
 
-    def addHistoryStoredListener(self, callback:'function'):
+    def addHistoryStoredListener(self, callback: 'function'):
         """
         Register callback for `HistoryStored` event
 
@@ -58,7 +57,7 @@ class SceneHistory():
         """
         self._history_stored_listeners.append(callback)
 
-    def addHistoryRestoredListener(self, callback:'function'):
+    def addHistoryRestoredListener(self, callback: 'function'):
         """
         Register callback for `HistoryRestored` event
 
@@ -116,7 +115,7 @@ class SceneHistory():
         for callback in self._history_restored_listeners: callback()
 
 
-    def storeHistory(self, desc:str, setModified:bool=False):
+    def storeHistory(self, desc: str, setModified: bool=False):
         """
         Store History Stamp into History Stack
 
@@ -172,7 +171,7 @@ class SceneHistory():
             elif hasattr(item, 'edge'): sel_obj['edges'].append(item.edge.id)
         return sel_obj
 
-    def createHistoryStamp(self, desc:str) -> dict:
+    def createHistoryStamp(self, desc: str) -> dict:
         """
         Create History Stamp. Internally serialize whole scene and the current selection
 
@@ -188,7 +187,7 @@ class SceneHistory():
 
         return history_stamp
 
-    def restoreHistoryStamp(self, history_stamp:dict):
+    def restoreHistoryStamp(self, history_stamp: dict):
         """
         Restore History Stamp to current `Scene` with selection of items included
 

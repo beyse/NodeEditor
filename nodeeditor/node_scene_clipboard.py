@@ -15,7 +15,7 @@ class SceneClipboard():
     """
     Class contains all the code for serialization/deserialization from Clipboard
     """
-    def __init__(self, scene:'Scene'):
+    def __init__(self, scene: 'Scene'):
         """
         :param scene: Reference to the :class:`~nodeeditor.node_scene.Scene`
         :type scene: :class:`~nodeeditor.node_scene.Scene`
@@ -26,7 +26,7 @@ class SceneClipboard():
         """
         self.scene = scene
 
-    def serializeSelected(self, delete:bool=False) -> OrderedDict:
+    def serializeSelected(self, delete: bool=False) -> OrderedDict:
         """
         Serializes selected items in the Scene into ``OrderedDict``
 
@@ -89,7 +89,7 @@ class SceneClipboard():
 
         return data
 
-    def deserializeFromClipboard(self, data:dict, *args, **kwargs):
+    def deserializeFromClipboard(self, data: dict, *args, **kwargs):
         """
         Deserializes data from Clipboard.
 

@@ -1,7 +1,5 @@
-from PyQt5.QtCore import *
-from examples.example_calculator.calc_conf import *
-from examples.example_calculator.calc_node_base import *
-from nodeeditor.utils import dumpException
+from examples.example_calculator.calc_conf import register_node, OP_NODE_ADD, OP_NODE_SUB, OP_NODE_MUL, OP_NODE_DIV
+from examples.example_calculator.calc_node_base import CalcNode
 
 
 @register_node(OP_NODE_ADD)

@@ -3,8 +3,8 @@
 A module containing `Graphics View` for NodeEditor
 """
 from PyQt5.QtWidgets import QGraphicsView, QApplication
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
+from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QEvent, QPointF, QRectF
+from PyQt5.QtGui import QPainter, QDragEnterEvent, QDropEvent, QMouseEvent, QKeyEvent, QWheelEvent
 
 from nodeeditor.node_graphics_socket import QDMGraphicsSocket
 from nodeeditor.node_graphics_edge import QDMGraphicsEdge
@@ -47,7 +47,7 @@ class QDMGraphicsView(QGraphicsView):
     #: pyqtSignal emitted when cursor position on the `Scene` has changed
     scenePosChanged = pyqtSignal(int, int)
 
-    def __init__(self, grScene:'QDMGraphicsScene', parent:'QWidget'=None):
+    def __init__(self, grScene: 'QDMGraphicsScene', parent: 'QWidget'=None):
         """
         :param grScene: reference to the :class:`~nodeeditor.node_graphics_scene.QDMGraphicsScene`
         :type grScene: :class:`~nodeeditor.node_graphics_scene.QDMGraphicsScene`
@@ -127,15 +127,15 @@ class QDMGraphicsView(QGraphicsView):
         """Helper function to re-set the grView's State Machine state to the default"""
         self.mode = MODE_NOOP
 
-    def dragEnterEvent(self, event:QDragEnterEvent):
+    def dragEnterEvent(self, event: QDragEnterEvent):
         """Trigger our registered `Drag Enter` events"""
         for callback in self._drag_enter_listeners: callback(event)
 
-    def dropEvent(self, event:QDropEvent):
+    def dropEvent(self, event: QDropEvent):
         """Trigger our registered `Drop` events"""
         for callback in self._drop_listeners: callback(event)
 
-    def addDragEnterListener(self, callback:'function'):
+    def addDragEnterListener(self, callback: 'function'):
         """
         Register callback for `Drag Enter` event
 
@@ -143,7 +143,7 @@ class QDMGraphicsView(QGraphicsView):
         """
         self._drag_enter_listeners.append(callback)
 
-    def addDropListener(self, callback:'function'):
+    def addDropListener(self, callback: 'function'):
         """
         Register callback for `Drop` event
 
@@ -151,7 +151,7 @@ class QDMGraphicsView(QGraphicsView):
         """
         self._drop_listeners.append(callback)
 
-    def mousePressEvent(self, event:QMouseEvent):
+    def mousePressEvent(self, event: QMouseEvent):
         """Dispatch Qt's mousePress event to corresponding function below"""
         if event.button() == Qt.MiddleButton:
             self.middleMouseButtonPress(event)
@@ -162,7 +162,7 @@ class QDMGraphicsView(QGraphicsView):
         else:
             super().mousePressEvent(event)
 
-    def mouseReleaseEvent(self, event:QMouseEvent):
+    def mouseReleaseEvent(self, event: QMouseEvent):
         """Dispatch Qt's mouseRelease event to corresponding function below"""
         if event.button() == Qt.MiddleButton:
             self.middleMouseButtonRelease(event)
@@ -174,7 +174,7 @@ class QDMGraphicsView(QGraphicsView):
             super().mouseReleaseEvent(event)
 
 
-    def middleMouseButtonPress(self, event:QMouseEvent):
+    def middleMouseButtonPress(self, event: QMouseEvent):
         """When Middle mouse button was pressed"""
 
         item = self.getItemAtClick(event)
@@ -219,7 +219,7 @@ class QDMGraphicsView(QGraphicsView):
 
 
 
-    def middleMouseButtonRelease(self, event:QMouseEvent):
+    def middleMouseButtonRelease(self, event: QMouseEvent):
         """When Middle mouse button was released"""
         fakeEvent = QMouseEvent(event.type(), event.localPos(), event.screenPos(),
                                 Qt.LeftButton, event.buttons() & ~Qt.LeftButton, event.modifiers())
@@ -227,7 +227,7 @@ class QDMGraphicsView(QGraphicsView):
         self.setDragMode(QGraphicsView.RubberBandDrag)
 
 
-    def leftMouseButtonPress(self, event:QMouseEvent):
+    def leftMouseButtonPress(self, event: QMouseEvent):
         """When Left  mouse button was pressed"""
 
         # get the item we clicked on
@@ -371,12 +371,12 @@ class QDMGraphicsView(QGraphicsView):
         super().mouseReleaseEvent(event)
 
 
-    def rightMouseButtonPress(self, event:QMouseEvent):
+    def rightMouseButtonPress(self, event: QMouseEvent):
         """When Right mouse button was pressed"""
         super().mousePressEvent(event)
 
 
-    def rightMouseButtonRelease(self, event:QMouseEvent):
+    def rightMouseButtonRelease(self, event: QMouseEvent):
         """When Right mouse button was release"""
 
         ## cannot be because with dragging RMB we spawn Create New Node Context Menu
@@ -388,7 +388,7 @@ class QDMGraphicsView(QGraphicsView):
         super().mouseReleaseEvent(event)
 
 
-    def mouseMoveEvent(self, event:QMouseEvent):
+    def mouseMoveEvent(self, event: QMouseEvent):
         """Overriden Qt's ``mouseMoveEvent`` handling Scene/View logic"""
         scenepos = self.mapToScene(event.pos())
 
@@ -421,7 +421,7 @@ class QDMGraphicsView(QGraphicsView):
         super().mouseMoveEvent(event)
 
 
-    def keyPressEvent(self, event:QKeyEvent):
+    def keyPressEvent(self, event: QKeyEvent):
         """
         .. note::
             This overridden Qt's method was used for handling key shortcuts, before we implemented proper
@@ -503,7 +503,7 @@ class QDMGraphicsView(QGraphicsView):
         if event.modifiers() & Qt.AltModifier: out += "ALT "
         return out
 
-    def getItemAtClick(self, event:QEvent) -> 'QGraphicsItem':
+    def getItemAtClick(self, event: QEvent) -> 'QGraphicsItem':
         """Return the object on which we've clicked/release mouse button
 
         :param event: Qt's mouse or key event
@@ -530,7 +530,7 @@ class QDMGraphicsView(QGraphicsView):
 
 
 
-    def wheelEvent(self, event:QWheelEvent):
+    def wheelEvent(self, event: QWheelEvent):
         """overridden Qt's ``wheelEvent``. This handles zooming"""
         # calculate our zoom Factor
         zoomOutFactor = 1 / self.zoomInFactor

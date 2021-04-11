@@ -1,18 +1,22 @@
 import os
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+from PyQt5.QtGui import QIcon, QKeySequence
+from PyQt5.QtWidgets import QMdiArea, QWidget, QDockWidget, QAction, QMessageBox, QFileDialog
+from PyQt5.QtCore import Qt, QSignalMapper
 
 from nodeeditor.utils import loadStylesheets
 from nodeeditor.node_editor_window import NodeEditorWindow
 from examples.example_calculator.calc_sub_window import CalculatorSubWindow
 from examples.example_calculator.calc_drag_listbox import QDMDragListbox
 from nodeeditor.utils import dumpException, pp
-from examples.example_calculator.calc_conf import *
+from examples.example_calculator.calc_conf import CALC_NODES
 
 # Enabling edge validators
 from nodeeditor.node_edge import Edge
-from nodeeditor.node_edge_validators import *
+from nodeeditor.node_edge_validators import (
+    edge_validator_debug,
+    edge_cannot_connect_two_outputs_or_two_inputs,
+    edge_cannot_connect_input_and_output_of_same_node
+)
 Edge.registerEdgeValidator(edge_validator_debug)
 Edge.registerEdgeValidator(edge_cannot_connect_two_outputs_or_two_inputs)
 Edge.registerEdgeValidator(edge_cannot_connect_input_and_output_of_same_node)

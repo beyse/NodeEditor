@@ -2,10 +2,9 @@
 """
 A module containing the Main Window class
 """
-import os
-import json
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
+import os, json
+from PyQt5.QtCore import QSize, QSettings, QPoint
+from PyQt5.QtWidgets import QMainWindow, QLabel, QAction, QMessageBox, QFileDialog, QApplication
 from nodeeditor.node_editor_widget import NodeEditorWidget
 
 

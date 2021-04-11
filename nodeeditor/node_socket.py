@@ -24,7 +24,8 @@ class Socket(Serializable):
 
     """Class representing Socket."""
 
-    def __init__(self, node:'Node', index:int=0, position:int=LEFT_TOP, socket_type:int=1, multi_edges:bool=True, count_on_this_node_side:int=1, is_input:bool=False):
+    def __init__(self, node: 'Node', index: int=0, position: int=LEFT_TOP, socket_type: int=1, multi_edges: bool=True,
+                 count_on_this_node_side: int=1, is_input: bool=False):
         """
         :param node: reference to the :class:`~nodeeditor.node_node.Node` containing this `Socket`
         :type node: :class:`~nodeeditor.node_node.Node`
@@ -84,7 +85,7 @@ class Socket(Serializable):
         self.node.scene.grScene.removeItem(self.grSocket)
         del self.grSocket
 
-    def changeSocketType(self, new_socket_type:int) -> bool:
+    def changeSocketType(self, new_socket_type: int) -> bool:
         """
         Change the Socket Type
 
@@ -125,7 +126,7 @@ class Socket(Serializable):
         """
         return len(self.edges) > 0
 
-    def isConnected(self, edge:'Edge') -> bool:
+    def isConnected(self, edge: 'Edge') -> bool:
         """
         Returns ``True`` if :class:`~nodeeditor.node_edge.Edge` is connected to this `Socket`
 
@@ -136,7 +137,7 @@ class Socket(Serializable):
         """
         return edge in self.edges
 
-    def addEdge(self, edge:'Edge'):
+    def addEdge(self, edge: 'Edge'):
         """
         Append an Edge to the list of connected Edges
 
@@ -145,7 +146,7 @@ class Socket(Serializable):
         """
         self.edges.append(edge)
 
-    def removeEdge(self, edge:'Edge'):
+    def removeEdge(self, edge: 'Edge'):
         """
         Disconnect passed :class:`~nodeeditor.node_edge.Edge` from this `Socket`
         :param edge: :class:`~nodeeditor.node_edge.Edge` to disconnect
@@ -157,7 +158,7 @@ class Socket(Serializable):
                 print("!W:", "Socket::removeEdge", "wanna remove edge", edge,
                       "from self.edges but it's not in the list!")
 
-    def removeAllEdges(self, silent=False):
+    def removeAllEdges(self, silent: bool=False):
         """Disconnect all `Edges` from this `Socket`"""
         while self.edges:
             edge = self.edges.pop(0)
@@ -166,7 +167,7 @@ class Socket(Serializable):
             else:
                 edge.remove()       # just remove all with notifications
 
-    def determineMultiEdges(self, data:dict) -> bool:
+    def determineMultiEdges(self, data: dict) -> bool:
         """
         Deserialization helper function. In our tutorials we created a new version of graph data format.
         This function is here to help solve the issue of opening older files in the newer format.
@@ -192,7 +193,7 @@ class Socket(Serializable):
             ('socket_type', self.socket_type),
         ])
 
-    def deserialize(self, data:dict, hashmap:dict={}, restore_id:bool=True) -> bool:
+    def deserialize(self, data: dict, hashmap: dict={}, restore_id: bool=True) -> bool:
         if restore_id: self.id = data['id']
         self.is_multi_edges = self.determineMultiEdges(data)
         self.changeSocketType(data['socket_type'])

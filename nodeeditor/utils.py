@@ -3,8 +3,8 @@
 Module with some helper functions
 """
 import traceback
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
+from PyQt5.QtCore import QFile
+from PyQt5.QtWidgets import QApplication
 from pprint import PrettyPrinter
 
 pp = PrettyPrinter(indent=4).pprint
@@ -22,7 +22,7 @@ def dumpException(e=None):
     traceback.print_exc()
 
 
-def loadStylesheet(filename:str):
+def loadStylesheet(filename: str):
     """
     Loads an qss stylesheet to the current QApplication instance
 

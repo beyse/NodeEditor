@@ -4,6 +4,7 @@ A module containing Serializable "Interface". We pretend its an abstract class
 """
 from collections import OrderedDict
 
+
 class Serializable():
     def __init__(self):
         """
@@ -22,7 +23,7 @@ class Serializable():
         """
         raise NotImplemented()
 
-    def deserialize(self, data:dict, hashmap:dict={}, restore_id:bool=True) -> bool:
+    def deserialize(self, data: dict, hashmap: dict={}, restore_id: bool=True) -> bool:
         """
         Deserialization method which take data in python ``dict`` format with helping `hashmap` containing
         references to existing entities.

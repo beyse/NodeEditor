@@ -1,10 +1,11 @@
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-from examples.example_calculator.calc_conf import *
+from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtCore import QDataStream, QIODevice, Qt
+from PyQt5.QtWidgets import QAction, QGraphicsProxyWidget, QMenu
+
+from examples.example_calculator.calc_conf import CALC_NODES, get_class_from_opcode, LISTBOX_MIMETYPE
 from nodeeditor.node_editor_widget import NodeEditorWidget
-from examples.example_calculator.calc_node_base import *
 from nodeeditor.node_edge import EDGE_TYPE_DIRECT, EDGE_TYPE_BEZIER, EDGE_TYPE_SQUARE
-from nodeeditor.node_graphics_view import MODE_EDGE_DRAG#, MODE_EDGES_REROUTING
+from nodeeditor.node_graphics_view import MODE_EDGE_DRAG
 from nodeeditor.utils import dumpException
 
 DEBUG = False

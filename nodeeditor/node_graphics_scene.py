@@ -3,9 +3,9 @@
 A module containing Graphic representation of :class:`~nodeeditor.node_scene.Scene`
 """
 import math
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
+from PyQt5.QtWidgets import QGraphicsScene, QWidget
+from PyQt5.QtCore import pyqtSignal, QRect, QLine, Qt
+from PyQt5.QtGui import QColor, QPen, QFont, QPainter
 from nodeeditor.utils import dumpException
 from nodeeditor.node_graphics_view import STATE_STRING, DEBUG_STATE
 
@@ -17,7 +17,7 @@ class QDMGraphicsScene(QGraphicsScene):
     #: pyqtSignal emitted when items are deselected in the `Scene`
     itemsDeselected = pyqtSignal()
 
-    def __init__(self, scene:'Scene', parent:QWidget=None):
+    def __init__(self, scene: 'Scene', parent: QWidget=None):
         """
         :param scene: reference to the :class:`~nodeeditor.node_scene.Scene`
         :type scene: :class:`~nodeeditor.node_scene.Scene`
@@ -67,7 +67,7 @@ class QDMGraphicsScene(QGraphicsScene):
         """Overriden Qt's dragMoveEvent to enable Qt's Drag Events"""
         pass
 
-    def setGrScene(self, width:int, height:int):
+    def setGrScene(self, width: int, height: int):
         """Set `width` and `height` of the `Graphics Scene`"""
         self.setSceneRect(-width // 2, -height // 2, width, height)
 

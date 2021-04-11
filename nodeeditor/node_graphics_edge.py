@@ -2,9 +2,9 @@
 """
 A module containing the Graphics representation of an Edge
 """
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
+from PyQt5.QtWidgets import QGraphicsPathItem, QWidget, QGraphicsItem
+from PyQt5.QtGui import QColor, QPen, QPainterPath
+from PyQt5.QtCore import Qt, QRectF, QPointF
 
 from nodeeditor.node_graphics_edge_path import GraphicsEdgePathBezier, GraphicsEdgePathDirect, GraphicsEdgePathSquare
 
