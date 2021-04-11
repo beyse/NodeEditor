@@ -3,9 +3,9 @@
 A module containing Graphic representation of :class:`~nodeeditor.node_scene.Scene`
 """
 import math
-from PyQt5.QtWidgets import QGraphicsScene, QWidget
-from PyQt5.QtCore import pyqtSignal, QRect, QLine, Qt
-from PyQt5.QtGui import QColor, QPen, QFont, QPainter
+from qtpy.QtWidgets import QGraphicsScene, QWidget
+from qtpy.QtCore import Signal, QRect, QLine, Qt
+from qtpy.QtGui import QColor, QPen, QFont, QPainter
 from nodeeditor.utils import dumpException
 from nodeeditor.node_graphics_view import STATE_STRING, DEBUG_STATE
 
@@ -13,9 +13,9 @@ from nodeeditor.node_graphics_view import STATE_STRING, DEBUG_STATE
 class QDMGraphicsScene(QGraphicsScene):
     """Class representing Graphic of :class:`~nodeeditor.node_scene.Scene`"""
     #: pyqtSignal emitted when some item is selected in the `Scene`
-    itemSelected = pyqtSignal()
+    itemSelected = Signal()
     #: pyqtSignal emitted when items are deselected in the `Scene`
-    itemsDeselected = pyqtSignal()
+    itemsDeselected = Signal()
 
     def __init__(self, scene: 'Scene', parent: QWidget=None):
         """
@@ -97,10 +97,12 @@ class QDMGraphicsScene(QGraphicsScene):
 
         # draw the lines
         painter.setPen(self._pen_light)
-        painter.drawLines(*lines_light)
+        try: painter.drawLines(*lines_light)                    # supporting PyQt5
+        except TypeError: painter.drawLines(lines_light)        # supporting PySide2
 
         painter.setPen(self._pen_dark)
-        painter.drawLines(*lines_dark)
+        try: painter.drawLines(*lines_dark)                     # supporting PyQt5
+        except TypeError: painter.drawLines(lines_dark)         # supporting PySide2
 
         if DEBUG_STATE:
             try:

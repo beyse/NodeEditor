@@ -1,7 +1,7 @@
 import os
-from PyQt5.QtGui import QIcon, QKeySequence
-from PyQt5.QtWidgets import QMdiArea, QWidget, QDockWidget, QAction, QMessageBox, QFileDialog
-from PyQt5.QtCore import Qt, QSignalMapper
+from qtpy.QtGui import QIcon, QKeySequence
+from qtpy.QtWidgets import QMdiArea, QWidget, QDockWidget, QAction, QMessageBox, QFileDialog
+from qtpy.QtCore import Qt, QSignalMapper
 
 from nodeeditor.utils import loadStylesheets
 from nodeeditor.node_editor_window import NodeEditorWindow

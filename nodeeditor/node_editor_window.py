@@ -3,8 +3,8 @@
 A module containing the Main Window class
 """
 import os, json
-from PyQt5.QtCore import QSize, QSettings, QPoint
-from PyQt5.QtWidgets import QMainWindow, QLabel, QAction, QMessageBox, QFileDialog, QApplication
+from qtpy.QtCore import QSize, QSettings, QPoint
+from qtpy.QtWidgets import QMainWindow, QLabel, QAction, QMessageBox, QFileDialog, QApplication
 from nodeeditor.node_editor_widget import NodeEditorWidget
 
 

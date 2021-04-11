@@ -1,5 +1,5 @@
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QLineEdit
+from qtpy.QtWidgets import QLineEdit
+from qtpy.QtCore import Qt
 from examples.example_calculator.calc_conf import register_node, OP_NODE_INPUT
 from examples.example_calculator.calc_node_base import CalcNode, CalcGraphicsNode
 from nodeeditor.node_content_widget import QDMNodeContentWidget

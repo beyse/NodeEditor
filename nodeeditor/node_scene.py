@@ -4,14 +4,13 @@ A module containing the representation of the NodeEditor's Scene
 """
 import os, json
 from collections import OrderedDict
-from nodeeditor.utils import dumpException
+from nodeeditor.utils import dumpException, pp
 from nodeeditor.node_serializable import Serializable
 from nodeeditor.node_graphics_scene import QDMGraphicsScene
 from nodeeditor.node_node import Node
 from nodeeditor.node_edge import Edge
 from nodeeditor.node_scene_history import SceneHistory
 from nodeeditor.node_scene_clipboard import SceneClipboard
-from nodeeditor.utils import pp
 
 
 DEBUG_REMOVE_WARNINGS = False

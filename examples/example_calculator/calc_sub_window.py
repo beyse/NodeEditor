@@ -1,6 +1,6 @@
-from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtCore import QDataStream, QIODevice, Qt
-from PyQt5.QtWidgets import QAction, QGraphicsProxyWidget, QMenu
+from qtpy.QtGui import QIcon, QPixmap
+from qtpy.QtCore import QDataStream, QIODevice, Qt
+from qtpy.QtWidgets import QAction, QGraphicsProxyWidget, QMenu
 
 from examples.example_calculator.calc_conf import CALC_NODES, get_class_from_opcode, LISTBOX_MIMETYPE
 from nodeeditor.node_editor_widget import NodeEditorWidget

@@ -3,8 +3,8 @@
 Module with some helper functions
 """
 import traceback
-from PyQt5.QtCore import QFile
-from PyQt5.QtWidgets import QApplication
+from qtpy.QtCore import QFile
+from qtpy.QtWidgets import QApplication
 from pprint import PrettyPrinter
 
 pp = PrettyPrinter(indent=4).pprint

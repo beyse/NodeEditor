@@ -2,9 +2,9 @@
 """
 A module containing `Graphics View` for NodeEditor
 """
-from PyQt5.QtWidgets import QGraphicsView, QApplication
-from PyQt5.QtCore import pyqtSignal, QPoint, Qt, QEvent, QPointF, QRectF
-from PyQt5.QtGui import QPainter, QDragEnterEvent, QDropEvent, QMouseEvent, QKeyEvent, QWheelEvent
+from qtpy.QtWidgets import QGraphicsView, QApplication
+from qtpy.QtCore import Signal, QPoint, Qt, QEvent, QPointF, QRectF
+from qtpy.QtGui import QPainter, QDragEnterEvent, QDropEvent, QMouseEvent, QKeyEvent, QWheelEvent
 
 from nodeeditor.node_graphics_socket import QDMGraphicsSocket
 from nodeeditor.node_graphics_edge import QDMGraphicsEdge
@@ -45,7 +45,7 @@ DEBUG_STATE = False
 class QDMGraphicsView(QGraphicsView):
     """Class representing NodeEditor's `Graphics View`"""
     #: pyqtSignal emitted when cursor position on the `Scene` has changed
-    scenePosChanged = pyqtSignal(int, int)
+    scenePosChanged = Signal(int, int)
 
     def __init__(self, grScene: 'QDMGraphicsScene', parent: 'QWidget'=None):
         """
