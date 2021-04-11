@@ -27,7 +27,7 @@ Requirements
 ------------
 
 - Python 3.x
-- PyQt5
+- PyQt5 or PySide2 (using wrapper QtPy)
 
 Installation
 ------------
