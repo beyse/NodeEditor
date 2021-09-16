@@ -3,7 +3,7 @@ from qtpy.QtCore import QPointF
 from qtpy.QtGui import QPainterPath
 
 
-EDGE_CP_ROUNDNESS = 100     #: Bezier control point distance on the line
+EDGE_CP_ROUNDNESS = 1     #: Bezier control point distance on the line
 WEIGHT_SOURCE = 0.2         #: factor for square edge to change the midpoint between start and end socket
 
 
@@ -73,8 +73,11 @@ class GraphicsEdgePathBezier(GraphicsEdgePathBase):
                 ) * EDGE_CP_ROUNDNESS
 
         path = QPainterPath(QPointF(self.owner.posSource[0], self.owner.posSource[1]))
-        path.cubicTo( s[0] + cpx_s, s[1] + cpy_s, d[0] + cpx_d, d[1] + cpy_d, self.owner.posDestination[0], self.owner.posDestination[1])
-
+        path.cubicTo( 
+            s[0] + cpx_s, s[1] + cpy_s, 
+            d[0] + cpx_d, d[1] + cpy_d, 
+            self.owner.posDestination[0], 
+            self.owner.posDestination[1])
         return path
 
 
