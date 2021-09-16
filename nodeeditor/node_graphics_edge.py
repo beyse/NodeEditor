@@ -55,12 +55,12 @@ class QDMGraphicsEdge(QGraphicsPathItem):
         self._color_hovered = QColor("#FF37A6FF")
         self._pen = QPen(self._color)
         self._pen_selected = QPen(self._color_selected)
-        self._pen_dragging = QPen(QColor("#7f7f7f"))
+        self._pen_dragging = QPen(QColor("#b9b9b9"))
         self._pen_hovered = QPen(self._color_hovered)
-        self._pen.setWidthF(2.0)
+        self._pen.setWidthF(1.3)
         self._pen_selected.setWidthF(2.0)
-        self._pen_dragging.setWidthF(2.0)
-        self._pen_hovered.setWidthF(3.0)
+        self._pen_dragging.setWidthF(1.3)
+        self._pen_hovered.setWidthF(2.0)
 
     def createEdgePathCalculator(self):
         """Create instance of :class:`~nodeeditor.node_graphics_edge_path.GraphicsEdgePathBase`"""
