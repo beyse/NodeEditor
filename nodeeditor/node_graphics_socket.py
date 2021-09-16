@@ -2,6 +2,8 @@
 """
 A module containing Graphics representation of a :class:`~nodeeditor.node_socket.Socket`
 """
+from PyQt5.QtGui import QFont, QPainterPath
+from PyQt5.QtWidgets import QGraphicsRectItem, QGraphicsTextItem
 from qtpy.QtWidgets import QGraphicsItem
 from qtpy.QtGui import QColor, QBrush, QPen
 from qtpy.QtCore import Qt, QRectF
@@ -29,7 +31,7 @@ class QDMGraphicsSocket(QGraphicsItem):
 
         self.isHighlighted = False
 
-        self.radius = 6.0
+        self.radius = 5.0
         self.outline_width = 1.0
         self.initAssets()
 
@@ -69,6 +71,38 @@ class QDMGraphicsSocket(QGraphicsItem):
         painter.setBrush(self._brush)
         painter.setPen(self._pen if not self.isHighlighted else self._pen_highlight)
         painter.drawEllipse(-self.radius, -self.radius, 2 * self.radius, 2 * self.radius)
+        
+        """Set up the title Graphics representation: font, color, position, etc."""
+        self.title_item = QGraphicsTextItem(self)
+        #self.title_item.node = self.node
+        self._title_color = Qt.white
+        self._title_font = QFont("Arial", 10)
+        self.title_horizontal_padding = 4.0
+        self.title_vertical_padding = 4.0
+        self.width = 100
+        self.title_height = 20,
+        self.edge_roundness = 0
+        self.title_item.setDefaultTextColor(self._title_color)
+        self.title_item.setFont(self._title_font)
+        self.title_item.setPos(5, -12)
+        self.title_item.setTextWidth(
+            self.width
+            - 2 * self.title_horizontal_padding
+        )
+        # title
+        self.title_item.setPlainText("Test")
+        path_title = QPainterPath()
+        path_title.setFillRule(Qt.WindingFill)
+
+        self._brush_title = QBrush(QColor("#FF313131"))
+
+        #path_title.addRoundedRect(0, 0, 30, 5, 0, 0)
+        #path_title.addRect(0, self.title_height - self.edge_roundness, self.edge_roundness, self.edge_roundness)
+        #path_title.addRect(self.width - self.edge_roundness, self.title_height - self.edge_roundness, self.edge_roundness, self.edge_roundness)
+        painter.setPen(Qt.NoPen)
+        painter.setBrush(self._brush_title)
+        painter.drawPath(path_title.simplified())
+
 
     def boundingRect(self) -> QRectF:
         """Defining Qt' bounding rectangle"""
