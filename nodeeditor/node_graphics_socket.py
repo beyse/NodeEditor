@@ -66,12 +66,6 @@ class QDMGraphicsSocket(QGraphicsItem):
         self._pen_highlight.setWidthF(2.0)
         self._brush = QBrush(self._color_background)
 
-    def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
-        """Painting a circle"""
-        painter.setBrush(self._brush)
-        painter.setPen(self._pen if not self.isHighlighted else self._pen_highlight)
-        painter.drawEllipse(-self.radius, -self.radius, 2 * self.radius, 2 * self.radius)
-        
         """Set up the title Graphics representation: font, color, position, etc."""
         self.title_item = QGraphicsTextItem(self)
         #self.title_item.node = self.node
@@ -91,17 +85,19 @@ class QDMGraphicsSocket(QGraphicsItem):
         )
         # title
         self.title_item.setPlainText("Test")
-        path_title = QPainterPath()
-        path_title.setFillRule(Qt.WindingFill)
-
+        self.path_title = QPainterPath()
+        self.path_title.setFillRule(Qt.WindingFill)
         self._brush_title = QBrush(QColor("#FF313131"))
 
-        #path_title.addRoundedRect(0, 0, 30, 5, 0, 0)
-        #path_title.addRect(0, self.title_height - self.edge_roundness, self.edge_roundness, self.edge_roundness)
-        #path_title.addRect(self.width - self.edge_roundness, self.title_height - self.edge_roundness, self.edge_roundness, self.edge_roundness)
+
+    def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
+        """Painting a circle"""
+        painter.setBrush(self._brush)
+        painter.setPen(self._pen if not self.isHighlighted else self._pen_highlight)
+        painter.drawEllipse(-self.radius, -self.radius, 2 * self.radius, 2 * self.radius)
         painter.setPen(Qt.NoPen)
         painter.setBrush(self._brush_title)
-        painter.drawPath(path_title.simplified())
+        painter.drawPath(self.path_title.simplified())
 
 
     def boundingRect(self) -> QRectF:
