@@ -68,7 +68,7 @@ class QDMGraphicsNode(QGraphicsItem):
         """Set up internal attributes like `width`, `height`, etc."""
         self.width = 180
         self.height = 240
-        self.edge_roundness = 4.0
+        self.edge_roundness = 2.0
         self.edge_padding = 10.0
         self.title_height = 24.0
         self.title_horizontal_padding = 4.0
@@ -76,22 +76,22 @@ class QDMGraphicsNode(QGraphicsItem):
 
     def initAssets(self):
         """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
-        self._title_color = Qt.white
+        self._title_color = QColor("#000000")
         self._title_font = QFont("Arial", 10)
 
-        self._color = QColor("#7F000000")
-        self._color_selected = QColor("#FFFFA637")
+        self._color = QColor("#999999")
+        self._color_selected = QColor("#52ffb9")
         self._color_hovered = QColor("#FF37A6FF")
 
         self._pen_default = QPen(self._color)
-        self._pen_default.setWidthF(2.0)
+        self._pen_default.setWidthF(0.8)
         self._pen_selected = QPen(self._color_selected)
-        self._pen_selected.setWidthF(2.0)
+        self._pen_selected.setWidthF(2)
         self._pen_hovered = QPen(self._color_hovered)
-        self._pen_hovered.setWidthF(3.0)
+        self._pen_hovered.setWidthF(2)
 
-        self._brush_title = QBrush(QColor("#FF313131"))
-        self._brush_background = QBrush(QColor("#E3212121"))
+        self._brush_title = QBrush(QColor("#dddddd"))
+        self._brush_background = QBrush(QColor("#dbf1f1f1"))
 
     def onSelected(self):
         """Our event handling when the node was selected"""
@@ -218,11 +218,15 @@ class QDMGraphicsNode(QGraphicsItem):
         path_outline = QPainterPath()
         path_outline.addRoundedRect(-1, -1, self.width+2, self.height+2, self.edge_roundness, self.edge_roundness)
         painter.setBrush(Qt.NoBrush)
-        if self.hovered:
+        
+        if self.isSelected():
+            painter.setPen(self._pen_selected)
+            painter.drawPath(path_outline.simplified())
+        elif self.hovered:
             painter.setPen(self._pen_hovered)
             painter.drawPath(path_outline.simplified())
             painter.setPen(self._pen_default)
             painter.drawPath(path_outline.simplified())
         else:
-            painter.setPen(self._pen_default if not self.isSelected() else self._pen_selected)
+            painter.setPen(self._pen_default)
             painter.drawPath(path_outline.simplified())
