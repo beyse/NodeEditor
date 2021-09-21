@@ -40,17 +40,17 @@ class QDMGraphicsScene(QGraphicsScene):
         self.setItemIndexMethod(QGraphicsScene.NoIndex)
 
         # settings
-        self.gridSize = 20
-        self.gridSquares = 5
+        self.gridSize = 50
+        self.gridSquares = 20
 
         self.initAssets()
         self.setBackgroundBrush(self._color_background)
 
     def initAssets(self):
         """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
-        self._color_background = QColor("#ffffff")
-        self._color_light = QColor("#eeeeee")
-        self._color_dark = QColor("#e8e8e8")
+        self._color_background = QColor("#1a1a1a")
+        self._color_light = QColor("#232323")
+        self._color_dark = QColor("#232323")
         self._color_state = QColor("#ccc")
 
         self._pen_light = QPen(self._color_light)
