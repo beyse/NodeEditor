@@ -21,7 +21,6 @@ class CalcGraphicsNode(QDMGraphicsNode):
 
     def initAssets(self):
         super().initAssets()
-        self.icons = QImage("icons/status_icons.png")
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
         super().paint(painter, QStyleOptionGraphicsItem, widget)
@@ -29,13 +28,6 @@ class CalcGraphicsNode(QDMGraphicsNode):
         offset = 24.0
         if self.node.isDirty(): offset = 0.0
         if self.node.isInvalid(): offset = 48.0
-
-        painter.drawImage(
-            QRectF(-10, -10, 24.0, 24.0),
-            self.icons,
-            QRectF(offset, 0, 24.0, 24.0)
-        )
-
 
 class CalcContent(QDMNodeContentWidget):
     def initUI(self):
