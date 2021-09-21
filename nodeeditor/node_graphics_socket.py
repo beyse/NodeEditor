@@ -2,7 +2,7 @@
 """
 A module containing Graphics representation of a :class:`~nodeeditor.node_socket.Socket`
 """
-from PyQt5.QtGui import QFont, QPainterPath
+from PyQt5.QtGui import QFont, QFontMetrics, QPainterPath
 from PyQt5.QtWidgets import QGraphicsRectItem, QGraphicsTextItem
 from qtpy.QtWidgets import QGraphicsItem
 from qtpy.QtGui import QColor, QBrush, QPen
@@ -78,13 +78,34 @@ class QDMGraphicsSocket(QGraphicsItem):
         self.edge_roundness = 0
         self.title_item.setDefaultTextColor(self._title_color)
         self.title_item.setFont(self._title_font)
-        self.title_item.setPos(5, -12)
+        
         self.title_item.setTextWidth(
             self.width
             - 2 * self.title_horizontal_padding
         )
         # title
-        self.title_item.setPlainText("Test")
+
+        if self.socket.is_input:
+            text = "Input"
+            metrics = QFontMetrics(self._title_font)
+            width = metrics.width(text)
+            height = metrics.height()
+            print('text = {}'.format(text))
+            print('width = {}'.format(width))
+            print('height = {}'.format(height))
+            self.title_item.setPlainText(text)
+            self.title_item.setPos(5, -12)
+        elif self.socket.is_output:
+            text = "Output"
+            metrics = QFontMetrics(self._title_font)
+            width = metrics.width(text)
+            height = metrics.height()
+            print('text = {}'.format(text))
+            print('width = {}'.format(width))
+            print('height = {}'.format(height))
+            self.title_item.setPlainText(text)
+            self.title_item.setPos(-(width+12), -12)
+
         self.path_title = QPainterPath()
         self.path_title.setFillRule(Qt.WindingFill)
         self._brush_title = QBrush(QColor("#000000"))
