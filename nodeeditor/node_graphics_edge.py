@@ -52,7 +52,7 @@ class QDMGraphicsEdge(QGraphicsPathItem):
 
     def initAssets(self):
         """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
-        self._color = self._default_color = QColor("#001000")
+        self._color = self._default_color = QColor("#ffffff")
         self._color_selected = QColor("#00ff00")
         self._color_hovered = QColor("#FF37A6FF")
         self._pen = QPen(self._color)
@@ -206,7 +206,7 @@ class QDMGraphicsEdge(QGraphicsPathItem):
         tri_path.addPolygon(triangle)
         #tri_path.setFillRule(Qt.WindingFill)
 
-        brush = QBrush(QColor("#000000"))
+        brush = QBrush(self._default_color)
 
         painter.setBrush(Qt.NoBrush)
 
