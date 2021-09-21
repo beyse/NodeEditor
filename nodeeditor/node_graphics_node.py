@@ -80,8 +80,8 @@ class QDMGraphicsNode(QGraphicsItem):
         self._title_font = QFont("Arial", 10)
 
         self._color = QColor("#999999")
-        self._color_selected = QColor("#52ffb9")
-        self._color_hovered = QColor("#FF37A6FF")
+        self._color_hovered = QColor("#52ffb9")
+        self._color_selected = QColor("#FF37A6FF")
 
         self._pen_default = QPen(self._color)
         self._pen_default.setWidthF(0.8)
@@ -219,14 +219,14 @@ class QDMGraphicsNode(QGraphicsItem):
         path_outline.addRoundedRect(-1, -1, self.width+2, self.height+2, self.edge_roundness, self.edge_roundness)
         painter.setBrush(Qt.NoBrush)
         
-        if self.isSelected():
-            painter.setPen(self._pen_selected)
-            painter.drawPath(path_outline.simplified())
-        elif self.hovered:
+        #if self.isSelected():
+        #    painter.setPen(self._pen_selected)
+        #    painter.drawPath(path_outline.simplified())
+        if self.hovered:
             painter.setPen(self._pen_hovered)
             painter.drawPath(path_outline.simplified())
-            painter.setPen(self._pen_default)
-            painter.drawPath(path_outline.simplified())
+            #painter.setPen(self._pen_default)
+            #painter.drawPath(path_outline.simplified())
         else:
             painter.setPen(self._pen_default)
             painter.drawPath(path_outline.simplified())
