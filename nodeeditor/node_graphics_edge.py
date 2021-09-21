@@ -2,6 +2,8 @@
 """
 A module containing the Graphics representation of an Edge
 """
+from PyQt5.QtCore import QPoint
+from PyQt5.QtGui import QBrush, QPolygonF
 from qtpy.QtWidgets import QGraphicsPathItem, QWidget, QGraphicsItem
 from qtpy.QtGui import QColor, QPen, QPainterPath
 from qtpy.QtCore import Qt, QRectF, QPointF
@@ -167,18 +169,49 @@ class QDMGraphicsEdge(QGraphicsPathItem):
             in :func:`~nodeeditor.node_graphics_edge.QDMGraphicsEdge.calcPath` method"""
         self.setPath(self.calcPath())
 
-        painter.setBrush(Qt.NoBrush)
+        path = self.path()
+        tri_path = QPainterPath()
+        
+        tri_offset = 0
+
+
 
         if self.hovered and self.edge.end_socket is not None:
             painter.setPen(self._pen_hovered)
-            painter.drawPath(self.path())
+            painter.drawPath(path)
 
         if self.edge.end_socket is None:
             painter.setPen(self._pen_dragging)
         else:
             painter.setPen(self._pen if not self.isSelected() else self._pen_selected)
+            tri_offset = -5
 
-        painter.drawPath(self.path())
+        
+        
+        painter.drawPath(path)
+        
+        x = self.posDestination[0]
+        y = self.posDestination[1]
+        tri_size = 5
+        stretch_x = 2.5
+        stretch_y = 1
+
+        tri_points = [ 
+            QPointF(x-(stretch_x*tri_size) + tri_offset, y+(stretch_y*tri_size)), 
+            QPointF(x + tri_offset, y),
+            QPointF(x-(stretch_x*tri_size) + tri_offset, y-(stretch_y*tri_size)), 
+            QPointF(x-(stretch_x*tri_size) + tri_offset, y+(stretch_y*tri_size))]
+
+        triangle = QPolygonF(tri_points)
+        tri_path.addPolygon(triangle)
+        #tri_path.setFillRule(Qt.WindingFill)
+
+        brush = QBrush(QColor("#000000"))
+
+        painter.setBrush(Qt.NoBrush)
+
+        painter.setBrush(brush)
+        painter.drawPath(tri_path)
 
     def intersectsWith(self, p1:QPointF, p2:QPointF) -> bool:
         """Does this Graphics Edge intersect with the line between point A and point B ?
