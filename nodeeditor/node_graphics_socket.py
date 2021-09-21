@@ -8,15 +8,6 @@ from qtpy.QtWidgets import QGraphicsItem
 from qtpy.QtGui import QColor, QBrush, QPen
 from qtpy.QtCore import Qt, QRectF
 
-SOCKET_COLORS = [
-    QColor("#FFFF7700"),
-    QColor("#FF52e220"),
-    QColor("#FF0056a6"),
-    QColor("#FFa86db1"),
-    QColor("#FFb54747"),
-    QColor("#FFdbe220"),
-    QColor("#FF888888"),
-]
 
 class QDMGraphicsSocket(QGraphicsItem):
     """Class representing Graphic `Socket` in ``QGraphicsScene``"""
@@ -31,8 +22,8 @@ class QDMGraphicsSocket(QGraphicsItem):
 
         self.isHighlighted = False
 
-        self.radius = 5.0
-        self.outline_width = 1.0
+        self.radius = 7.0
+        self.outline_width = 0.0
         self.initAssets()
 
     @property
@@ -40,10 +31,7 @@ class QDMGraphicsSocket(QGraphicsItem):
         return self.socket.socket_type
 
     def getSocketColor(self, key):
-        """Returns the ``QColor`` for this ``key``"""
-        if type(key) == int: return SOCKET_COLORS[key]
-        elif type(key) == str: return QColor(key)
-        return Qt.transparent
+        return QColor("#22db7e")
 
     def changeSocketType(self):
         """Change the Socket Type"""
@@ -58,7 +46,7 @@ class QDMGraphicsSocket(QGraphicsItem):
         # determine socket color
         self._color_background = self.getSocketColor(self.socket_type)
         self._color_outline = QColor("#FF000000")
-        self._color_highlight = QColor("#FF37A6FF")
+        self._color_highlight = QColor("#84ff7d")
 
         self._pen = QPen(self._color_outline)
         self._pen.setWidthF(self.outline_width)
