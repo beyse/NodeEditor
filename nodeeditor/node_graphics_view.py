@@ -97,7 +97,7 @@ class QDMGraphicsView(QGraphicsView):
         self.zoomClamp = True
         self.zoom = 10
         self.zoomStep = 1
-        self.zoomRange = [0, 10]
+        self.zoomRange = [1, 20]
 
         # listeners
         self._drag_enter_listeners = []
@@ -121,7 +121,7 @@ class QDMGraphicsView(QGraphicsView):
 
     def isSnappingEnabled(self, event: 'QInputEvent' = None) -> bool:
         """Returns ``True`` if snapping is currently enabled"""
-        return EDGE_SNAPPING and (event.modifiers() & Qt.CTRL) if event else True
+        return EDGE_SNAPPING
 
     def resetMode(self):
         """Helper function to re-set the grView's State Machine state to the default"""
