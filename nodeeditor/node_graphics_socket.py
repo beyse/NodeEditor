@@ -69,7 +69,7 @@ class QDMGraphicsSocket(QGraphicsItem):
         """Set up the title Graphics representation: font, color, position, etc."""
         self.title_item = QGraphicsTextItem(self)
         #self.title_item.node = self.node
-        self._title_color = Qt.white
+        self._title_color = QColor("#000000")
         self._title_font = QFont("Arial", 10)
         self.title_horizontal_padding = 4.0
         self.title_vertical_padding = 4.0
@@ -87,7 +87,7 @@ class QDMGraphicsSocket(QGraphicsItem):
         self.title_item.setPlainText("Test")
         self.path_title = QPainterPath()
         self.path_title.setFillRule(Qt.WindingFill)
-        self._brush_title = QBrush(QColor("#FF313131"))
+        self._brush_title = QBrush(QColor("#000000"))
 
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
