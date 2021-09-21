@@ -196,6 +196,9 @@ class QDMGraphicsNode(QGraphicsItem):
         # title
         path_title = QPainterPath()
         path_title.setFillRule(Qt.WindingFill)
+        path_title.addRoundedRect(0, 0, self.width, self.title_height, self.edge_roundness, self.edge_roundness)
+        path_title.addRect(0, self.title_height - self.edge_roundness, self.edge_roundness, self.edge_roundness)
+        path_title.addRect(self.width - self.edge_roundness, self.title_height - self.edge_roundness, self.edge_roundness, self.edge_roundness)
         painter.setPen(Qt.NoPen)
         painter.setBrush(self._brush_title)
         painter.drawPath(path_title.simplified())
@@ -204,27 +207,27 @@ class QDMGraphicsNode(QGraphicsItem):
         # content
         path_content = QPainterPath()
         path_content.setFillRule(Qt.WindingFill)
-        path_content.addRoundedRect(0, 0, self.width, self.height, self.edge_roundness, self.edge_roundness)
-        path_content.addRect(0, 0, self.edge_roundness, self.edge_roundness)
-        #path_content.addRect(self.width - self.edge_roundness, self.title_height, self.edge_roundness, self.edge_roundness)
+        path_content.addRoundedRect(0, self.title_height, self.width, self.height - self.title_height, self.edge_roundness, self.edge_roundness)
+        path_content.addRect(0, self.title_height, self.edge_roundness, self.edge_roundness)
+        path_content.addRect(self.width - self.edge_roundness, self.title_height, self.edge_roundness, self.edge_roundness)
         painter.setPen(Qt.NoPen)
         painter.setBrush(self._brush_background)
         painter.drawPath(path_content.simplified())
 
 
         # outline
-        path_outline = QPainterPath()
-        path_outline.addRoundedRect(-1, -1, self.width+2, self.height+2, self.edge_roundness, self.edge_roundness)
-        painter.setBrush(Qt.NoBrush)
+        #path_outline = QPainterPath()
+        #path_outline.addRoundedRect(-1, -1, self.width+2, self.height+2, self.edge_roundness, self.edge_roundness)
+        #painter.setBrush(Qt.NoBrush)
         
         #if self.isSelected():
         #    painter.setPen(self._pen_selected)
         #    painter.drawPath(path_outline.simplified())
         if self.hovered:
             painter.setPen(self._pen_hovered)
-            painter.drawPath(path_outline.simplified())
+            #painter.drawPath(path_outline.simplified())
             #painter.setPen(self._pen_default)
             #painter.drawPath(path_outline.simplified())
         else:
             painter.setPen(self._pen_default)
-            painter.drawPath(path_outline.simplified())
+            #painter.drawPath(path_outline.simplified())
