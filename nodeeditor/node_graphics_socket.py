@@ -31,7 +31,7 @@ class QDMGraphicsSocket(QGraphicsItem):
         return self.socket.socket_type
 
     def getSocketColor(self, key):
-        return QColor("#22db7e")
+        return QColor("#ec8836")
 
     def changeSocketType(self):
         """Change the Socket Type"""
@@ -46,7 +46,7 @@ class QDMGraphicsSocket(QGraphicsItem):
         # determine socket color
         self._color_background = self.getSocketColor(self.socket_type)
         self._color_outline = QColor("#FF000000")
-        self._color_highlight = QColor("#84ff7d")
+        self._color_highlight = QColor("#c15000")
 
         self._pen = QPen(self._color_outline)
         self._pen.setWidthF(self.outline_width)
@@ -57,7 +57,7 @@ class QDMGraphicsSocket(QGraphicsItem):
         """Set up the title Graphics representation: font, color, position, etc."""
         self.title_item = QGraphicsTextItem(self)
         self._title_color = QColor("#000000")
-        self._title_color_highlighted = QColor("#22db7e")
+        self._title_color_highlighted = QColor("#c15000")
         self._title_font = QFont("Arial", 10)
         self.title_horizontal_padding = 4.0
         self.title_vertical_padding = 4.0
