@@ -52,12 +52,12 @@ class QDMGraphicsEdge(QGraphicsPathItem):
 
     def initAssets(self):
         """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
-        self._color = self._default_color = QColor("#ffffff")
-        self._color_selected = QColor("#00ff00")
-        self._color_hovered = QColor("#FF37A6FF")
+        self._color = self._default_color = QColor("#ececec")
+        self._color_selected = QColor("#ffd373")
+        self._color_hovered = QColor("#ffffff")
         self._pen = QPen(self._color)
         self._pen_selected = QPen(self._color_selected)
-        self._pen_dragging = QPen(QColor("#b9b9b9"))
+        self._pen_dragging = QPen(QColor("#a0a0a0"))
         self._pen_hovered = QPen(self._color_hovered)
         self._pen.setWidthF(1.3)
         self._pen_selected.setWidthF(2.0)
@@ -192,26 +192,26 @@ class QDMGraphicsEdge(QGraphicsPathItem):
         
         x = self.posDestination[0]
         y = self.posDestination[1]
-        tri_size = 5
-        stretch_x = 2.5
-        stretch_y = 1
+        #tri_size = 5
+        #stretch_x = 2.5
+        #stretch_y = 1
 
-        tri_points = [ 
-            QPointF(x-(stretch_x*tri_size) + tri_offset, y+(stretch_y*tri_size)), 
-            QPointF(x + tri_offset, y),
-            QPointF(x-(stretch_x*tri_size) + tri_offset, y-(stretch_y*tri_size)), 
-            QPointF(x-(stretch_x*tri_size) + tri_offset, y+(stretch_y*tri_size))]
+        #tri_points = [ 
+        #    QPointF(x-(stretch_x*tri_size) + tri_offset, y+(stretch_y*tri_size)), 
+        #    QPointF(x + tri_offset, y),
+        #    QPointF(x-(stretch_x*tri_size) + tri_offset, y-(stretch_y*tri_size)), 
+        #    QPointF(x-(stretch_x*tri_size) + tri_offset, y+(stretch_y*tri_size))]
 
-        triangle = QPolygonF(tri_points)
-        tri_path.addPolygon(triangle)
+        #triangle = QPolygonF(tri_points)
+        #tri_path.addPolygon(triangle)
         #tri_path.setFillRule(Qt.WindingFill)
 
-        brush = QBrush(self._default_color)
+        #brush = QBrush(self._default_color)
 
-        painter.setBrush(Qt.NoBrush)
+        #painter.setBrush(Qt.NoBrush)
 
-        painter.setBrush(brush)
-        painter.drawPath(tri_path)
+        #painter.setBrush(brush)
+        #painter.drawPath(tri_path)
 
     def intersectsWith(self, p1:QPointF, p2:QPointF) -> bool:
         """Does this Graphics Edge intersect with the line between point A and point B ?
