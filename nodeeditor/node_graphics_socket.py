@@ -56,8 +56,8 @@ class QDMGraphicsSocket(QGraphicsItem):
 
         """Set up the title Graphics representation: font, color, position, etc."""
         self.title_item = QGraphicsTextItem(self)
-        #self.title_item.node = self.node
         self._title_color = QColor("#000000")
+        self._title_color_highlighted = QColor("#22db7e")
         self._title_font = QFont("Arial", 10)
         self.title_horizontal_padding = 4.0
         self.title_vertical_padding = 4.0
@@ -66,6 +66,7 @@ class QDMGraphicsSocket(QGraphicsItem):
         self.edge_roundness = 0
         self.title_item.setDefaultTextColor(self._title_color)
         self.title_item.setFont(self._title_font)
+
         
         self.title_item.setTextWidth(
             self.width
@@ -78,9 +79,6 @@ class QDMGraphicsSocket(QGraphicsItem):
             metrics = QFontMetrics(self._title_font)
             width = metrics.width(text)
             height = metrics.height()
-            print('text = {}'.format(text))
-            print('width = {}'.format(width))
-            print('height = {}'.format(height))
             self.title_item.setPlainText(text)
             self.title_item.setPos(5, -12)
         elif self.socket.is_output:
@@ -88,9 +86,6 @@ class QDMGraphicsSocket(QGraphicsItem):
             metrics = QFontMetrics(self._title_font)
             width = metrics.width(text)
             height = metrics.height()
-            print('text = {}'.format(text))
-            print('width = {}'.format(width))
-            print('height = {}'.format(height))
             self.title_item.setPlainText(text)
             self.title_item.setPos(-(width+12), -12)
 
@@ -105,8 +100,12 @@ class QDMGraphicsSocket(QGraphicsItem):
         painter.setPen(self._pen if not self.isHighlighted else self._pen_highlight)
         painter.drawEllipse(-self.radius, -self.radius, 2 * self.radius, 2 * self.radius)
         painter.setPen(Qt.NoPen)
-        painter.setBrush(self._brush_title)
-        painter.drawPath(self.path_title.simplified())
+
+        if self.isHighlighted:
+            self.title_item.setDefaultTextColor(self._title_color_highlighted)
+        else:
+            self.title_item.setDefaultTextColor(self._title_color)
+
 
 
     def boundingRect(self) -> QRectF:
