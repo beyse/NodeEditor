@@ -52,17 +52,17 @@ class QDMGraphicsEdge(QGraphicsPathItem):
 
     def initAssets(self):
         """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
-        self._color = self._default_color = QColor("#ececec")
-        self._color_selected = QColor("#ffd373")
-        self._color_hovered = QColor("#ffffff")
+        self._color = self._default_color = QColor("#07303c")
+        self._color_selected = QColor("#07def5")
+        self._color_hovered = QColor("#028a99")
         self._pen = QPen(self._color)
         self._pen_selected = QPen(self._color_selected)
-        self._pen_dragging = QPen(QColor("#a0a0a0"))
+        self._pen_dragging = QPen(QColor("#5891a0"))
         self._pen_hovered = QPen(self._color_hovered)
-        self._pen.setWidthF(1.3)
-        self._pen_selected.setWidthF(2.0)
-        self._pen_dragging.setWidthF(1.3)
-        self._pen_hovered.setWidthF(2.0)
+        self._pen.setWidthF(1.5)
+        self._pen_selected.setWidthF(1.5)
+        self._pen_dragging.setWidthF(1.5)
+        self._pen_hovered.setWidthF(1.5)
 
     def createEdgePathCalculator(self):
         """Create instance of :class:`~nodeeditor.node_graphics_edge_path.GraphicsEdgePathBase`"""
@@ -176,9 +176,7 @@ class QDMGraphicsEdge(QGraphicsPathItem):
 
 
 
-        if self.hovered and self.edge.end_socket is not None:
-            painter.setPen(self._pen_hovered)
-            painter.drawPath(path)
+
 
         if self.edge.end_socket is None:
             painter.setPen(self._pen_dragging)
@@ -190,8 +188,15 @@ class QDMGraphicsEdge(QGraphicsPathItem):
         
         painter.drawPath(path)
         
+        if self.hovered and self.edge.end_socket is not None:
+            painter.setPen(self._pen_hovered)
+            painter.drawPath(path)
+
         x = self.posDestination[0]
         y = self.posDestination[1]
+
+
+
         #tri_size = 5
         #stretch_x = 2.5
         #stretch_y = 1

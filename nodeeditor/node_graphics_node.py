@@ -80,20 +80,21 @@ class QDMGraphicsNode(QGraphicsItem):
         self._title_color = QColor("#000000")
         self._title_font = QFont("Arial", 10)
 
-        self._color = QColor("#999999")
+        self._color = QColor("#07303c")
         self._color_hovered = QColor("#52ffb9")
-        self._color_selected = QColor("#FF37A6FF")
+        self._color_selected = QColor("#07def5")
 
         self._pen_default = QPen(self._color)
-        self._pen_default.setWidthF(0.8)
+        self._pen_default.setWidthF(1.5)
         self._pen_selected = QPen(self._color_selected)
-        self._pen_selected.setWidthF(2)
+        self._pen_selected.setWidthF(1.5)
         self._pen_hovered = QPen(self._color_hovered)
         self._pen_hovered.setWidthF(2)
 
-        self._brush_title = QBrush(QColor("#ffffffff"))
-        self._brush_background = QBrush(QColor("#dbffffff"))
-        self._brush_hover = QBrush(QColor("#fff0f0f0"))
+        self._brush_title = QBrush(QColor("#cde7e7e7"))
+        self._brush_title_hover = QBrush(QColor("#cdf6f6f6"))
+        self._brush_background = QBrush(QColor("#cdf4f4f4"))
+        self._brush_hover = QBrush(QColor("#cdffffff"))
 
     def onSelected(self):
         """Our event handling when the node was selected"""
@@ -201,8 +202,22 @@ class QDMGraphicsNode(QGraphicsItem):
         path_title.addRect(0, self.title_height - self.edge_roundness, self.edge_roundness, self.edge_roundness)
         path_title.addRect(self.width - self.edge_roundness, self.title_height - self.edge_roundness, self.edge_roundness, self.edge_roundness)
         painter.setPen(Qt.NoPen)
-        painter.setBrush(self._brush_title)
+        if self.hovered:
+            painter.setBrush(self._brush_title_hover)
+        else:
+            painter.setBrush(self._brush_title)
         painter.drawPath(path_title.simplified())
+
+        # outline
+        path_outline = QPainterPath()
+        path_outline.addRoundedRect(-1, -1, self.width+2, self.height+2, self.edge_roundness, self.edge_roundness)
+        painter.setBrush(Qt.NoBrush)
+        if self.isSelected():
+            painter.setPen(self._pen_selected)
+        else:
+            painter.setPen(self._pen_default)
+
+        painter.drawPath(path_outline.simplified())
 
 
         # content
@@ -215,14 +230,10 @@ class QDMGraphicsNode(QGraphicsItem):
 
 
 
-        # outline
-        #path_outline = QPainterPath()
-        #path_outline.addRoundedRect(-1, -1, self.width+2, self.height+2, self.edge_roundness, self.edge_roundness)
-        #painter.setBrush(Qt.NoBrush)
+
+
+
         
-        #if self.isSelected():
-        #    painter.setPen(self._pen_selected)
-        #    painter.drawPath(path_outline.simplified())
         if self.hovered:
             painter.setBrush(self._brush_hover)
             painter.drawPath(path_content.simplified())

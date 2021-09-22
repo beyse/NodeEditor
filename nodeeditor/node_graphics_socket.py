@@ -31,7 +31,7 @@ class QDMGraphicsSocket(QGraphicsItem):
         return self.socket.socket_type
 
     def getSocketColor(self, key):
-        return QColor("#ec8836")
+        return QColor("#07303c")
 
     def changeSocketType(self):
         """Change the Socket Type"""
@@ -45,19 +45,20 @@ class QDMGraphicsSocket(QGraphicsItem):
 
         # determine socket color
         self._color_background = self.getSocketColor(self.socket_type)
-        self._color_outline = QColor("#FF000000")
-        self._color_highlight = QColor("#c15000")
+        self._color_outline = QColor("#00000000")
+        self._color_highlight = QColor("#07def5")
 
         self._pen = QPen(self._color_outline)
         self._pen.setWidthF(self.outline_width)
-        self._pen_highlight = QPen(self._color_highlight)
+        self._pen_highlight = QPen(self._color_background)
         self._pen_highlight.setWidthF(2.0)
         self._brush = QBrush(self._color_background)
+        self._brush_highlight = QBrush(self._color_highlight)
 
         """Set up the title Graphics representation: font, color, position, etc."""
         self.title_item = QGraphicsTextItem(self)
         self._title_color = QColor("#000000")
-        self._title_color_highlighted = QColor("#c15000")
+        self._title_color_highlighted = QColor("#028a99")
         self._title_font = QFont("Arial", 10)
         self.title_horizontal_padding = 4.0
         self.title_vertical_padding = 4.0
@@ -96,7 +97,7 @@ class QDMGraphicsSocket(QGraphicsItem):
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
         """Painting a circle"""
-        painter.setBrush(self._brush)
+        painter.setBrush(self._brush if not self.isHighlighted else self._brush_highlight)
         painter.setPen(self._pen if not self.isHighlighted else self._pen_highlight)
         painter.drawEllipse(-self.radius, -self.radius, 2 * self.radius, 2 * self.radius)
         painter.setPen(Qt.NoPen)

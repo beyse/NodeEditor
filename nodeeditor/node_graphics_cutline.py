@@ -2,6 +2,7 @@
 """
 A module containing the class for Cutting Line
 """
+from PyQt5.QtGui import QColor
 from qtpy.QtGui import QPen, QPainterPath, QPolygonF, QPainter
 from qtpy.QtWidgets import QGraphicsItem, QWidget
 from qtpy.QtCore import Qt, QRectF, QPointF
@@ -18,8 +19,8 @@ class QDMCutLine(QGraphicsItem):
 
         self.line_points = []
 
-        self._pen = QPen(Qt.white)
-        self._pen.setWidthF(2.0)
+        self._pen = QPen(QColor("#000000"))
+        self._pen.setWidthF(1.0)
         self._pen.setDashPattern([3, 3])
 
         self.setZValue(2)
