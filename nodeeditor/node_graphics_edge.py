@@ -55,14 +55,17 @@ class QDMGraphicsEdge(QGraphicsPathItem):
         self._color = self._default_color = QColor("#07303c")
         self._color_selected = QColor("#07def5")
         self._color_hovered = QColor("#028a99")
+        self._color_invalid = QColor("#ed8836")
         self._pen = QPen(self._color)
         self._pen_selected = QPen(self._color_selected)
         self._pen_dragging = QPen(QColor("#5891a0"))
         self._pen_hovered = QPen(self._color_hovered)
+        self._pen_invalid = QPen(self._color_invalid)
         self._pen.setWidthF(1.5)
         self._pen_selected.setWidthF(1.5)
         self._pen_dragging.setWidthF(1.5)
         self._pen_hovered.setWidthF(1.5)
+        self._pen_invalid.setWidthF(1.5)
 
     def createEdgePathCalculator(self):
         """Create instance of :class:`~nodeeditor.node_graphics_edge_path.GraphicsEdgePathBase`"""
@@ -183,20 +186,16 @@ class QDMGraphicsEdge(QGraphicsPathItem):
         else:
             painter.setPen(self._pen if not self.isSelected() else self._pen_selected)
             tri_offset = -5
-
-        
-        
-        painter.drawPath(path)
         
         if self.hovered and self.edge.end_socket is not None:
             painter.setPen(self._pen_hovered)
-            painter.drawPath(path)
 
-        x = self.posDestination[0]
-        y = self.posDestination[1]
+        if self.edge.is_valid == False:
+            painter.setPen(self._pen_invalid)
 
-
-
+        painter.drawPath(path)
+        #x = self.posDestination[0]
+        #y = self.posDestination[1]
         #tri_size = 5
         #stretch_x = 2.5
         #stretch_y = 1

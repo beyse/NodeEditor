@@ -41,7 +41,7 @@ class Edge(Serializable):
         """
         super().__init__()
         self.scene = scene
-
+        self.is_valid = True
         # default init
         self._start_socket = None
         self._end_socket = None
@@ -191,6 +191,12 @@ class Edge(Serializable):
         :rtype: :class:`~nodeeditor.node_socket.Socket` or ``None``
         """
         return self.start_socket if known_socket == self.end_socket else self.end_socket
+
+    def getEndSocket(self):
+        return self.end_socket
+
+    def getStartSocket(self):
+        return self.start_socket
 
     def doSelect(self, new_state:bool=True):
         """

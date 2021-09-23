@@ -83,11 +83,14 @@ class QDMGraphicsNode(QGraphicsItem):
         self._color = QColor("#07303c")
         self._color_hovered = QColor("#52ffb9")
         self._color_selected = QColor("#07def5")
+        self._color_dirty = QColor("#ed8836")
 
         self._pen_default = QPen(self._color)
         self._pen_default.setWidthF(1.5)
         self._pen_selected = QPen(self._color_selected)
         self._pen_selected.setWidthF(1.5)
+        self._pen_dirty = QPen(self._color_dirty)
+        self._pen_dirty.setWidthF(1.5)
         self._pen_hovered = QPen(self._color_hovered)
         self._pen_hovered.setWidthF(2)
 
@@ -184,6 +187,7 @@ class QDMGraphicsNode(QGraphicsItem):
     def initContent(self):
         """Set up the `grContent` - ``QGraphicsProxyWidget`` to have a container for `Graphics Content`"""
         if self.content is not None:
+            print(type(self.content))
             self.content.setGeometry(self.edge_padding, self.title_height + self.edge_padding,
                                  self.width - 2 * self.edge_padding, self.height - 2 * self.edge_padding - self.title_height)
 
@@ -217,8 +221,11 @@ class QDMGraphicsNode(QGraphicsItem):
         else:
             painter.setPen(self._pen_default)
 
-        painter.drawPath(path_outline.simplified())
 
+        if self.node.isDirty():
+            painter.setPen(self._pen_dirty)
+
+        painter.drawPath(path_outline.simplified())
 
         # content
         path_content = QPainterPath()

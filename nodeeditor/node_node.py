@@ -6,7 +6,7 @@ from collections import OrderedDict
 from nodeeditor.node_graphics_node import QDMGraphicsNode
 from nodeeditor.node_content_widget import QDMNodeContentWidget
 from nodeeditor.node_serializable import Serializable
-from nodeeditor.node_socket import Socket, LEFT_BOTTOM, LEFT_CENTER, LEFT_TOP, RIGHT_BOTTOM, RIGHT_CENTER, RIGHT_TOP
+from nodeeditor.node_socket import Socket, LEFT_BOTTOM, LEFT_CENTER, LEFT_TOP, RIGHT_BOTTOM, RIGHT_CENTER, RIGHT_TOP, SocketDefinition
 from nodeeditor.utils import dumpException, pp
 
 DEBUG = False
@@ -159,8 +159,10 @@ class Node(Serializable):
         counter = 0
         for item in inputs:
             socket = self.__class__.Socket_class(
-                node=self, index=counter, position=self.input_socket_position,
-                socket_type=item, multi_edges=self.input_multi_edged,
+                node=self, index=counter, position=self.input_socket_position, 
+                socket_name=item.name,
+                socket_type=item.type,
+                 multi_edges=self.input_multi_edged,
                 count_on_this_node_side=len(inputs), is_input=True
             )
             counter += 1
@@ -170,7 +172,9 @@ class Node(Serializable):
         for item in outputs:
             socket = self.__class__.Socket_class(
                 node=self, index=counter, position=self.output_socket_position,
-                socket_type=item, multi_edges=self.output_multi_edged,
+                socket_name=item.name,
+                socket_type=item.type,
+                multi_edges=self.output_multi_edged,
                 count_on_this_node_side=len(outputs), is_input=False
             )
             counter += 1
@@ -414,6 +418,9 @@ class Node(Serializable):
                 other_node = edge.getOtherSocket(self.outputs[ix]).node
                 other_nodes.append(other_node)
         return other_nodes
+
+    def getInputSockets(self):
+        return self.inputs
 
 
     def getInput(self, index: int=0) -> ['Node', None]:

@@ -30,6 +30,10 @@ class QDMGraphicsSocket(QGraphicsItem):
     def socket_type(self):
         return self.socket.socket_type
 
+    @property
+    def socket_name(self):
+        return self.socket.socket_name
+
     def getSocketColor(self, key):
         return QColor("#07303c")
 
@@ -43,10 +47,13 @@ class QDMGraphicsSocket(QGraphicsItem):
     def initAssets(self):
         """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
 
+        self.setToolTip(self.socket_type)
+
         # determine socket color
         self._color_background = self.getSocketColor(self.socket_type)
         self._color_outline = QColor("#00000000")
         self._color_highlight = QColor("#07def5")
+        self._color_invalid = QColor("#ed8836")
 
         self._pen = QPen(self._color_outline)
         self._pen.setWidthF(self.outline_width)
@@ -54,6 +61,7 @@ class QDMGraphicsSocket(QGraphicsItem):
         self._pen_highlight.setWidthF(2.0)
         self._brush = QBrush(self._color_background)
         self._brush_highlight = QBrush(self._color_highlight)
+        self._brush_invalid = QBrush(self._color_invalid)
 
         """Set up the title Graphics representation: font, color, position, etc."""
         self.title_item = QGraphicsTextItem(self)
@@ -76,14 +84,14 @@ class QDMGraphicsSocket(QGraphicsItem):
         # title
 
         if self.socket.is_input:
-            text = "Input"
+            text = str(self.socket_name)
             metrics = QFontMetrics(self._title_font)
             width = metrics.width(text)
             height = metrics.height()
             self.title_item.setPlainText(text)
             self.title_item.setPos(5, -12)
         elif self.socket.is_output:
-            text = "Output"
+            text = str(self.socket_name)
             metrics = QFontMetrics(self._title_font)
             width = metrics.width(text)
             height = metrics.height()
@@ -97,10 +105,17 @@ class QDMGraphicsSocket(QGraphicsItem):
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
         """Painting a circle"""
-        painter.setBrush(self._brush if not self.isHighlighted else self._brush_highlight)
-        painter.setPen(self._pen if not self.isHighlighted else self._pen_highlight)
-        painter.drawEllipse(-self.radius, -self.radius, 2 * self.radius, 2 * self.radius)
-        painter.setPen(Qt.NoPen)
+
+        if self.socket.is_valid:
+            painter.setBrush(self._brush if not self.isHighlighted else self._brush_highlight)
+            painter.setPen(self._pen if not self.isHighlighted else self._pen_highlight)
+            painter.drawEllipse(-self.radius, -self.radius, 2 * self.radius, 2 * self.radius)
+            painter.setPen(Qt.NoPen)
+        else:
+            painter.setBrush(self._brush_invalid)
+            painter.setPen(self._pen if not self.isHighlighted else self._pen_highlight)
+            painter.drawEllipse(-self.radius, -self.radius, 2 * self.radius, 2 * self.radius)
+            painter.setPen(Qt.NoPen)
 
         if self.isHighlighted:
             self.title_item.setDefaultTextColor(self._title_color_highlighted)

@@ -18,13 +18,17 @@ RIGHT_BOTTOM = 6    #:
 DEBUG = False
 DEBUG_REMOVE_WARNINGS = False
 
+class SocketDefinition(Serializable):
+    def __init__(self, type:str, name:str):
+        self.type = type
+        self.name = name
 
 class Socket(Serializable):
     Socket_GR_Class = QDMGraphicsSocket
 
     """Class representing Socket."""
 
-    def __init__(self, node: 'Node', index: int=0, position: int=LEFT_TOP, socket_type: int=1, multi_edges: bool=True,
+    def __init__(self, node: 'Node', index: int=0, position: int=LEFT_TOP, socket_name: str = 'unnamed', socket_type: str = 'null', multi_edges: bool=True,
                  count_on_this_node_side: int=1, is_input: bool=False):
         """
         :param node: reference to the :class:`~nodeeditor.node_node.Node` containing this `Socket`
@@ -32,7 +36,8 @@ class Socket(Serializable):
         :param index: Current index of this socket in the position
         :type index: ``int``
         :param position: Socket position. See :ref:`socket-position-constants`
-        :param socket_type: Constant defining type(color) of this socket
+        :param socket_name: String defining name of this socket
+        :param socket_type: String defining type of this socket
         :param multi_edges: Can this socket have multiple `Edges` connected?
         :type multi_edges: ``bool``
         :param count_on_this_node_side: number of total sockets on this position
@@ -47,7 +52,8 @@ class Socket(Serializable):
             - **grSocket** - reference to the :class:`~nodeeditor.node_graphics_socket.QDMGraphicsSocket`
             - **position** - Socket position. See :ref:`socket-position-constants`
             - **index** - Current index of this socket in the position
-            - **socket_type** - Constant defining type(color) of this socket
+            - **socket_name** - String defining name of this socket
+            - **socket_type** - String defining type of this socket
             - **count_on_this_node_side** - number of sockets on this position
             - **is_multi_edges** - ``True`` if `Socket` can contain multiple `Edges`
             - **is_input** - ``True`` if this socket serves for Input
@@ -58,11 +64,13 @@ class Socket(Serializable):
         self.node = node
         self.position = position
         self.index = index
+        self.socket_name = socket_name
         self.socket_type = socket_type
         self.count_on_this_node_side = count_on_this_node_side
         self.is_multi_edges = multi_edges
         self.is_input = is_input
         self.is_output = not self.is_input
+        self.is_valid = True
 
 
         if DEBUG: print("Socket -- creating with", self.index, self.position, "for nodeeditor", self.node)
