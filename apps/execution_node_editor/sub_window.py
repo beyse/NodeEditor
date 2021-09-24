@@ -1,8 +1,9 @@
+from apps.execution_node_editor.conf import CALC_NODES, create_node, LISTBOX_MIMETYPE
+from nodeeditor.node_socket import Socket, SocketDefinition
 from qtpy.QtGui import QIcon, QPixmap
 from qtpy.QtCore import QDataStream, QIODevice, Qt
 from qtpy.QtWidgets import QAction, QGraphicsProxyWidget, QMenu
 
-from conf import CALC_NODES, get_class_from_opcode, LISTBOX_MIMETYPE
 from nodeeditor.node_editor_widget import NodeEditorWidget
 from nodeeditor.node_edge import EDGE_TYPE_DIRECT, EDGE_TYPE_BEZIER, EDGE_TYPE_SQUARE
 from nodeeditor.node_graphics_view import MODE_EDGE_DRAG
@@ -88,16 +89,20 @@ class SubWindow(NodeEditorWidget):
             pixmap = QPixmap()
             dataStream >> pixmap
             op_code = dataStream.readInt()
-            text = dataStream.readQString()
+            node_type = dataStream.readQString()
 
             mouse_position = event.pos()
             scene_position = self.scene.grScene.views()[0].mapToScene(mouse_position)
 
-            if DEBUG: print("GOT DROP: [%d] '%s'" % (op_code, text), "mouse:", mouse_position, "scene:", scene_position)
+            print("GOT DROP: [%d] '%s'" % (op_code, node_type), "mouse:", mouse_position, "scene:", scene_position)
 
             try:
-                node = get_class_from_opcode(op_code)(self.scene)
+                print("onDrop!")
+                #node = get_class_from_opcode(op_code)(self.scene)
+                node = create_node(self.scene, node_type)
                 node.setPos(scene_position.x(), scene_position.y())
+                #node.title = text
+                #node.inputs=[Socket(node=node, socket_name="harlo", socket_type="carlo")]
                 self.scene.history.storeHistory("Created node %s" % node.__class__.__name__)
             except Exception as e: dumpException(e)
 
