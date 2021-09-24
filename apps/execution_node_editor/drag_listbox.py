@@ -1,12 +1,18 @@
+from apps.execution_node_editor.conf import LISTBOX_MIMETYPE, OP_NODE_INPUT
 from qtpy.QtGui import QPixmap, QIcon, QDrag
 from qtpy.QtCore import QSize, Qt, QByteArray, QDataStream, QMimeData, QIODevice, QPoint
-from qtpy.QtWidgets import QListWidget, QAbstractItemView, QListWidgetItem
+from qtpy.QtWidgets import QTreeWidget, QAbstractItemView, QTreeWidgetItem 
 
-from conf import CALC_NODES, get_class_from_opcode, LISTBOX_MIMETYPE
 from nodeeditor.utils import dumpException
 
 
-class QDMDragListbox(QListWidget):
+nodeTypes = {
+    "Input": ["ImageSourceNode", "CameraNode", "VideNode"],
+    "Processing": ["AdderNode", "BlurNode", "BinarizeNode"],
+    "Output": ["VideWriterNode"]
+}
+
+class QDMDragListbox(QTreeWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.initUI()
@@ -16,44 +22,44 @@ class QDMDragListbox(QListWidget):
         self.setIconSize(QSize(32, 32))
         self.setSelectionMode(QAbstractItemView.SingleSelection)
         self.setDragEnabled(True)
-
+        self.setColumnCount(1)
+        self.setHeaderLabels([""])
         self.addMyItems()
 
 
     def addMyItems(self):
-        keys = list(CALC_NODES.keys())
-        keys.sort()
-        for key in keys:
-            node = get_class_from_opcode(key)
-            self.addMyItem(node.op_title, node.icon, node.op_code)
-
-
-    def addMyItem(self, name, icon=None, op_code=0):
-        item = QListWidgetItem(name, self) # can be (icon, text, parent, <int>type)
-        pixmap = QPixmap(icon if icon is not None else ".")
-        item.setIcon(QIcon(pixmap))
-        item.setSizeHint(QSize(32, 32))
-
-        item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsDragEnabled)
-
-        # setup data
-        item.setData(Qt.UserRole, pixmap)
-        item.setData(Qt.UserRole + 1, op_code)
-
+        items = []
+        for key, values in nodeTypes.items():
+            item = QTreeWidgetItem([key])
+            for value in values:
+                child = QTreeWidgetItem([value])
+                child.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsDragEnabled)
+                # setup data
+                child.setData(0, Qt.UserRole + 1, 0)
+                item.addChild(child)
+            items.append(item)
+        
+        self.insertTopLevelItems(0, items)
+        #keys = list(CALC_NODES.keys())
+        #keys.sort()
+        #for key in keys:
+        #    node = get_class_from_opcode(key)
+        #    self.addMyItem(node.op_title, node.icon, node.op_code)
 
     def startDrag(self, *args, **kwargs):
         try:
+            print("startDrag")
             item = self.currentItem()
-            op_code = item.data(Qt.UserRole + 1)
+            op_code = item.data(0, Qt.UserRole + 1)
 
-            pixmap = QPixmap(item.data(Qt.UserRole))
+            pixmap = QPixmap(".")
 
 
             itemData = QByteArray()
             dataStream = QDataStream(itemData, QIODevice.WriteOnly)
             dataStream << pixmap
             dataStream.writeInt(op_code)
-            dataStream.writeQString(item.text())
+            dataStream.writeQString(item.text(0))
 
             mimeData = QMimeData()
             mimeData.setData(LISTBOX_MIMETYPE, itemData)
