@@ -1,3 +1,4 @@
+from apps.execution_node_editor.conf import register_node_types
 import os
 from qtpy.QtGui import QIcon, QKeySequence
 from qtpy.QtWidgets import QMdiArea, QWidget, QDockWidget, QAction, QMessageBox, QFileDialog
@@ -8,7 +9,7 @@ from nodeeditor.node_editor_window import NodeEditorWindow
 from sub_window import SubWindow
 from drag_listbox import QDMDragListbox
 from nodeeditor.utils import dumpException, pp
-
+from apps.execution_node_editor.node_type_definition import NodeTypeDefinition , PortDefinition, read_node_type_definitions_from_dirs
 # Enabling edge validators
 from nodeeditor.node_edge import Edge
 from nodeeditor.node_edge_validators import (
@@ -27,6 +28,7 @@ import qss.nodeeditor_dark_resources
 
 DEBUG = False
 
+node_type_definitions = []
 
 class ExecutionNodeEditorWindow(NodeEditorWindow):
 
@@ -46,6 +48,11 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
             print("Registered nodes:")
             #pp(CALC_NODES)
 
+        categorizes_node_type_definitions = read_node_type_definitions_from_dirs("./node_type_definitions")
+
+        for category, node_types in categorizes_node_type_definitions.items():
+            register_node_types(node_types, category)
+        
 
         self.mdiArea = QMdiArea()
         self.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)

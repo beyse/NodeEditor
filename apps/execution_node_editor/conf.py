@@ -4,7 +4,7 @@ from nodeeditor.utils import dumpException
 from nodeeditor.node_socket import SocketDefinition
 from apps.execution_node_editor.execution_node_base import ExecutionNode, GraphicsExecutionNode
 from nodeeditor.node_content_widget import QDMNodeContentWidget
-import node_base
+
 
 LISTBOX_MIMETYPE = "application/x-item"
 
@@ -19,32 +19,58 @@ OP_NODE_DIV = 6
 CALC_NODES = {
 }
 
-class NodeTypeDefinition:
-    def __init__(self, type_name, input_sockets, output_sockets):
-        self.type_name = type_name
-        self.input_sockets = input_sockets
-        self.output_sockets = output_sockets
+#class NodeTypeDefinition:
+#    def __init__(self, type_name, input_sockets, output_sockets):
+#        self.type_name = type_name
+#        self.input_sockets = input_sockets
+#        self.output_sockets = output_sockets
 
 
 input_sockets = {
-    "ImageSourceNode": [SocketDefinition("int", "imageSourceIn"), SocketDefinition("int", "image source in 2")],
-    "CameraNode": [SocketDefinition("foo", "cameraNode 1")], 
-    "VideNode": [SocketDefinition("foo", "da video")]
+    #"ImageSourceNode": [SocketDefinition("int", "imageSourceIn"), SocketDefinition("int", "image source in 2")],
+    #"CameraNode": [SocketDefinition("foo", "cameraNode 1")], 
+    #"VideNode": [SocketDefinition("foo", "da video")]
 }
 
 output_sockets = {
-    "ImageSourceNode": [SocketDefinition("int", "out"), SocketDefinition("int", "oo"), SocketDefinition("int", "oo")],
-    "CameraNode": [SocketDefinition("foo", "hmm 1"), SocketDefinition("a", "hmm 2")], 
-    "VideNode": [SocketDefinition("foo", "oi video")]
+    #"ImageSourceNode": [SocketDefinition("int", "out"), SocketDefinition("int", "oo"), SocketDefinition("int", "oo")],
+    #"CameraNode": [SocketDefinition("foo", "hmm 1"), SocketDefinition("a", "hmm 2")], 
+    #"VideNode": [SocketDefinition("foo", "oi video")]
 }
+
+nodeTypes = {
+   
+   # "Input": ["ImageSourceNode", "CameraNode", "VideNode"],
+    #"Processing": ["AdderNode", "BlurNode", "BinarizeNode"],
+    #"Output": ["VideWriterNode"]
+} 
 
 class ConfException(Exception): pass
 class InvalidNodeRegistration(ConfException): pass
 class OpCodeNotRegistered(ConfException): pass
 
 
+def register_node_types(node_type_definitions, category = "uncategorized"):
 
+    for d in node_type_definitions:
+        print(d.node_type)
+        if d.node_type not in input_sockets.keys():
+            input_sockets[d.node_type] = []
+        for i in d.input_ports:
+            print(i.port_name)
+            socket_definition = SocketDefinition(i.data_type, i.port_name)
+            input_sockets[d.node_type].append(socket_definition)
 
+        if d.node_type not in output_sockets.keys():
+            output_sockets[d.node_type] = []
+        for o in d.output_ports:
+            print(o.port_name)
+            socket_definition = SocketDefinition(o.data_type, o.port_name)
+            output_sockets[d.node_type].append(socket_definition)
+        
+        if category not in nodeTypes.keys():
+            nodeTypes[category] = []
+        nodeTypes[category].append(d.node_type)
 
 class CalcContent(QDMNodeContentWidget):
     def initUI(self):
