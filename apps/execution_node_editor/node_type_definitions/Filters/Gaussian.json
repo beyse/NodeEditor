@@ -1,0 +1,17 @@
+{
+    "node_type": "GaussianFilter",
+    "input_ports": [
+      {
+        "port_name": "image",
+        "data_type": "cv::Mat"
+      }
+    ],
+    "output_ports": [
+      {
+        "port_name": "blurred",
+        "data_type": "cv::Mat"
+      }
+    ]
+  }
+  
+  

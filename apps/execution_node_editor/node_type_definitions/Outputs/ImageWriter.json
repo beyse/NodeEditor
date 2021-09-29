@@ -1,0 +1,17 @@
+{
+  "node_type": "ImageWriter",
+  "input_ports": [
+    {
+      "port_name": "filePath",
+      "data_type": "std::string"
+    },
+    {
+      "port_name": "image",
+      "data_type": "cv::Mat"
+    }
+  ],
+  "output_ports": [
+  ]
+}
+  
+  
