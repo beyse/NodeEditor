@@ -1,16 +1,10 @@
-from apps.execution_node_editor.conf import LISTBOX_MIMETYPE, OP_NODE_INPUT
+from PyQt5.QtGui import QBrush, QColor, QFont
+from apps.execution_node_editor.conf import LISTBOX_MIMETYPE, nodeTypes
 from qtpy.QtGui import QPixmap, QIcon, QDrag
 from qtpy.QtCore import QSize, Qt, QByteArray, QDataStream, QMimeData, QIODevice, QPoint
 from qtpy.QtWidgets import QTreeWidget, QAbstractItemView, QTreeWidgetItem 
 
 from nodeeditor.utils import dumpException
-
-
-nodeTypes = {
-    "Input": ["ImageSourceNode", "CameraNode", "VideNode"],
-    "Processing": ["AdderNode", "BlurNode", "BinarizeNode"],
-    "Output": ["VideWriterNode"]
-}
 
 class QDMDragListbox(QTreeWidget):
     def __init__(self, parent=None):
@@ -25,14 +19,21 @@ class QDMDragListbox(QTreeWidget):
         self.setColumnCount(1)
         self.setHeaderLabels([""])
         self.addMyItems()
+        self._font = QFont("Arial", 12)
+        self.setFont(self._font)
+        
 
 
     def addMyItems(self):
         items = []
         for key, values in nodeTypes.items():
             item = QTreeWidgetItem([key])
+            color = QColor("#ffffff")
+            brush = QBrush(color)
+            item.setForeground(0, brush)
             for value in values:
                 child = QTreeWidgetItem([value])
+                child.setForeground(0, brush)
                 child.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsDragEnabled)
                 # setup data
                 child.setData(0, Qt.UserRole + 1, 0)
