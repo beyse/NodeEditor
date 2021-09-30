@@ -381,9 +381,9 @@ class QDMGraphicsView(QGraphicsView):
 
         ## cannot be because with dragging RMB we spawn Create New Node Context Menu
         ## However, you could use this if you want to cancel with RMB
-        # if self.mode == MODE_EDGE_DRAG:
-        #     self.dragging.edgeDragEnd(None)
-        #     return
+        if self.mode == MODE_EDGE_DRAG:
+            self.dragging.edgeDragEnd(None)
+            return
 
         super().mouseReleaseEvent(event)
 
@@ -437,11 +437,11 @@ class QDMGraphicsView(QGraphicsView):
         # Use this code below if you wanna have shortcuts in this widget.
         # You want to use this, when you don't have a window which handles these shortcuts for you
 
-        # if event.key() == Qt.Key_Delete:
-        #     if not self.editingFlag:
-        #         self.deleteSelected()
-        #     else:
-        #         super().keyPressEvent(event)
+        if event.key() == Qt.Key_Escape:
+            if self.mode == MODE_EDGE_DRAG:
+                self.dragging.edgeDragEnd(None)
+            else:
+                super().keyPressEvent(event)
         # elif event.key() == Qt.Key_S and event.modifiers() & Qt.ControlModifier:
         #     self.grScene.scene.saveToFile("graph.json")
         # elif event.key() == Qt.Key_L and event.modifiers() & Qt.ControlModifier:
@@ -457,8 +457,8 @@ class QDMGraphicsView(QGraphicsView):
         #     for item in self.grScene.scene.history.history_stack:
         #         print("#", ix, "--", item['desc'])
         #         ix += 1
-        # else:
-        super().keyPressEvent(event)
+        else:
+            super().keyPressEvent(event)
 
 
     def cutIntersectingEdges(self):
