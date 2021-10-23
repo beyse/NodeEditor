@@ -1,3 +1,5 @@
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtWidgets import QToolBar
 from apps.execution_node_editor.conf import register_node_types
 import os
 from qtpy.QtGui import QIcon, QKeySequence
@@ -41,6 +43,16 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
             os.path.join(os.path.dirname(__file__), "qss/nodeeditor-dark.qss"),
             self.stylesheet_filename
         )
+
+        app_icon = QtGui.QIcon()
+        app_icon.addFile('gui/icons/16x16.png', QtCore.QSize(16,16))
+        app_icon.addFile('gui/icons/24x24.png', QtCore.QSize(24,24))
+        app_icon.addFile('gui/icons/32x32.png', QtCore.QSize(32,32))
+        app_icon.addFile('gui/icons/48x48.png', QtCore.QSize(48,48))
+        app_icon.addFile('gui/icons/64x64.png', QtCore.QSize(64,64))
+        app_icon.addFile('gui/icons/128x128.png', QtCore.QSize(128,128))
+        app_icon.addFile('gui/icons/256x256.png', QtCore.QSize(256,256))
+        self.setWindowIcon(app_icon)
 
         self.empty_icon = QIcon(".")
 
@@ -238,7 +250,12 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
             self.nodesDock.show()
 
     def createToolBars(self):
-        pass
+        self.openAction = QAction(QIcon("gui/icons/play.png"), "Run Graph", None)
+        toolbar = QToolBar("Main Toolbar")
+        toolbar.addAction(self.openAction)
+        self.addToolBar(toolbar)
+
+        #self.mainToolBar.addAction(self.openAction)
 
     def createNodesDock(self):
         self.nodesListWidget = QDMDragListbox()
