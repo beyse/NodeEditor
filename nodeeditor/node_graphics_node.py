@@ -28,8 +28,7 @@ class QDMGraphicsNode(QGraphicsItem):
         self.hovered = False
         self._was_moved = False
         self._last_selected_state = False
-
-        self.initSizes()
+        self.initSizes(0)
         self.initAssets()
         self.initUI()
 
