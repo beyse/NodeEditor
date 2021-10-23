@@ -383,7 +383,6 @@ class QDMGraphicsView(QGraphicsView):
         ## However, you could use this if you want to cancel with RMB
         if self.mode == MODE_EDGE_DRAG:
             self.dragging.edgeDragEnd(None)
-            return
 
         super().mouseReleaseEvent(event)
 
