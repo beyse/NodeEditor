@@ -20,7 +20,7 @@ class Node(Serializable):
     NodeContent_class = QDMNodeContentWidget
     Socket_class = Socket
 
-    def __init__(self, scene: 'Scene', title: str="Undefined Node", inputs: list=[], outputs: list=[]):
+    def __init__(self, scene: 'Scene', title: str="No Title", inputs: list=[], outputs: list=[]):
         """
 
         :param scene: reference to the :class:`~nodeeditor.node_scene.Scene`
@@ -66,6 +66,14 @@ class Node(Serializable):
 
     def __str__(self):
         return "<%s:%s %s..%s>" % (self.title, self.__class__.__name__,hex(id(self))[2:5], hex(id(self))[-3:])
+
+    @property
+    def node_type(self):
+        return self._node_type
+
+    @node_type.setter
+    def node_type(self, value):
+        self._node_type = value
 
     @property
     def title(self):

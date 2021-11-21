@@ -11,6 +11,7 @@ from nodeeditor.node_node import Node
 from nodeeditor.node_edge import Edge
 from nodeeditor.node_scene_history import SceneHistory
 from nodeeditor.node_scene_clipboard import SceneClipboard
+from pathlib import Path
 
 
 DEBUG_REMOVE_WARNINGS = False
@@ -292,8 +293,41 @@ class Scene(Serializable):
 
         self.has_been_modified = False
 
+    def saveGraphToFile(self, filename: str):
+        graph = {}
+        nodes_dict = {}
+        for node in self.nodes:
+            node_dict = {}
+            node_dict["type"] = node.node_type
+            node_dict["settings"] = None
+            nodes_dict[node.title] = node_dict
+
+        edges_list = []
+        for e in self.edges:
+
+            start = '{}:{}'.format(e.start_socket.node.title, e.start_socket.socket_name)
+            end = '{}:{}'.format(e.end_socket.node.title, e.end_socket.socket_name)
+            l = []
+            l.append(start)
+            l.append(end)
+            edges_list.append(l)
+        
+        graph["name"] = Path(filename).stem
+        graph["nodes"] = nodes_dict
+        graph["connections"] = edges_list
+
+        json_graph = json.dumps(graph, indent = 2) 
+
+        with open(filename, "w") as file:
+            file.write(json_graph)
+            self.has_been_modified = False
+            self.filename = filename
+
+
 
     def saveToFile(self, filename: str):
+        self.saveGraphToFile(filename)
+        return
         """
         Save this `Scene` to the file on disk.
 

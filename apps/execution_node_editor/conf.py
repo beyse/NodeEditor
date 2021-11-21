@@ -4,7 +4,7 @@ from nodeeditor.utils import dumpException
 from nodeeditor.node_socket import SocketDefinition
 from apps.execution_node_editor.execution_node_base import ExecutionNode, GraphicsExecutionNode
 from nodeeditor.node_content_widget import QDMNodeContentWidget
-
+import re
 
 LISTBOX_MIMETYPE = "application/x-item"
 
@@ -17,6 +17,10 @@ OP_NODE_DIV = 6
 
 
 CALC_NODES = {
+}
+
+node_counter = {
+
 }
 
 #class NodeTypeDefinition:
@@ -76,16 +80,34 @@ class CalcContent(QDMNodeContentWidget):
     def initUI(self):
         lbl = QLabel(self.node.content_label, self)
         lbl.setObjectName(self.node.content_label_objname)
+
+def camel_to_snake(name):
+  name = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
+  return re.sub('([a-z0-9])([A-Z])', r'\1_\2', name).lower()
+
 class ConcreteExecutionNode(ExecutionNode):
     icon = "icons/in.png"
     op_code = OP_NODE_INPUT
     content_label_objname = "calc_node_input"
 
     def __init__(self, scene, node_type):
+        print('node_type = {}'.format(node_type))
         self.node_type = node_type
         super().__init__(scene, inputs = input_sockets[node_type], outputs=output_sockets[node_type])
         self.op_title = node_type
-        self.title = node_type
+
+        node_count = 1
+        if node_type not in node_counter.keys():
+            node_counter[node_type] = node_count
+        else:
+            node_counter[node_type] += 1
+            node_count = node_counter[node_type]
+
+        #postfix = ''
+        #if node_count > 1:
+        postfix = '_' + str(node_count)
+
+        self.title = camel_to_snake(node_type) + postfix
         self.eval()
 
     def initInnerClasses(self):
