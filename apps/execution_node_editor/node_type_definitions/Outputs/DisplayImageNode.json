@@ -1,10 +1,6 @@
 {
-  "node_type": "ImageWriter",
+  "node_type": "DisplayImageNode",
   "input_ports": [
-    {
-      "port_name": "filePath",
-      "data_type": "std::string"
-    },
     {
       "port_name": "image",
       "data_type": "cv::Mat"
@@ -14,7 +10,7 @@
   ],
   "default_settings": 
   {
-    "overwrite": true
+    "windowName": "image"
   }
 }
   

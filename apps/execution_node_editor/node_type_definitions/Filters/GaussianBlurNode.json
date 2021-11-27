@@ -1,5 +1,5 @@
 {
-    "node_type": "GaussianFilter",
+    "node_type": "GaussianBlurNode",
     "input_ports": [
       {
         "port_name": "image",
@@ -14,9 +14,8 @@
     ],
     "default_settings": 
     {
-      "kernel_size": 3,
-      "border_mode": "REFLECT"
+      "sigma": 1.0
     }
-  }
+}
   
   

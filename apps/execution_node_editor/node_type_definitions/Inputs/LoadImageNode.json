@@ -1,10 +1,6 @@
 {
-    "node_type": "ImageReader",
+    "node_type": "LoadImageNode",
     "input_ports": [
-      {
-        "port_name": "filePath",
-        "data_type": "std::string"
-      }
     ],
     "output_ports": [
       {
@@ -14,9 +10,7 @@
     ],
     "default_settings": 
     {
-      "number": 32.4,
-      "bool": true,
-      "string": "hallo"
+      "imageFilePath": "/path/to/image.jpg"
     }
   }
   
