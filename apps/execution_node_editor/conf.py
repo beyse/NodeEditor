@@ -118,25 +118,28 @@ class ConcreteExecutionNode(ExecutionNode):
 
         self.title = camel_to_snake(node_type) + postfix
         self.editor = None
+        self.is_editor_open = False
         self.eval()
 
     def onDoubleClicked(self, event):
-        if self.editor == None:
+        if self.is_editor_open == False:
             self.editor = JsonEditor(self.title, self.settings, self.setSettings)
-            self.editor.show()
+            self.editor.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
             self.editor.closeEvent = self.resetEditor
+            self.is_editor_open = True
+            self.editor.show()
         else:
             # this will activate the window
             self.editor.setWindowState(QtCore.Qt.WindowActive)
             self.editor.activateWindow()
 
     def resetEditor(self, event):
-        self.editor = None
+        print('resetEditor')
+        self.is_editor_open = False
 
     def setSettings(self, s):
+        print('setSettings')
         self.settings = s
-        self.editor.destroy()
-        self.editor = None
 
 
     def initInnerClasses(self):
