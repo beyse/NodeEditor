@@ -1,10 +1,13 @@
 
+from PyQt5 import QtGui
 from PyQt5.QtWidgets import QLabel
+from pyqode.qt import QtCore
 from nodeeditor.utils import dumpException
 from nodeeditor.node_socket import SocketDefinition
 from apps.execution_node_editor.execution_node_base import ExecutionNode, GraphicsExecutionNode
 from nodeeditor.node_content_widget import QDMNodeContentWidget
 import re
+from json_editor import JsonEditor
 
 LISTBOX_MIMETYPE = "application/x-item"
 
@@ -49,6 +52,10 @@ nodeTypes = {
     #"Output": ["VideWriterNode"]
 } 
 
+defaultSettings = {
+
+}
+
 class ConfException(Exception): pass
 class InvalidNodeRegistration(ConfException): pass
 class OpCodeNotRegistered(ConfException): pass
@@ -64,6 +71,8 @@ def register_node_types(node_type_definitions, category = "uncategorized"):
             print(i.port_name)
             socket_definition = SocketDefinition(i.data_type, i.port_name)
             input_sockets[d.node_type].append(socket_definition)
+        
+        defaultSettings[d.node_type] = d.default_settings
 
         if d.node_type not in output_sockets.keys():
             output_sockets[d.node_type] = []
@@ -92,6 +101,7 @@ class ConcreteExecutionNode(ExecutionNode):
     def __init__(self, scene, node_type):
         print('node_type = {}'.format(node_type))
         self.node_type = node_type
+        self.settings = defaultSettings[node_type]
         super().__init__(scene, inputs = input_sockets[node_type], outputs=output_sockets[node_type])
         self.op_title = node_type
 
@@ -107,7 +117,27 @@ class ConcreteExecutionNode(ExecutionNode):
         postfix = '_' + str(node_count)
 
         self.title = camel_to_snake(node_type) + postfix
+        self.editor = None
         self.eval()
+
+    def onDoubleClicked(self, event):
+        if self.editor == None:
+            self.editor = JsonEditor(self.title, self.settings, self.setSettings)
+            self.editor.show()
+            self.editor.closeEvent = self.resetEditor
+        else:
+            # this will activate the window
+            self.editor.setWindowState(QtCore.Qt.WindowActive)
+            self.editor.activateWindow()
+
+    def resetEditor(self, event):
+        self.editor = None
+
+    def setSettings(self, s):
+        self.settings = s
+        self.editor.destroy()
+        self.editor = None
+
 
     def initInnerClasses(self):
         self.content = CalcContent(self)
