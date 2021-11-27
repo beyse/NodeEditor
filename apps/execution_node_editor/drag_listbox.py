@@ -28,7 +28,7 @@ class QDMDragListbox(QTreeWidget):
         items = []
         for key, values in nodeTypes.items():
             item = QTreeWidgetItem([key])
-            color = QColor("#ffffff")
+            color = QColor("#000000")
             brush = QBrush(color)
             item.setForeground(0, brush)
             for value in values:
