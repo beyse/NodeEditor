@@ -11,5 +11,6 @@
             "port_name": "image",
             "data_type": "cv::Mat"
         }
-    ]
+    ],
+    "default_settings": null
 }

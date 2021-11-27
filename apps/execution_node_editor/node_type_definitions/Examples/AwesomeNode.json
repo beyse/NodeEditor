@@ -15,6 +15,10 @@
       "port_name": "number",
       "data_type": "float"
     }
-  ]
+  ],
+  "default_settings":
+  {
+    "setting_1": 42
+  }
 }
 

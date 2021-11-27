@@ -11,7 +11,11 @@
     }
   ],
   "output_ports": [
-  ]
+  ],
+  "default_settings": 
+  {
+    "overwrite": true
+  }
 }
   
   

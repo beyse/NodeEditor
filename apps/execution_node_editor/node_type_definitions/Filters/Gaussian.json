@@ -11,7 +11,12 @@
         "port_name": "blurred",
         "data_type": "cv::Mat"
       }
-    ]
+    ],
+    "default_settings": 
+    {
+      "kernel_size": 3,
+      "border_mode": "REFLECT"
+    }
   }
   
   

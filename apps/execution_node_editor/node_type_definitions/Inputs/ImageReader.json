@@ -11,7 +11,13 @@
         "port_name": "image",
         "data_type": "cv::Mat"
       }
-    ]
+    ],
+    "default_settings": 
+    {
+      "number": 32.4,
+      "bool": true,
+      "string": "hallo"
+    }
   }
   
   
