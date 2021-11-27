@@ -1,4 +1,5 @@
 import os
+from PyQt5 import QtCore
 
 from pyqode.qt import QtWidgets
 from pyqode.core import api, modes
@@ -25,7 +26,7 @@ class JsonEditor(QtWidgets.QMainWindow):
         self.editor.setPlainText(json_string)
         lines = countLines(json_string)
         # automatically adjust height based on number of lines
-        height = (lines + 3) / 0.06
+        height = int((lines + 3) / 0.06)
         height = max(200, height)
         height = min(1000, height)
         self.editor.setMinimumWidth(400)
@@ -70,6 +71,7 @@ class JsonEditor(QtWidgets.QMainWindow):
         except:
             had_error = True
             msgBox = QMessageBox()
+            msgBox.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
             msgBox.setIcon(QMessageBox.Information)
             msgBox.setText("This JSON document is invalid.\nKeep open and continue editing?")
             msgBox.setWindowTitle("Syntax Error")
