@@ -324,10 +324,7 @@ class Scene(Serializable):
             self.filename = filename
 
 
-
-    def saveToFile(self, filename: str):
-        self.saveGraphToFile(filename)
-        return
+    def saveSceneToFile(self, filename: str):
         """
         Save this `Scene` to the file on disk.
 
@@ -335,11 +332,18 @@ class Scene(Serializable):
         :type filename: ``str``
         """
         with open(filename, "w") as file:
-            file.write( json.dumps( self.serialize(), indent=4 ) )
+            file.write(json.dumps(self.serialize(), indent=2))
             print("saving to", filename, "was successfull.")
-
             self.has_been_modified = False
             self.filename = filename
+
+    def saveToFile(self, filename: str):
+        graphFilename = '.graph.json'.join(filename.rsplit('.json', 1))
+        sceneFilename = '.scene.json'.join(filename.rsplit('.json', 1))
+        self.saveGraphToFile(graphFilename)
+        self.saveSceneToFile(sceneFilename)
+        
+
 
     def loadFromFile(self, filename: str):
         """
