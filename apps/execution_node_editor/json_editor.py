@@ -24,10 +24,10 @@ class JsonEditor(QtWidgets.QMainWindow):
 
         toolbar = QToolBar("Editor Toolbar")
 
-        self.done_action = QtWidgets.QAction("Done", self)
-        self.done_action.setShortcut('Ctrl+S')
-        self.done_action.triggered.connect(self.done)
-        toolbar.addAction(self.done_action)
+        self.apply_action = QtWidgets.QAction("Apply", self)
+        self.apply_action.setShortcut('Ctrl+S')
+        self.apply_action.triggered.connect(self.apply)
+        toolbar.addAction(self.apply_action)
         
         self.undo_action = QtWidgets.QAction("Undo", self)
         self.undo_action.setShortcut('Ctrl+Z')
@@ -49,8 +49,8 @@ class JsonEditor(QtWidgets.QMainWindow):
     def restore(self):
         self.editor.setPlainText(self.original_content)
 
-    def done(self):
-        print('DONE')
+    def apply(self):
+        print('Apply')
         had_error = True
         json_dict = {}
         try:
