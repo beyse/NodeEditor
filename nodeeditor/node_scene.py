@@ -299,7 +299,7 @@ class Scene(Serializable):
         for node in self.nodes:
             node_dict = {}
             node_dict["type"] = node.node_type
-            node_dict["settings"] = None
+            node_dict["settings"] = node.settings
             nodes_dict[node.title] = node_dict
 
         edges_list = []
