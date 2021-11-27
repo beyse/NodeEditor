@@ -44,6 +44,8 @@ class NodeTypeDefinition:
 
         dict["input_ports"] = input_port_dicts
         dict["output_ports"] = output_port_dicts 
+        
+        dict["default_settings"] = self.default_settings
 
         return dict
 
@@ -61,6 +63,8 @@ class NodeTypeDefinition:
         for o in dict["output_ports"]:
             pd = PortDefinition(o)
             self.output_ports.append(pd)
+
+        self.default_settings = dict["default_settings"]
 
 def read_node_type_definitions(directory):
 
