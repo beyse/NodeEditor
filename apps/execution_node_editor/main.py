@@ -37,5 +37,6 @@ if __name__ == '__main__':
     wnd = ExecutionNodeEditorWindow()
     wnd.setWindowIcon(app_icon)
     wnd.show()
+    wnd.actNew.trigger()
 
     sys.exit(app.exec_())
