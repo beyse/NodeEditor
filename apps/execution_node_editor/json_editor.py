@@ -8,19 +8,30 @@ from PyQt5.QtWidgets import QAction, QMessageBox, QStyle, QStyleFactory, QToolBa
 
 import json 
 
+def countLines(text):
+    return len(text.split('\n'))
 
 class JsonEditor(QtWidgets.QMainWindow):
     def __init__(self, node_name, json_dict, callback):
         super(JsonEditor, self).__init__()
         self.editor = JSONCodeEdit(self)
-        self.editor.setMinimumWidth(400)
-        self.editor.setMinimumHeight(200)
+
+        self.editor.tab_length = 2
         self.setCentralWidget(self.editor)
         self.callback = callback
         self.setWindowTitle('{} settings'.format(node_name))
         json_string = json.dumps(json_dict, indent = 2)
         self.original_content = json_string
         self.editor.setPlainText(json_string)
+        lines = countLines(json_string)
+        # automatically adjust height based on number of lines
+        height = (lines + 3) / 0.06
+        height = max(200, height)
+        height = min(1000, height)
+        self.editor.setMinimumWidth(400)
+        print("lines  = {}".format(lines))
+        print("height = {}".format(height))
+        self.editor.setMinimumHeight(height)
 
         toolbar = QToolBar("Editor Toolbar")
 
