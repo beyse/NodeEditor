@@ -40,7 +40,7 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
 
         self.stylesheet_filename = os.path.join(os.path.dirname(__file__), "qss/nodeeditor.qss")
         loadStylesheets(
-            os.path.join(os.path.dirname(__file__), "qss/nodeeditor-dark.qss"),
+            os.path.join(os.path.dirname(__file__), "qss/nodeeditor.qss"),
             self.stylesheet_filename
         )
 
