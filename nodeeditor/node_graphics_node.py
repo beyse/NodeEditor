@@ -179,7 +179,7 @@ class QDMGraphicsNode(QGraphicsItem):
         metrics = QFontMetrics(self._title_font)
         width = metrics.width(self.node.title) 
         self.title_item.setFont(self._title_font)
-        self.title_item.setX((self.width  - width)/ 2)
+        self.title_item.setX(1)
         self.title_item.setY(0)
         self.title_item.setTextWidth(self.width)
 
