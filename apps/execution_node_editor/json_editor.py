@@ -85,5 +85,3 @@ class JsonEditor(QtWidgets.QMainWindow):
 
         if had_error == False:
             self.callback(json_dict)
-        
-        self.close()
