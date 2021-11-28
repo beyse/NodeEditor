@@ -22,10 +22,10 @@ QDockWidget::close-button,QDockWidget::float-button{subcontrol-position:top righ
 QDockWidget::close-button{right:4px}
 QDockWidget::float-button{right:18px}
 QMenuBar{background:#EEEEEE}
-QMenuBar::item{spacing:3px;padding:3px 5px;color:#4f4f4f;background:transparent}
+QMenuBar::item{spacing:3px;padding:3px 5px;color:#141414;background:transparent}
 QMenuBar::item:selected,QMenuBar::item:pressed{background:#4f9eee}
 QMenu{background:#EEEEEE;border:1px solid #EEEEEE}
-QMenu::item{background:#EEEEEE;color:#4f4f4f}
+QMenu::item{background:#EEEEEE;color:#141414}
 QMenu::item:selected{background:#C0C0C0}
 QMenu::active{background:#C0C0C0;color:#4f4f4f}
 QMenu::separator{height:1px;background:#EEEEEE}
