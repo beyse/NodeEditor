@@ -39,7 +39,7 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
         self.name_company = 'Sebastian Beyer'
         self.name_product = 'ExecutionNodeEditor'
         self.process = None
-        self.stylesheet_filename = os.path.join(os.path.dirname(__file__), "qss/nodeeditor.qss")
+        self.stylesheet_filename = os.path.join(os.path.dirname(__file__), "qss/nodeeditor-light.qss")
         loadStylesheets(
             os.path.join(os.path.dirname(__file__), "qss/nodeeditor.qss"),
             self.stylesheet_filename
