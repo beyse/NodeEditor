@@ -146,9 +146,14 @@ class NodeEditorWidget(QWidget):
         :param filename: file to store the graph
         :type filename: ``str``
         """
-        if filename is not None: self.filename = filename
+        if filename is not None: 
+            self.filename = filename
+            self.graphFilename = '.graph.json'.join(filename.rsplit('.json', 1))
+            self.sceneFilename = '.scene.json'.join(filename.rsplit('.json', 1))
+
         QApplication.setOverrideCursor(Qt.WaitCursor)
-        self.scene.saveToFile(self.filename)
+        self.scene.saveGraphToFile(self.graphFilename)
+        self.scene.saveSceneToFile(self.sceneFilename)
         QApplication.restoreOverrideCursor()
         return True
 

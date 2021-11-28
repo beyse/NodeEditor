@@ -5,6 +5,7 @@ import os
 from qtpy.QtGui import QIcon, QKeySequence
 from qtpy.QtWidgets import QMdiArea, QWidget, QDockWidget, QAction, QMessageBox, QFileDialog
 from qtpy.QtCore import Qt, QSignalMapper
+import subprocess
 
 from nodeeditor.utils import loadStylesheets
 from nodeeditor.node_editor_window import NodeEditorWindow
@@ -37,7 +38,7 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
     def initUI(self):
         self.name_company = 'Sebastian Beyer'
         self.name_product = 'ExecutionNodeEditor'
-
+        self.process = None
         self.stylesheet_filename = os.path.join(os.path.dirname(__file__), "qss/nodeeditor.qss")
         loadStylesheets(
             os.path.join(os.path.dirname(__file__), "qss/nodeeditor.qss"),
@@ -250,12 +251,46 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
             self.nodesDock.show()
 
     def createToolBars(self):
-        self.openAction = QAction(QIcon("gui/icons/play.png"), "Run Graph", None)
         toolbar = QToolBar("Main Toolbar")
-        toolbar.addAction(self.openAction)
+        self.run_graph_action = QAction(QIcon("gui/icons/play.png"), "Run Graph (F5)", self)
+        self.run_graph_action.setShortcut('F5')
+        self.run_graph_action.triggered.connect(self.run_graph)
+        toolbar.addAction(self.run_graph_action)
+        
         self.addToolBar(toolbar)
 
-        #self.mainToolBar.addAction(self.openAction)
+    def execute_process(self, graph_file):
+        if self.process is not None:
+            print('A process already exists')
+            if self.process.poll() is None:
+                print('Process is still running')
+                # process is still running
+                print('I will terminate the process')
+                self.process.terminate()
+                try:
+                    print('Waiting for a maximum of 1 seconds')
+                    self.process.wait(1)
+                    print('Process terminated')
+                except:
+                    print('Waiting timed out and process still running')
+                    print('I will kill the process')
+                    self.process.kill()
+            else:
+                print('This process terminated')
+        
+        exepath = "C:\\Temp\\ExecutionNodes\\build\\examples\\example_image_processing\\Release\\example_image_processing.exe"
+        self.process = subprocess.Popen([exepath, graph_file], creationflags=subprocess.CREATE_NEW_CONSOLE)
+
+    def run_graph(self):
+        print('run graph')
+        # first save the graph
+        ok, graph_file = self.onFileSave()
+        # get the file name of the graph
+        #current_nodeeditor = self.getCurrentNodeEditorWidget()
+        #print(current_nodeeditor)
+        if ok:
+            self.execute_process(graph_file)
+            #print('Run now {}'.format(graph_file))
 
     def createNodesDock(self):
         self.nodesListWidget = QDMDragListbox()

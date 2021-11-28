@@ -146,7 +146,11 @@ class NodeEditorWindow(QMainWindow):
               )
 
         if res == QMessageBox.Save:
-            return self.onFileSave()
+            status = self.onFileSave()
+            if status is None:
+                return False
+            else:
+                return True 
         elif res == QMessageBox.Cancel:
             return False
 
@@ -193,28 +197,28 @@ class NodeEditorWindow(QMainWindow):
             if not current_nodeeditor.isFilenameSet(): return self.onFileSaveAs()
 
             current_nodeeditor.fileSave()
-            self.statusBar().showMessage("Successfully saved %s" % current_nodeeditor.filename, 5000)
+            self.statusBar().showMessage("Successfully saved %s" % current_nodeeditor.sceneFilename, 5000)
 
             # support for MDI app
             if hasattr(current_nodeeditor, "setTitle"): current_nodeeditor.setTitle()
             else: self.setTitle()
-            return True
+            return True, current_nodeeditor.graphFilename 
 
     def onFileSaveAs(self):
         """Handle File Save As operation"""
         current_nodeeditor = self.getCurrentNodeEditorWidget()
         if current_nodeeditor is not None:
-            fname, filter = QFileDialog.getSaveFileName(self, 'Save graph to file', self.getFileDialogDirectory(), self.getFileDialogFilter())
+            fname, filter = QFileDialog.getSaveFileName(self, 'Save graph and scene to file', self.getFileDialogDirectory(), self.getFileDialogFilter())
             if fname == '': return False
 
             self.onBeforeSaveAs(current_nodeeditor, fname)
             current_nodeeditor.fileSave(fname)
-            self.statusBar().showMessage("Successfully saved as %s" % current_nodeeditor.filename, 5000)
+            self.statusBar().showMessage("Successfully saved as %s" % current_nodeeditor.sceneFilename, 5000)
 
             # support for MDI app
             if hasattr(current_nodeeditor, "setTitle"): current_nodeeditor.setTitle()
             else: self.setTitle()
-            return True
+            return True, current_nodeeditor.graphFilename 
 
     def onBeforeSaveAs(self, current_nodeeditor: 'NodeEditorWidget', filename: str):
         """

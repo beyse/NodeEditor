@@ -337,13 +337,6 @@ class Scene(Serializable):
             self.has_been_modified = False
             self.filename = filename
 
-    def saveToFile(self, filename: str):
-        graphFilename = '.graph.json'.join(filename.rsplit('.json', 1))
-        sceneFilename = '.scene.json'.join(filename.rsplit('.json', 1))
-        self.saveGraphToFile(graphFilename)
-        self.saveSceneToFile(sceneFilename)
-        
-
 
     def loadFromFile(self, filename: str):
         """
