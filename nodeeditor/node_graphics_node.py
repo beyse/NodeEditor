@@ -83,6 +83,7 @@ class QDMGraphicsNode(QGraphicsItem):
         self._color_hovered = QColor("#52ffb9")
         self._color_selected = QColor("#07def5")
         self._color_dirty = QColor("#ed8836")
+        self._color_dirty_selected = QColor("#ffc519")
 
         self._pen_default = QPen(self._color)
         self._pen_default.setWidthF(1.5)
@@ -90,6 +91,8 @@ class QDMGraphicsNode(QGraphicsItem):
         self._pen_selected.setWidthF(1.5)
         self._pen_dirty = QPen(self._color_dirty)
         self._pen_dirty.setWidthF(1.5)
+        self._pen_dirty_selected = QPen(self._color_dirty_selected)
+        self._pen_dirty_selected.setWidthF(1.5)
         self._pen_hovered = QPen(self._color_hovered)
         self._pen_hovered.setWidthF(2)
 
@@ -222,7 +225,10 @@ class QDMGraphicsNode(QGraphicsItem):
 
 
         if self.node.isDirty():
-            painter.setPen(self._pen_dirty)
+            if self.isSelected():
+                painter.setPen(self._pen_dirty_selected)
+            else:
+                painter.setPen(self._pen_dirty)
 
         painter.drawPath(path_outline.simplified())
 
