@@ -1,0 +1,21 @@
+{
+    "node_type": "SplitWords",
+    "input_ports": [
+      {
+        "port_name": "text",
+        "data_type": "std::string"
+      }
+    ],
+    "output_ports": [
+      {
+        "port_name": "words",
+        "data_type": "std::vector<std::string>"
+      }
+    ],
+    "default_settings": 
+    {
+      "delimiters": [" ", "\n", "\t"]
+    }
+  }
+  
+  
