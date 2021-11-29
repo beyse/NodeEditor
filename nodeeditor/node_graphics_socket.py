@@ -67,7 +67,7 @@ class QDMGraphicsSocket(QGraphicsItem):
         self.title_item = QGraphicsTextItem(self)
         self._title_color = QColor("#000000")
         self._title_color_highlighted = QColor("#028a99")
-        self._title_font = QFont("Arial", 10)
+        self._title_font = QFont("Roboto", 10)
         self.title_horizontal_padding = 4.0
         self.title_vertical_padding = 4.0
         self.width = 100

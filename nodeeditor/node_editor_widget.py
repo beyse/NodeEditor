@@ -201,7 +201,7 @@ class NodeEditorWidget(QWidget):
         rect = self.grScene.addRect(-100, -100, 80, 100, outlinePen, greenBrush)
         rect.setFlag(QGraphicsItem.ItemIsMovable)
 
-        text = self.grScene.addText("This is my Awesome text!", QFont("Ubuntu"))
+        text = self.grScene.addText("This is my Awesome text!", QFont("Roboto"))
         text.setFlag(QGraphicsItem.ItemIsSelectable)
         text.setFlag(QGraphicsItem.ItemIsMovable)
         text.setDefaultTextColor(QColor.fromRgbF(1.0, 1.0, 1.0))

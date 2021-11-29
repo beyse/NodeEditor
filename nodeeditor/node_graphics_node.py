@@ -77,7 +77,7 @@ class QDMGraphicsNode(QGraphicsItem):
     def initAssets(self):
         """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
         self._title_color = QColor("#000000")
-        self._title_font = QFont("Arial", 10)
+        self._title_font = QFont("Roboto", 10)
 
         self._color = QColor("#07303c")
         self._color_hovered = QColor("#52ffb9")

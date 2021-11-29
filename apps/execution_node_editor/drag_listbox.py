@@ -19,7 +19,7 @@ class QDMDragListbox(QTreeWidget):
         self.setColumnCount(1)
         self.setHeaderLabels([""])
         self.addMyItems()
-        self._font = QFont("Arial", 12)
+        self._font = QFont("Roboto", 12)
         self.setFont(self._font)
         
 
