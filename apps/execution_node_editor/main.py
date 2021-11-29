@@ -13,6 +13,13 @@ from window import ExecutionNodeEditorWindow
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 
+    for (dirpath, dirnames, filenames) in os.walk('gui/fonts'):
+        for f in filenames:
+            font_id = QtGui.QFontDatabase.addApplicationFont(f)
+            if QtGui.QFontDatabase.applicationFontFamilies(font_id) == -1:
+                print("Could not load font")
+                sys.exit(-1)
+
     # print(QStyleFactory.keys())
     app.setStyle('Fusion')
 
