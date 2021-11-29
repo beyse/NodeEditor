@@ -2,7 +2,9 @@
 """
 A module containing Graphics representation of :class:`~nodeeditor.node_node.Node`
 """
+from PyQt5.QtCore import QPoint
 from PyQt5.QtGui import QFontMetrics, QTextBlockFormat, QTextCursor
+from PyQt5.QtWidgets import QGraphicsDropShadowEffect
 from qtpy.QtWidgets import QGraphicsItem, QWidget, QGraphicsTextItem
 from qtpy.QtGui import QFont, QColor, QPen, QBrush, QPainterPath
 from qtpy.QtCore import Qt, QRectF
@@ -31,6 +33,18 @@ class QDMGraphicsNode(QGraphicsItem):
         self.initSizes(0)
         self.initAssets()
         self.initUI()
+
+
+        shadowX = 0
+        shadowY = 5
+        self.__shadow = QGraphicsDropShadowEffect(blurRadius=30,
+                                              offset=QPoint(shadowX, shadowY))
+        self.setGraphicsEffect(self.__shadow)
+        self.__shadow.setEnabled(True)
+
+        self.width += shadowX
+        self.height += shadowY
+        
 
     @property
     def content(self):
@@ -68,7 +82,7 @@ class QDMGraphicsNode(QGraphicsItem):
         """Set up internal attributes like `width`, `height`, etc."""
         self.width = 180
         self.height = 240
-        self.edge_roundness = 2.0
+        self.edge_roundness = 1.0
         self.edge_padding = 10.0
         self.title_height = 24.0
         self.title_horizontal_padding = 4.0
@@ -76,19 +90,19 @@ class QDMGraphicsNode(QGraphicsItem):
 
     def initAssets(self):
         """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
-        self._title_color = QColor("#000000")
+        self._title_color = QColor("#ffffff")
         self._title_font = QFont("Roboto", 10)
 
         self._color = QColor("#07303c")
         self._color_hovered = QColor("#52ffb9")
-        self._color_selected = QColor("#07def5")
+        self._color_selected = QColor("#28daed")
         self._color_dirty = QColor("#ed8836")
         self._color_dirty_selected = QColor("#ffc519")
 
-        self._pen_default = QPen(self._color)
-        self._pen_default.setWidthF(1.5)
+        self._pen_default = QPen(QColor("#00000000"))
+        self._pen_default.setWidthF(0)
         self._pen_selected = QPen(self._color_selected)
-        self._pen_selected.setWidthF(1.5)
+        self._pen_selected.setWidthF(0.75)
         self._pen_dirty = QPen(self._color_dirty)
         self._pen_dirty.setWidthF(1.5)
         self._pen_dirty_selected = QPen(self._color_dirty_selected)
@@ -96,10 +110,14 @@ class QDMGraphicsNode(QGraphicsItem):
         self._pen_hovered = QPen(self._color_hovered)
         self._pen_hovered.setWidthF(2)
 
-        self._brush_title = QBrush(QColor("#cde7e7e7"))
-        self._brush_title_hover = QBrush(QColor("#cdf6f6f6"))
-        self._brush_background = QBrush(QColor("#cdf4f4f4"))
-        self._brush_hover = QBrush(QColor("#cdffffff"))
+        self._brush_title = QBrush(QColor("#009ecc"))
+        self._brush_title_hover = QBrush(QColor("#0baddc"))
+        self._brush_title_selected = QBrush(QColor("#28daed"))
+        self._brush_title_dirty = QBrush(self._color_dirty)
+        self._brush_title_dirty_selected = QBrush(self._color_dirty_selected)
+        self._brush_title_dirty_hovered = QBrush(QColor("#f29d33"))
+        self._brush_background = QBrush(QColor("#ffffff"))
+        self._brush_hover = QBrush(QColor("#ffffff"))
 
     def onSelected(self):
         """Our event handling when the node was selected"""
@@ -209,28 +227,28 @@ class QDMGraphicsNode(QGraphicsItem):
         path_title.addRect(self.width - self.edge_roundness, self.title_height - self.edge_roundness, self.edge_roundness, self.edge_roundness)
         painter.setPen(Qt.NoPen)
         if self.hovered:
-            painter.setBrush(self._brush_title_hover)
+            if self.node.isDirty():
+                painter.setBrush(self._brush_title_dirty_hovered)
+            else:
+                painter.setBrush(self._brush_title_hover)
         else:
-            painter.setBrush(self._brush_title)
+            if self.node.isDirty():
+                painter.setBrush(self._brush_title_dirty)
+            else:
+                painter.setBrush(self._brush_title)
+
+
+
+        if self.isSelected():
+            if self.node.isDirty():
+                painter.setBrush(self._brush_title_dirty_selected)
+            else:
+                painter.setBrush(self._brush_title_selected)
+
         painter.drawPath(path_title.simplified())
 
-        # outline
-        path_outline = QPainterPath()
-        path_outline.addRoundedRect(-1, -1, self.width+2, self.height+2, self.edge_roundness, self.edge_roundness)
-        painter.setBrush(Qt.NoBrush)
-        if self.isSelected():
-            painter.setPen(self._pen_selected)
-        else:
-            painter.setPen(self._pen_default)
 
 
-        if self.node.isDirty():
-            if self.isSelected():
-                painter.setPen(self._pen_dirty_selected)
-            else:
-                painter.setPen(self._pen_dirty)
-
-        painter.drawPath(path_outline.simplified())
 
         # content
         path_content = QPainterPath()
@@ -240,15 +258,29 @@ class QDMGraphicsNode(QGraphicsItem):
         path_content.addRect(self.width - self.edge_roundness, self.title_height, self.edge_roundness, self.edge_roundness)
         painter.setPen(Qt.NoPen)
 
-
-
-
-
-
-        
         if self.hovered:
             painter.setBrush(self._brush_hover)
             painter.drawPath(path_content.simplified())
+            
         else:
             painter.setBrush(self._brush_background)
             painter.drawPath(path_content.simplified())
+
+                # outline
+        path_outline = QPainterPath()
+        painter.setBrush(Qt.NoBrush)
+        if self.isSelected():
+            painter.setPen(self._pen_selected)
+            path_outline.addRoundedRect(0,0, self.width, self.height, self.edge_roundness, self.edge_roundness)
+        else:
+            painter.setPen(self._pen_default)
+            path_outline.addRoundedRect(-0.5, -0.5, self.width+1, self.height+1, self.edge_roundness, self.edge_roundness)
+
+
+        if self.node.isDirty():
+            if self.isSelected():
+                painter.setPen(self._pen_dirty_selected)
+            else:
+                painter.setPen(self._pen_dirty)
+
+        painter.drawPath(path_outline.simplified())
