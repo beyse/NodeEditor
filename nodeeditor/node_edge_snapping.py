@@ -32,17 +32,26 @@ class EdgeSnapping():
             scenepos.x() - self.edge_snapping_radius, scenepos.y() - self.edge_snapping_radius,
             self.edge_snapping_radius * 2, self.edge_snapping_radius * 2
         )
-        items = self.grScene.items(scanrect)
-        items = list(filter(lambda x: isinstance(x, QDMGraphicsSocket), items))
+        
+        all_sockets = list(filter(lambda x: isinstance(x, QDMGraphicsSocket), self.grScene.items()))
+        for grsock in all_sockets:
+            grsock.isHighlighted = False
+            grsock.update()
 
-        if len(items) == 0:
+        all_nearby_items = self.grScene.items(scanrect)
+        all_nearby_sockets = list(filter(lambda x: isinstance(x, QDMGraphicsSocket), all_nearby_items))
+
+        if len(all_nearby_sockets) == 0:
             return None, scenepos
 
-        selected_item = items[0]
-        if len(items) > 1:
+        selected_item = all_nearby_sockets[0]
+        if len(all_nearby_sockets) > 1:
             # calculate the nearest socket
             nearest = 10000000000
-            for grsock in items:
+            for grsock in all_nearby_sockets:
+                grsock.isHighlighted = False
+                grsock.update()
+
                 grsock_scenepos = grsock.socket.node.getSocketScenePosition(grsock.socket)
                 qpdist = QPointF(*grsock_scenepos) - scenepos
                 dist = qpdist.x() * qpdist.x() + qpdist.y() * qpdist.y()
