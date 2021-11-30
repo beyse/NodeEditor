@@ -42,10 +42,9 @@ class GraphicsEdgePathBezier(GraphicsEdgePathBase):
         """
         s = self.owner.posSource
         d = self.owner.posDestination
-        dist = abs(d[0] - s[0]) * 0.5
-
-        c1x = +dist
-        c2x = -dist
+        distX = abs(d[0] - s[0])
+        c1x = +distX * 0.55
+        c2x = -distX * 0.25
         c1y = 0
         c2y = 0
 
