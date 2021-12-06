@@ -157,7 +157,17 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
 
 
     def about(self):
-        QMessageBox.about(self, "Todo")
+        QMessageBox.about(self, "About", 
+        "This program was written by Sebastian Beyer\n"
+        "sebastian.beyer@live.com\n\n"
+
+        "You can view it on GitHub: https://github.com/beyse/NodeEditor.\n\n"
+        
+        "It is a fork from pyqt-node-editor done by Pavel Křupala.\n"
+        "Check it out as well at: https://gitlab.com/pavel.krupala/pyqt-node-editor.\n\n"
+        
+        "The project is licensed under the MIT License.\n"
+        "Learn more about it here: https://choosealicense.com/licenses/mit/."); 
 
     def createMenus(self):
         super().createMenus()
