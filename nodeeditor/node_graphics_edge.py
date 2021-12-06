@@ -2,6 +2,7 @@
 """
 A module containing the Graphics representation of an Edge
 """
+from PyQt5 import QtGui
 from PyQt5.QtCore import QPoint
 from PyQt5.QtGui import QBrush, QPolygonF
 from qtpy.QtWidgets import QGraphicsPathItem, QWidget, QGraphicsItem
@@ -55,18 +56,21 @@ class QDMGraphicsEdge(QGraphicsPathItem):
         self._color = self._default_color = QColor("#07303c")
         self._color_selected = QColor("#07def5")
         self._color_hovered = QColor("#028a99")
+        self._color_selected_hovered = QColor("#58fffd")
         self._color_invalid = QColor("#ed8836")
         self._color_invalid_selected = QColor("#ffc519")
         self._pen = QPen(self._color)
         self._pen_selected = QPen(self._color_selected)
         self._pen_dragging = QPen(QColor("#5891a0"))
         self._pen_hovered = QPen(self._color_hovered)
+        self._pen_selected_hovered = QPen(self._color_selected_hovered)
         self._pen_invalid = QPen(self._color_invalid)
         self._pen_invalid_selected= QPen(self._color_invalid_selected)
         self._pen.setWidthF(1.5)
         self._pen_selected.setWidthF(1.5)
         self._pen_dragging.setWidthF(1.5)
         self._pen_hovered.setWidthF(1.5)
+        self._pen_selected_hovered.setWidthF(1.5)
         self._pen_invalid.setWidthF(1.5)
         self._pen_invalid_selected.setWidthF(1.5)
 
@@ -109,6 +113,7 @@ class QDMGraphicsEdge(QGraphicsPathItem):
     def onSelected(self):
         """Our event handling when the edge was selected"""
         self.edge.scene.grScene.itemSelected.emit()
+        self.update()
 
     def doSelect(self, new_state:bool=True):
         """Safe version of selecting the `Graphics Node`. Takes care about the selection state flag used internally
@@ -168,7 +173,13 @@ class QDMGraphicsEdge(QGraphicsPathItem):
         :return: path representation
         :rtype: ``QPainterPath``
         """
-        return self.calcPath()
+        # This is necessary to make the graph hover
+        # based on a small area around the stroke
+        path = self.calcPath()
+        stroker = QtGui.QPainterPathStroker()
+        stroker.setWidth(7)
+        path = stroker.createStroke(self.calcPath())
+        return path
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
         """Qt's overridden method to paint this Graphics Edge. Path calculated
@@ -188,7 +199,7 @@ class QDMGraphicsEdge(QGraphicsPathItem):
             tri_offset = -5
         
         if self.hovered and self.edge.end_socket is not None:
-            painter.setPen(self._pen_hovered)
+            painter.setPen(self._pen_hovered if not self.isSelected() else self._pen_selected_hovered)
 
         if self.edge.is_valid == False:
             painter.setPen(self._pen_invalid if not self.isSelected() else self._pen_invalid_selected)
