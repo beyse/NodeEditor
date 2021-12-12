@@ -23,7 +23,7 @@ PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
 OutputDir=C:\Users\Sebastian\source\repos\NodeEditor\dist
 OutputBaseFilename=Setup ExecutionNodeEditor
-SetupIconFile=C:\Users\Sebastian\source\repos\NodeEditor\apps\execution_node_editor\gui\icons\installer.ico
+SetupIconFile=C:\Users\Sebastian\source\repos\NodeEditor\apps\execution_node_editor\assets\icons\installer.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -36,7 +36,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "C:\Users\Sebastian\source\repos\NodeEditor\dist\ExecutionNodeEditor.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Sebastian\source\repos\NodeEditor\dist\gui\*"; DestDir: "{app}\gui"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\Users\Sebastian\source\repos\NodeEditor\dist\assets\*"; DestDir: "{app}\assets"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "C:\Users\Sebastian\source\repos\NodeEditor\dist\node_type_definitions\*"; DestDir: "{app}\node_type_definitions"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 

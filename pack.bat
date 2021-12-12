@@ -12,12 +12,12 @@ python -m PyInstaller --noconfirm ^
 --hidden-import nodeeditor.node_socket.SocketDefinition ^
 --noconsole ^
 --onefile ^
---icon=apps\execution_node_editor\gui\icons\app.ico ^
+--icon=apps\execution_node_editor\assets\icons\app.ico ^
 --name ExecutionNodeEditor ^
 .\apps\execution_node_editor\main.py
 
 xcopy .\apps\execution_node_editor\node_type_definitions .\dist\node_type_definitions\ /s /e
-xcopy .\apps\execution_node_editor\gui .\dist\gui\ /s /e
+xcopy .\apps\execution_node_editor\assets .\dist\assets\ /s /e
 
 "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" .\apps\execution_node_editor\setup\setup-compile-script.iss
 
