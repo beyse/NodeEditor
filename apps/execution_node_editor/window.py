@@ -2,7 +2,7 @@ import qss.nodeeditor_dark_resources
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QToolBar
 from apps.execution_node_editor.conf import register_node_types
-import os
+import os, sys
 from qtpy.QtGui import QIcon, QKeySequence
 from qtpy.QtWidgets import QMdiArea, QWidget, QDockWidget, QAction, QMessageBox, QFileDialog
 from qtpy.QtCore import Qt, QSignalMapper
@@ -48,13 +48,13 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
         )
 
         app_icon = QtGui.QIcon()
-        app_icon.addFile('gui/icons/16x16.png', QtCore.QSize(16, 16))
-        app_icon.addFile('gui/icons/24x24.png', QtCore.QSize(24, 24))
-        app_icon.addFile('gui/icons/32x32.png', QtCore.QSize(32, 32))
-        app_icon.addFile('gui/icons/48x48.png', QtCore.QSize(48, 48))
-        app_icon.addFile('gui/icons/64x64.png', QtCore.QSize(64, 64))
-        app_icon.addFile('gui/icons/128x128.png', QtCore.QSize(128, 128))
-        app_icon.addFile('gui/icons/256x256.png', QtCore.QSize(256, 256))
+        app_icon.addFile('assets/icons/16x16.png', QtCore.QSize(16, 16))
+        app_icon.addFile('assets/icons/24x24.png', QtCore.QSize(24, 24))
+        app_icon.addFile('assets/icons/32x32.png', QtCore.QSize(32, 32))
+        app_icon.addFile('assets/icons/48x48.png', QtCore.QSize(48, 48))
+        app_icon.addFile('assets/icons/64x64.png', QtCore.QSize(64, 64))
+        app_icon.addFile('assets/icons/128x128.png', QtCore.QSize(128, 128))
+        app_icon.addFile('assets/icons/256x256.png', QtCore.QSize(256, 256))
         self.setWindowIcon(app_icon)
 
         self.empty_icon = QIcon(".")
@@ -63,8 +63,9 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
             print("Registered nodes:")
             # pp(CALC_NODES)
 
-        categorizes_node_type_definitions = read_node_type_definitions_from_dirs(
-            "./node_type_definitions")
+        exe_path = os.path.dirname(os.path.realpath(sys.argv[0]))
+        node_definitions_dir = os.path.join(exe_path, 'node_type_definitions')
+        categorizes_node_type_definitions = read_node_type_definitions_from_dirs(node_definitions_dir)
 
         for category, node_types in categorizes_node_type_definitions.items():
             register_node_types(node_types, category)
@@ -133,6 +134,10 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
         if activeSubWindow:
             return activeSubWindow.widget()
         return None
+
+    def openFile(self, filename):
+        self.getCurrentNodeEditorWidget().fileLoad(filename)
+        self.setTitle()
 
     def onFileNew(self):
         try:
@@ -272,7 +277,7 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
     def createToolBars(self):
         toolbar = QToolBar("Main Toolbar")
         self.run_graph_action = QAction(
-            QIcon("gui/icons/play.png"), "Run Graph (F5)", self)
+            QIcon("assets/icons/play.png"), "Run Graph (F5)", self)
         self.run_graph_action.setShortcut('F5')
         self.run_graph_action.triggered.connect(self.run_graph)
         toolbar.addAction(self.run_graph_action)
