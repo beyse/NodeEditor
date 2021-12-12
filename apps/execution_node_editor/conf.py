@@ -149,6 +149,16 @@ class ConcreteExecutionNode(ExecutionNode):
         self.grNode.initSizes(max_sockets)
         self.grNode.initAssets()
 
+    def serialize(self):
+        res = super().serialize()
+        res['node_settings'] = self.settings
+        return res
+
+    def deserialize(self, data, hashmap={}, restore_id=True):
+        res = super().deserialize(data, hashmap, restore_id)
+        self.settings = data['node_settings']
+        return res
+
 
 def create_node(scene, node_type):
     return ConcreteExecutionNode(scene, node_type)

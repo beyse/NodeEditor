@@ -12,7 +12,8 @@ from qtpy.QtCore import Qt, QRectF
 
 class QDMGraphicsNode(QGraphicsItem):
     """Class describing Graphics representation of :class:`~nodeeditor.node_node.Node`"""
-    def __init__(self, node:'Node', parent:QWidget=None):
+
+    def __init__(self, node: 'Node', parent: QWidget = None):
         """
         :param node: reference to :class:`~nodeeditor.node_node.Node`
         :type node: :class:`~nodeeditor.node_node.Node`
@@ -34,17 +35,15 @@ class QDMGraphicsNode(QGraphicsItem):
         self.initAssets()
         self.initUI()
 
-
         shadowX = 0
         shadowY = 5
         self.__shadow = QGraphicsDropShadowEffect(blurRadius=30,
-                                              offset=QPoint(shadowX, shadowY))
+                                                  offset=QPoint(shadowX, shadowY))
         self.setGraphicsEffect(self.__shadow)
         self.__shadow.setEnabled(True)
 
         self.width += shadowX
         self.height += shadowY
-        
 
     @property
     def content(self):
@@ -131,7 +130,8 @@ class QDMGraphicsNode(QGraphicsItem):
         """
         self.setSelected(new_state)
         self._last_selected_state = new_state
-        if new_state: self.onSelected()
+        if new_state:
+            self.onSelected()
 
     def mouseMoveEvent(self, event):
         """Overridden event to detect that we moved with this `Node`"""
@@ -150,7 +150,8 @@ class QDMGraphicsNode(QGraphicsItem):
         # handle when grNode moved
         if self._was_moved:
             self._was_moved = False
-            self.node.scene.history.storeHistory("Node moved", setModified=True)
+            self.node.scene.history.storeHistory(
+                "Node moved", setModified=True)
 
             self.node.scene.resetLastSelectedStates()
             self.doSelect()     # also trigger itemSelected when node was moved
@@ -181,7 +182,6 @@ class QDMGraphicsNode(QGraphicsItem):
         self.hovered = False
         self.update()
 
-
     def boundingRect(self) -> QRectF:
         """Defining Qt' bounding rectangle"""
         return QRectF(
@@ -191,40 +191,42 @@ class QDMGraphicsNode(QGraphicsItem):
             self.height
         ).normalized()
 
-
     def initTitle(self):
         """Set up the title Graphics representation: font, color, position, etc."""
         self.title_item = QGraphicsTextItem(self)
         self.title_item.node = self.node
         self.title_item.setDefaultTextColor(self._title_color)
         metrics = QFontMetrics(self._title_font)
-        width = metrics.width(self.node.title) 
+        width = metrics.width(self.node.title)
         self.title_item.setFont(self._title_font)
         self.title_item.setX(1)
         self.title_item.setY(0)
         self.title_item.setTextWidth(self.width)
 
     def initContent(self):
-        """Set up the `grContent` - ``QGraphicsProxyWidget`` to have a container for `Graphics Content`"""
-        if self.content is not None:
-            print(type(self.content))
-            self.content.setGeometry(self.edge_padding, self.title_height + self.edge_padding,
-                                 self.width - 2 * self.edge_padding, self.height - 2 * self.edge_padding - self.title_height)
+        pass
+        # """Set up the `grContent` - ``QGraphicsProxyWidget`` to have a container for `Graphics Content`"""
+        # if self.content is not None:
+        #     print(type(self.content))
+        #     self.content.setGeometry(self.edge_padding, self.title_height + self.edge_padding,
+        #                          self.width - 2 * self.edge_padding, self.height - 2 * self.edge_padding - self.title_height)
 
-        # get the QGraphicsProxyWidget when inserted into the grScene
-        self.grContent = self.node.scene.grScene.addWidget(self.content)
-        self.grContent.node = self.node
-        self.grContent.setParentItem(self)
-
+        # # get the QGraphicsProxyWidget when inserted into the grScene
+        # self.grContent = self.node.scene.grScene.addWidget(self.content)
+        # self.grContent.node = self.node
+        # self.grContent.setParentItem(self)
 
     def paint(self, painter, QStyleOptionGraphicsItem, widget=None):
         """Painting the rounded rectanglar `Node`"""
         # title
         path_title = QPainterPath()
         path_title.setFillRule(Qt.WindingFill)
-        path_title.addRoundedRect(0, 0, self.width, self.title_height, self.edge_roundness, self.edge_roundness)
-        path_title.addRect(0, self.title_height - self.edge_roundness, self.edge_roundness, self.edge_roundness)
-        path_title.addRect(self.width - self.edge_roundness, self.title_height - self.edge_roundness, self.edge_roundness, self.edge_roundness)
+        path_title.addRoundedRect(
+            0, 0, self.width, self.title_height, self.edge_roundness, self.edge_roundness)
+        path_title.addRect(0, self.title_height - self.edge_roundness,
+                           self.edge_roundness, self.edge_roundness)
+        path_title.addRect(self.width - self.edge_roundness, self.title_height -
+                           self.edge_roundness, self.edge_roundness, self.edge_roundness)
         painter.setPen(Qt.NoPen)
         if self.hovered:
             if self.node.isDirty():
@@ -237,8 +239,6 @@ class QDMGraphicsNode(QGraphicsItem):
             else:
                 painter.setBrush(self._brush_title)
 
-
-
         if self.isSelected():
             if self.node.isDirty():
                 painter.setBrush(self._brush_title_dirty_selected)
@@ -247,35 +247,36 @@ class QDMGraphicsNode(QGraphicsItem):
 
         painter.drawPath(path_title.simplified())
 
-
-
-
         # content
         path_content = QPainterPath()
         path_content.setFillRule(Qt.WindingFill)
-        path_content.addRoundedRect(0, self.title_height, self.width, self.height - self.title_height, self.edge_roundness, self.edge_roundness)
-        path_content.addRect(0, self.title_height, self.edge_roundness, self.edge_roundness)
-        path_content.addRect(self.width - self.edge_roundness, self.title_height, self.edge_roundness, self.edge_roundness)
+        path_content.addRoundedRect(0, self.title_height, self.width, self.height -
+                                    self.title_height, self.edge_roundness, self.edge_roundness)
+        path_content.addRect(0, self.title_height,
+                             self.edge_roundness, self.edge_roundness)
+        path_content.addRect(self.width - self.edge_roundness,
+                             self.title_height, self.edge_roundness, self.edge_roundness)
         painter.setPen(Qt.NoPen)
 
         if self.hovered:
             painter.setBrush(self._brush_hover)
             painter.drawPath(path_content.simplified())
-            
+
         else:
             painter.setBrush(self._brush_background)
             painter.drawPath(path_content.simplified())
 
-                # outline
+            # outline
         path_outline = QPainterPath()
         painter.setBrush(Qt.NoBrush)
         if self.isSelected():
             painter.setPen(self._pen_selected)
-            path_outline.addRoundedRect(0,0, self.width, self.height, self.edge_roundness, self.edge_roundness)
+            path_outline.addRoundedRect(
+                0, 0, self.width, self.height, self.edge_roundness, self.edge_roundness)
         else:
             painter.setPen(self._pen_default)
-            path_outline.addRoundedRect(-0.5, -0.5, self.width+1, self.height+1, self.edge_roundness, self.edge_roundness)
-
+            path_outline.addRoundedRect(-0.5, -0.5, self.width+1,
+                                        self.height+1, self.edge_roundness, self.edge_roundness)
 
         if self.node.isDirty():
             if self.isSelected():

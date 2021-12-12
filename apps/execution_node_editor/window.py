@@ -1,3 +1,4 @@
+import qss.nodeeditor_dark_resources
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QToolBar
 from apps.execution_node_editor.conf import register_node_types
@@ -12,7 +13,7 @@ from nodeeditor.node_editor_window import NodeEditorWindow
 from sub_window import SubWindow
 from drag_listbox import QDMDragListbox
 from nodeeditor.utils import dumpException, pp
-from apps.execution_node_editor.node_type_definition import NodeTypeDefinition , PortDefinition, read_node_type_definitions_from_dirs
+from apps.execution_node_editor.node_type_definition import NodeTypeDefinition, PortDefinition, read_node_type_definitions_from_dirs
 # Enabling edge validators
 from nodeeditor.node_edge import Edge
 from nodeeditor.node_edge_validators import (
@@ -26,12 +27,12 @@ Edge.registerEdgeValidator(edge_cannot_connect_input_and_output_of_same_node)
 
 
 # images for the dark skin
-import qss.nodeeditor_dark_resources
 
 
 DEBUG = False
 
 node_type_definitions = []
+
 
 class ExecutionNodeEditorWindow(NodeEditorWindow):
 
@@ -39,33 +40,34 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
         self.name_company = 'Sebastian Beyer'
         self.name_product = 'ExecutionNodeEditor'
         self.process = None
-        self.stylesheet_filename = os.path.join(os.path.dirname(__file__), "qss/nodeeditor-light.qss")
+        self.stylesheet_filename = os.path.join(
+            os.path.dirname(__file__), "qss/nodeeditor-light.qss")
         loadStylesheets(
             os.path.join(os.path.dirname(__file__), "qss/nodeeditor.qss"),
             self.stylesheet_filename
         )
 
         app_icon = QtGui.QIcon()
-        app_icon.addFile('gui/icons/16x16.png', QtCore.QSize(16,16))
-        app_icon.addFile('gui/icons/24x24.png', QtCore.QSize(24,24))
-        app_icon.addFile('gui/icons/32x32.png', QtCore.QSize(32,32))
-        app_icon.addFile('gui/icons/48x48.png', QtCore.QSize(48,48))
-        app_icon.addFile('gui/icons/64x64.png', QtCore.QSize(64,64))
-        app_icon.addFile('gui/icons/128x128.png', QtCore.QSize(128,128))
-        app_icon.addFile('gui/icons/256x256.png', QtCore.QSize(256,256))
+        app_icon.addFile('gui/icons/16x16.png', QtCore.QSize(16, 16))
+        app_icon.addFile('gui/icons/24x24.png', QtCore.QSize(24, 24))
+        app_icon.addFile('gui/icons/32x32.png', QtCore.QSize(32, 32))
+        app_icon.addFile('gui/icons/48x48.png', QtCore.QSize(48, 48))
+        app_icon.addFile('gui/icons/64x64.png', QtCore.QSize(64, 64))
+        app_icon.addFile('gui/icons/128x128.png', QtCore.QSize(128, 128))
+        app_icon.addFile('gui/icons/256x256.png', QtCore.QSize(256, 256))
         self.setWindowIcon(app_icon)
 
         self.empty_icon = QIcon(".")
 
         if DEBUG:
             print("Registered nodes:")
-            #pp(CALC_NODES)
+            # pp(CALC_NODES)
 
-        categorizes_node_type_definitions = read_node_type_definitions_from_dirs("./node_type_definitions")
+        categorizes_node_type_definitions = read_node_type_definitions_from_dirs(
+            "./node_type_definitions")
 
         for category, node_types in categorizes_node_type_definitions.items():
             register_node_types(node_types, category)
-        
 
         self.mdiArea = QMdiArea()
         self.mdiArea.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -103,21 +105,27 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
             import sys
             sys.exit(0)
 
-
     def createActions(self):
         super().createActions()
 
-        self.actClose = QAction("Cl&ose", self, statusTip="Close the active window", triggered=self.mdiArea.closeActiveSubWindow)
-        self.actCloseAll = QAction("Close &All", self, statusTip="Close all the windows", triggered=self.mdiArea.closeAllSubWindows)
-        self.actTile = QAction("&Tile", self, statusTip="Tile the windows", triggered=self.mdiArea.tileSubWindows)
-        self.actCascade = QAction("&Cascade", self, statusTip="Cascade the windows", triggered=self.mdiArea.cascadeSubWindows)
-        self.actNext = QAction("Ne&xt", self, shortcut=QKeySequence.NextChild, statusTip="Move the focus to the next window", triggered=self.mdiArea.activateNextSubWindow)
-        self.actPrevious = QAction("Pre&vious", self, shortcut=QKeySequence.PreviousChild, statusTip="Move the focus to the previous window", triggered=self.mdiArea.activatePreviousSubWindow)
+        self.actClose = QAction("Cl&ose", self, statusTip="Close the active window",
+                                triggered=self.mdiArea.closeActiveSubWindow)
+        self.actCloseAll = QAction(
+            "Close &All", self, statusTip="Close all the windows", triggered=self.mdiArea.closeAllSubWindows)
+        self.actTile = QAction(
+            "&Tile", self, statusTip="Tile the windows", triggered=self.mdiArea.tileSubWindows)
+        self.actCascade = QAction(
+            "&Cascade", self, statusTip="Cascade the windows", triggered=self.mdiArea.cascadeSubWindows)
+        self.actNext = QAction("Ne&xt", self, shortcut=QKeySequence.NextChild,
+                               statusTip="Move the focus to the next window", triggered=self.mdiArea.activateNextSubWindow)
+        self.actPrevious = QAction("Pre&vious", self, shortcut=QKeySequence.PreviousChild,
+                                   statusTip="Move the focus to the previous window", triggered=self.mdiArea.activatePreviousSubWindow)
 
         self.actSeparator = QAction(self)
         self.actSeparator.setSeparator(True)
 
-        self.actAbout = QAction("&About", self, statusTip="Show the application's About box", triggered=self.about)
+        self.actAbout = QAction(
+            "&About", self, statusTip="Show the application's About box", triggered=self.about)
 
     def getCurrentNodeEditorWidget(self):
         """ we're returning NodeEditorWidget here... """
@@ -131,11 +139,12 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
             subwnd = self.createMdiChild()
             subwnd.widget().fileNew()
             subwnd.show()
-        except Exception as e: dumpException(e)
-
+        except Exception as e:
+            dumpException(e)
 
     def onFileOpen(self):
-        fnames, filter = QFileDialog.getOpenFileNames(self, 'Open graph from file', self.getFileDialogDirectory(), self.getFileDialogFilter())
+        fnames, filter = QFileDialog.getOpenFileNames(
+            self, 'Open graph from file', self.getFileDialogDirectory(), self.getFileDialogFilter())
 
         try:
             for fname in fnames:
@@ -153,21 +162,21 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
                             subwnd.show()
                         else:
                             nodeeditor.close()
-        except Exception as e: dumpException(e)
-
+        except Exception as e:
+            dumpException(e)
 
     def about(self):
-        QMessageBox.about(self, "About", 
-        "This program was written by Sebastian Beyer\n"
-        "sebastian.beyer@live.com\n\n"
+        QMessageBox.about(self, "About",
+                          "This program was written by Sebastian Beyer\n"
+                          "sebastian.beyer@live.com\n\n"
 
-        "You can view it on GitHub: https://github.com/beyse/NodeEditor.\n\n"
-        
-        "It is a fork from pyqt-node-editor done by Pavel Křupala.\n"
-        "Check it out as well at: https://gitlab.com/pavel.krupala/pyqt-node-editor.\n\n"
-        
-        "The project is licensed under the MIT License.\n"
-        "Learn more about it here: https://choosealicense.com/licenses/mit/."); 
+                          "You can view it on GitHub: https://github.com/beyse/NodeEditor.\n\n"
+
+                          "It is a fork from pyqt-node-editor done by Pavel Křupala.\n"
+                          "Check it out as well at: https://gitlab.com/pavel.krupala/pyqt-node-editor.\n\n"
+
+                          "The project is licensed under the MIT License.\n"
+                          "Learn more about it here: https://choosealicense.com/licenses/mit/.")
 
     def createMenus(self):
         super().createMenus()
@@ -210,13 +219,13 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
 
             self.actCut.setEnabled(hasMdiChild and active.hasSelectedItems())
             self.actCopy.setEnabled(hasMdiChild and active.hasSelectedItems())
-            self.actDelete.setEnabled(hasMdiChild and active.hasSelectedItems())
+            self.actDelete.setEnabled(
+                hasMdiChild and active.hasSelectedItems())
 
             self.actUndo.setEnabled(hasMdiChild and active.canUndo())
             self.actRedo.setEnabled(hasMdiChild and active.canRedo())
-        except Exception as e: dumpException(e)
-
-
+        except Exception as e:
+            dumpException(e)
 
     def updateWindowMenu(self):
         self.windowMenu.clear()
@@ -262,11 +271,12 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
 
     def createToolBars(self):
         toolbar = QToolBar("Main Toolbar")
-        self.run_graph_action = QAction(QIcon("gui/icons/play.png"), "Run Graph (F5)", self)
+        self.run_graph_action = QAction(
+            QIcon("gui/icons/play.png"), "Run Graph (F5)", self)
         self.run_graph_action.setShortcut('F5')
         self.run_graph_action.triggered.connect(self.run_graph)
         toolbar.addAction(self.run_graph_action)
-        
+
         self.addToolBar(toolbar)
 
     def execute_process(self, graph_file):
@@ -287,9 +297,11 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
                     self.process.kill()
             else:
                 print('This process terminated')
-        
+
         exepath = "C:\\Temp\\ExecutionNodes\\build\\examples\\example_image_processing\\Release\\example_image_processing.exe"
-        self.process = subprocess.Popen([exepath, graph_file], creationflags=subprocess.CREATE_NEW_CONSOLE)
+        self.process = subprocess.Popen(
+            [exepath, graph_file], creationflags=subprocess.CREATE_NEW_CONSOLE)
+        #self.process = subprocess.Popen([exepath, graph_file])
 
     def run_graph(self):
         print('run graph')
@@ -297,7 +309,7 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
         ok, graph_file = self.onFileSave()
         # get the file name of the graph
         #current_nodeeditor = self.getCurrentNodeEditorWidget()
-        #print(current_nodeeditor)
+        # print(current_nodeeditor)
         if ok:
             self.execute_process(graph_file)
             #print('Run now {}'.format(graph_file))
@@ -320,7 +332,8 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
         subwnd.setWindowIcon(self.empty_icon)
         # nodeeditor.scene.addItemSelectedListener(self.updateEditMenu)
         # nodeeditor.scene.addItemsDeselectedListener(self.updateEditMenu)
-        nodeeditor.scene.history.addHistoryModifiedListener(self.updateEditMenu)
+        nodeeditor.scene.history.addHistoryModifiedListener(
+            self.updateEditMenu)
         nodeeditor.addCloseEventListener(self.onSubWndClose)
         return subwnd
 
@@ -333,13 +346,11 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
         else:
             event.ignore()
 
-
     def findMdiChild(self, filename):
         for window in self.mdiArea.subWindowList():
             if window.widget().filename == filename:
                 return window
         return None
-
 
     def setActiveSubWindow(self, window):
         if window:

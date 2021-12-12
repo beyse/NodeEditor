@@ -11,7 +11,6 @@ from nodeeditor.utils import dumpException
 
 class GraphicsExecutionNode(QDMGraphicsNode):
 
-
     def initSizes(self, max_sockets):
         super().initSizes()
         self.width = 150
@@ -28,8 +27,11 @@ class GraphicsExecutionNode(QDMGraphicsNode):
         super().paint(painter, QStyleOptionGraphicsItem, widget)
 
         offset = 24.0
-        if self.node.isDirty(): offset = 0.0
-        if self.node.isInvalid(): offset = 48.0
+        if self.node.isDirty():
+            offset = 0.0
+        if self.node.isInvalid():
+            offset = 48.0
+
 
 class ExecutionContent(QDMNodeContentWidget):
     def initUI(self):
@@ -46,14 +48,12 @@ class ExecutionNode(Node):
     GraphicsNode_class = GraphicsExecutionNode
     NodeContent_class = ExecutionContent
 
-    def __init__(self, scene, inputs=[2,2], outputs=[1]):
+    def __init__(self, scene, inputs=[2, 2], outputs=[1]):
         super().__init__(scene, self.__class__.op_title, inputs, outputs)
 
         self.value = None
         # it's really important to mark all nodes Dirty by default
         self.markDirty()
-
-
 
     def initSettings(self):
         super().initSettings()
@@ -73,11 +73,12 @@ class ExecutionNode(Node):
             print("input socket name = {}".format(input_socket.socket_name))
             print("input socket type = {}".format(input_socket.socket_type))
             if len(input_socket.edges) == 0:
-                print("This socket has no edges") 
+                print("This socket has no edges")
                 input_socket.is_valid = True
                 continue
             else:
-                print("This socket has {} edges".format(len(input_socket.edges))) 
+                print("This socket has {} edges".format(
+                    len(input_socket.edges)))
 
             connecting_edge = input_socket.edges[0]
             print(connecting_edge)
@@ -100,7 +101,8 @@ class ExecutionNode(Node):
 
     def eval(self):
         if not self.isDirty() and not self.isInvalid():
-            print(" _> returning cached %s value:" % self.__class__.__name__, self.value)
+            print(" _> returning cached %s value:" %
+                  self.__class__.__name__, self.value)
             return self.value
 
         try:
@@ -116,20 +118,18 @@ class ExecutionNode(Node):
             self.grNode.setToolTip(str(e))
             dumpException(e)
 
-
-
     def onInputChanged(self, socket=None):
         print("%s::__onInputChanged" % self.__class__.__name__)
         self.markDirty()
         self.eval()
 
-
     def serialize(self):
         res = super().serialize()
-        res['op_code'] = self.__class__.op_code
+        res['node_type'] = self.node_type
         return res
 
     def deserialize(self, data, hashmap={}, restore_id=True):
         res = super().deserialize(data, hashmap, restore_id)
-        print("Deserialized CalcNode '%s'" % self.__class__.__name__, "res:", res)
+        print("Deserialized ExecutionNode '%s'" %
+              self.__class__.__name__, "res:", res)
         return res
