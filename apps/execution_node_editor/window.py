@@ -1,3 +1,5 @@
+from apps.execution_node_editor.execution_node_base import GraphicsExecutionNode
+from apps.execution_node_editor.json_editor import JsonEditor
 import qss.nodeeditor_dark_resources
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QToolBar
@@ -84,6 +86,7 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
         self.windowMapper.mapped[QWidget].connect(self.setActiveSubWindow)
 
         self.createNodesDock()
+        self.createSettingsDock()
 
         self.createActions()
         self.createMenus()
@@ -213,6 +216,7 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
         self.actSeparator.setVisible(hasMdiChild)
 
         self.updateEditMenu()
+        self.updateSettingsDock()
 
     def updateEditMenu(self):
         try:
@@ -229,6 +233,25 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
 
             self.actUndo.setEnabled(hasMdiChild and active.canUndo())
             self.actRedo.setEnabled(hasMdiChild and active.canRedo())
+        except Exception as e:
+            dumpException(e)
+
+    def updateSettingsDock(self):
+        try:
+            # print("update Settings Dock")
+            active = self.getCurrentNodeEditorWidget()
+            hasMdiChild = (active is not None)
+
+            self.settingsDock.update({}, None, False)
+            if hasMdiChild:
+                print(type(active))
+                selected_items = active.getSelectedItems()
+                if len(selected_items) == 1:
+                    selected_item = selected_items[0]
+                    if isinstance(selected_item, GraphicsExecutionNode):
+                        node = selected_item.node
+                        node.settings
+                        self.settingsDock.update(node.settings, node.setSettings, True)
         except Exception as e:
             dumpException(e)
 
@@ -328,6 +351,10 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
 
         self.addDockWidget(Qt.RightDockWidgetArea, self.nodesDock)
 
+    def createSettingsDock(self):
+        self.settingsDock = JsonEditor()
+        self.addDockWidget(Qt.RightDockWidgetArea, self.settingsDock)
+
     def createStatusBar(self):
         self.statusBar().showMessage("Ready")
 
@@ -339,6 +366,8 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
         # nodeeditor.scene.addItemsDeselectedListener(self.updateEditMenu)
         nodeeditor.scene.history.addHistoryModifiedListener(
             self.updateEditMenu)
+        nodeeditor.scene.history.addHistoryModifiedListener(
+            self.updateSettingsDock)
         nodeeditor.addCloseEventListener(self.onSubWndClose)
         return subwnd
 

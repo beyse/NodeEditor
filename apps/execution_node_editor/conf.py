@@ -7,7 +7,6 @@ from nodeeditor.node_socket import SocketDefinition
 from apps.execution_node_editor.execution_node_base import ExecutionNode, GraphicsExecutionNode
 from nodeeditor.node_content_widget import QDMNodeContentWidget
 import re
-from json_editor import JsonEditor
 
 LISTBOX_MIMETYPE = "application/x-item"
 
@@ -117,25 +116,10 @@ class ConcreteExecutionNode(ExecutionNode):
         postfix = '_' + str(node_count)
 
         self.title = camel_to_snake(node_type) + postfix
-        self.editor = None
-        self.is_editor_open = False
         self.eval()
 
     def onDoubleClicked(self, event):
-        if self.is_editor_open == False:
-            self.editor = JsonEditor(self.title, self.settings, self.setSettings)
-            self.editor.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
-            self.editor.closeEvent = self.resetEditor
-            self.is_editor_open = True
-            self.editor.show()
-        else:
-            # this will activate the window
-            self.editor.setWindowState(QtCore.Qt.WindowActive)
-            self.editor.activateWindow()
-
-    def resetEditor(self, event):
-        print('resetEditor')
-        self.is_editor_open = False
+        pass
 
     def setSettings(self, s):
         print('setSettings')
