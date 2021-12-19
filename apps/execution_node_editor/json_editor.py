@@ -3,10 +3,9 @@ from subprocess import call
 from PyQt5 import QtCore
 
 from pyqode.qt import QtWidgets
-from pyqode.core import api, modes
 from pyqode.json.widgets import JSONCodeEdit
 
-from PyQt5.QtWidgets import QAction, QMainWindow, QMessageBox, QStyle, QStyleFactory, QToolBar
+from PyQt5.QtWidgets import QAction, QMainWindow, QMessageBox, QScrollBar, QStyle, QStyleFactory, QToolBar
 
 import json 
 
@@ -16,7 +15,7 @@ def countLines(text):
 class JsonEditor(QtWidgets.QDockWidget):
     def __init__(self):
         super(JsonEditor, self).__init__()
-        self.editor = JSONCodeEdit(self)
+        self.editor = JSONCodeEdit(parent=self, interpreter=None)
         self.editor.tab_length = 2
         self.editor.setMinimumWidth(100)
         self.editor.setMinimumHeight(100)
