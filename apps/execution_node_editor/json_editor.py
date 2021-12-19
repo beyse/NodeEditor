@@ -16,6 +16,7 @@ class JsonEditor(QtWidgets.QDockWidget):
     def __init__(self):
         super(JsonEditor, self).__init__()
         self.editor = JSONCodeEdit(parent=self, interpreter=None)
+        self.editor.setHorizontalScrollBar(QScrollBar(self.editor))
         self.editor.tab_length = 2
         self.editor.setMinimumWidth(100)
         self.editor.setMinimumHeight(100)
