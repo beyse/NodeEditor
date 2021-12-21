@@ -250,7 +250,6 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
                     selected_item = selected_items[0]
                     if isinstance(selected_item, GraphicsExecutionNode):
                         node = selected_item.node
-                        node.settings
                         self.settingsDock.update(node.settings, node.setSettings, True)
         except Exception as e:
             dumpException(e)
