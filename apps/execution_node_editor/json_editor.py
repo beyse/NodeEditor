@@ -18,6 +18,8 @@ class JsonEditor(QtWidgets.QDockWidget):
         self.editor = JSONCodeEdit(parent=self, interpreter=None)
         self.editor.setHorizontalScrollBar(QScrollBar(self.editor))
         self.editor.tab_length = 2
+        self.setMinimumWidth(100)
+        self.setMinimumHeight(100)
         self.editor.setMinimumWidth(100)
         self.editor.setMinimumHeight(100)
         self.editor.textChanged.connect(self.apply_change)
@@ -26,6 +28,10 @@ class JsonEditor(QtWidgets.QDockWidget):
         self.callback = None
 
     def update(self, json_dict, callback, active):
+        if not active:
+            self.setWidget(None)
+        else:
+            self.setWidget(self.editor)
         self.editor.setEnabled(active)            
         self.callback = callback
         json_string = json.dumps(json_dict, indent = 2)
