@@ -3,6 +3,7 @@
 A module containing all code for working with Clipboard
 """
 from collections import OrderedDict
+from apps.execution_node_editor.conf import ConcreteExecutionNode
 from nodeeditor.node_graphics_edge import QDMGraphicsEdge
 from nodeeditor.node_edge import Edge
 
@@ -135,8 +136,8 @@ class SceneClipboard():
         self.scene.doDeselectItems()
 
         for node_data in data['nodes']:
-            new_node = self.scene.getNodeClassFromData(node_data)(self.scene)
-            new_node.deserialize(node_data, hashmap, restore_id=False, *args, **kwargs)
+            new_node = ConcreteExecutionNode(self.scene, node_data['node_type'])
+            new_node.deserialize(node_data, hashmap, restore_id=False, keep_title=True)
             created_nodes.append(new_node)
 
             # readjust the new nodeeditor's position

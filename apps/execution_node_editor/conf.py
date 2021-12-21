@@ -138,9 +138,12 @@ class ConcreteExecutionNode(ExecutionNode):
         res['node_settings'] = self.settings
         return res
 
-    def deserialize(self, data, hashmap={}, restore_id=True):
+    def deserialize(self, data, hashmap={}, restore_id=True, keep_title=False):
+        title_before = self.title
         res = super().deserialize(data, hashmap, restore_id)
         self.settings = data['node_settings']
+        if keep_title:
+            self.title = title_before
         return res
 
 
