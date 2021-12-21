@@ -180,7 +180,7 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
 
                           "You can view it on GitHub: https://github.com/beyse/NodeEditor.\n\n"
 
-                          "It is a fork from pyqt-node-editor done by Pavel Křupala.\n"
+                          "It is a fork of pyqt-node-editor done by Pavel Křupala.\n"
                           "Check it out as well at: https://gitlab.com/pavel.krupala/pyqt-node-editor.\n\n"
 
                           "The project is licensed under the MIT License.\n"
