@@ -31,8 +31,7 @@ class SubWindow(NodeEditorWidget):
         self._close_event_listeners = []
 
     def getNodeClassFromData(self, data):
-        if 'op_code' not in data: return Node
-        return get_class_from_opcode(data['op_code'])
+        return get_node_from_type(data['node_type'])
 
     def doEvalOutputs(self):
         # eval all output nodes
