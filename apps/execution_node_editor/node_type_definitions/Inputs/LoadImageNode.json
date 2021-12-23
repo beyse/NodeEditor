@@ -10,7 +10,17 @@
     ],
     "default_settings": 
     {
-      "imageFilePath": "/path/to/image.jpg"
+      "string": "/path/to/image.jpg",
+      "object":{
+        "decimal": 45,
+        "float": 123.45,
+        "text": "another text",
+        "list": [
+          1, 2, 3, 4
+        ]
+      },
+      "ey": 4,
+      "da_list": ["Hey", "Ho", "Yo"]
     }
   }
   
