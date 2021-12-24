@@ -3,7 +3,6 @@ from subprocess import call
 from typing import Dict
 from PyQt5 import QtCore
 from PyQt5 import QtGui
-from PyQt5.QtGui import QBrush, QColor, QCursor, QFont
 from pyqode.core.api import syntax_highlighter
 from pyqode.core.api.decoration import TextDecoration
 from qtpy.QtCore import Qt
@@ -12,7 +11,7 @@ from PyQtJsonModel import QJsonModel
 from pyqode.qt import QtWidgets
 from pyqode.json.widgets import JSONCodeEdit
 
-from PyQt5.QtWidgets import QAction, QMainWindow, QMessageBox, QScrollBar, QStyle, QStyleFactory, QToolBar, QTreeView, QTreeWidget, QTreeWidgetItem
+from PyQt5.QtWidgets import QAbstractItemView, QTreeView
 
 import json 
 
@@ -28,6 +27,9 @@ class JsonEditor(QtWidgets.QDockWidget):
         self.setMinimumHeight(100)
         self.setWindowTitle("Node Settings")
         self.callback = None
+        self.tree.setStyleSheet('QTreeView { alternate-background-color: #f7f7f7; font-family: Roboto; font-size: 12pt;} QTreeView::item { height: 25px; }')
+        self.tree.setAlternatingRowColors(True)
+        self.tree.setEditTriggers(QAbstractItemView.AllEditTriggers)
 
     def update(self, json_dict, callback, active):
         if active:
