@@ -1,13 +1,13 @@
 from json.decoder import JSONDecodeError
-import os
 from subprocess import call
 from typing import Dict
 from PyQt5 import QtCore
-from PyQt5.QtGui import QBrush, QColor, QCursor
+from PyQt5 import QtGui
+from PyQt5.QtGui import QBrush, QColor, QCursor, QFont
 from pyqode.core.api import syntax_highlighter
 from pyqode.core.api.decoration import TextDecoration
 from qtpy.QtCore import Qt
-import re
+from PyQtJsonModel import QJsonModel
 
 from pyqode.qt import QtWidgets
 from pyqode.json.widgets import JSONCodeEdit
@@ -22,43 +22,36 @@ def countLines(text):
 class JsonEditor(QtWidgets.QDockWidget):
     def __init__(self):
         super(JsonEditor, self).__init__()
-
-        self.tree = QTreeWidget()
-        self.tree.setColumnCount(2)
-        self.tree.setHeaderLabels(["Setting", "Value"])
+        self.tree = QTreeView(self)
         self.setWidget(self.tree)
         self.setMinimumWidth(100)
         self.setMinimumHeight(100)
         self.setWindowTitle("Node Settings")
         self.callback = None
-        self.root = QTreeWidgetItem(self.tree, ["Root"])
-        self.tree.addTopLevelItem(self.root)
-        
-
-
-    def build_tree(self, dict, item : QTreeWidgetItem):
-        for key, value in dict.items():
-            if isinstance(value, Dict):
-                child = QTreeWidgetItem([key])
-                item.addChild(child)
-                self.build_tree(value, child)
-            elif isinstance(value, list):
-                for entry in value:
-                    strValue = str(entry)
-                    child = QTreeWidgetItem(item, [key, strValue])
-                    child.setFlags(child.flags() | Qt.ItemIsEditable)
-                    item.addChild(child)
-            else:
-                strValue = str(value)
-                child = QTreeWidgetItem(item, [key, strValue])
-                child.setFlags(child.flags() | Qt.ItemIsEditable)
-                item.addChild(child)
-        
-
-
 
     def update(self, json_dict, callback, active):
-       self.build_tree(json_dict, self.root)
+        if active:
+            self.setWidget(self.tree)
+            self.json_model = QJsonModel(json_data=json_dict)
+            self.json_model.dataChanged.connect(self.apply_change)
+            self.tree.setModel(self.json_model)
+            self.callback = callback
+
+        else:
+            self.setWidget(None)
+            #self.json_model = None
+            self.callback = None
 
     def apply_change(self):
-        pass
+        had_error = True
+        json_dict = {}
+        try:
+            json_dict = self.json_model.as_dict
+            had_error = False
+        except:
+            had_error = True
+
+        if had_error == False and self.callback is not None:
+            print('Apply new settings to node')
+            print(json_dict)
+            self.callback(json_dict)
