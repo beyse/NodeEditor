@@ -52,18 +52,20 @@ class QJsonTreeItem:
         elif isinstance(value, QJsonValue):
             if value.isBool():
                 root_item.value = value.toBool()
-                root_item.typename = 'bool'
+                root_item.typename = type(bool).__name__
             elif value.isDouble():
                 root_item.value = value.toDouble()
-                root_item.typename = 'float'
+                root_item.typename = type(float).__name__
 
             elif value.isString():
                 root_item.value = value.toString()
-                root_item.typename = 'str'
+                root_item.typename = type(str).__name__
+
 
             elif value.isArray():
                 array = value.toArray()
-                root_item.typename = 'list'
+                root_item.typename = type(list).__name__
+                root_item.value = None
                 for idx, val in enumerate(array):
                     child = self.init_tree(val, root_item)
                     child.key = idx
@@ -100,7 +102,7 @@ class QJsonModel(QAbstractItemModel):
         super().__init__(parent)
         self.document = None
         self.root_item = QJsonTreeItem()
-        self.headers = ["Setting", "Value", "Type"]
+        self.headers = ["Setting", "Value"]
         if json_data:
             self.update_data(json_data)
 
@@ -176,8 +178,6 @@ class QJsonModel(QAbstractItemModel):
             elif col == 1:
                 value = item.value
                 return value
-            elif col == 2:
-                return item.typename
 
         elif role == Qt.EditRole:
             if col == 0:
@@ -250,7 +250,7 @@ class QJsonModel(QAbstractItemModel):
         return len(parent_item.children)
 
     def columnCount(self, parent: QModelIndex = ...):
-        return 3
+        return 2
 
     def flags(self, index: QModelIndex) -> Qt.ItemFlags:
         if not index.isValid():
