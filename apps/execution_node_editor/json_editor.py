@@ -21,6 +21,7 @@ def countLines(text):
 class JsonEditor(QtWidgets.QDockWidget):
     def __init__(self):
         super(JsonEditor, self).__init__()
+        self.setFeatures(QtWidgets.QDockWidget.DockWidgetMovable)
         self.tree = QTreeView(self)
         self.setWidget(self.tree)
         self.setMinimumWidth(100)

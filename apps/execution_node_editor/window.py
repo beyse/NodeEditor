@@ -345,6 +345,7 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
         self.nodesListWidget = QDMDragListbox()
 
         self.nodesDock = QDockWidget("Nodes")
+        self.nodesDock.setFeatures(QDockWidget.DockWidgetMovable)
         self.nodesDock.setWidget(self.nodesListWidget)
         self.nodesDock.setFloating(False)
 
