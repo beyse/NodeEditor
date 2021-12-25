@@ -52,38 +52,30 @@ class QJsonTreeItem:
         elif isinstance(value, QJsonValue):
             if value.isBool():
                 root_item.value = value.toBool()
-                root_item.typename = type(bool).__name__
             elif value.isDouble():
                 root_item.value = value.toDouble()
-                root_item.typename = type(float).__name__
-
             elif value.isString():
                 root_item.value = value.toString()
-                root_item.typename = type(str).__name__
-
-
             elif value.isArray():
                 array = value.toArray()
-                root_item.typename = type(list).__name__
-                root_item.value = None
+                root_item.value = list()
                 for idx, val in enumerate(array):
                     child = self.init_tree(val, root_item)
                     child.key = idx
                     root_item.children.append(child)
-
             elif value.isObject():
                 obj = value.toObject()
-                root_item.typename = ''
+                root_item.value = object()
                 for key, val in obj.items():
                     child = self.init_tree(val, root_item)
                     child.key = key
                     root_item.children.append(child)
             elif value.isNull():
-                root_item.typename = 'null'
-                root_item.value = ''
+                root_item.value = None
         else:
             root_item.value = value
         
+        root_item.typename = type(root_item.value).__name__
         return root_item
 
     @property
@@ -197,6 +189,8 @@ class QJsonModel(QAbstractItemModel):
                 item.key = value
                 return True
             elif col == 1:
+                if item.typename == 'list' or item.typename == 'object':
+                    return True
                 item.value = value
                 item.typename = type(value).__name__
                 self.dataChanged.emit(index, index, [role])
@@ -256,7 +250,11 @@ class QJsonModel(QAbstractItemModel):
         if not index.isValid():
             return Qt.NoItemFlags
         if index.column() == 1:
-            return Qt.ItemIsEditable | super().flags(index)
+            item = index.internalPointer()
+            if item.typename == 'list' or item.typename == 'object':
+                return super().flags(index)
+            else:
+                return Qt.ItemIsEditable | super().flags(index)
         return super().flags(index)
 
     @property
