@@ -23,7 +23,7 @@ class QDMGraphicsSocket(QGraphicsItem):
         self.isHighlighted = False
 
         self.radius = 6.0
-        self.outline_width = 0.0
+        self.outline_width = 0.5
         self.initAssets()
 
     @property
@@ -51,13 +51,13 @@ class QDMGraphicsSocket(QGraphicsItem):
 
         # determine socket color
         self._color_background = self.getSocketColor(self.socket_type)
-        self._color_outline = QColor("#00000000")
-        self._color_highlight = QColor("#00c1f8")
+        self._color_outline = QColor("#FFFFFF")
+        self._color_highlight = QColor("#28daed")
         self._color_invalid = QColor("#ed8836")
 
         self._pen = QPen(self._color_outline)
         self._pen.setWidthF(self.outline_width)
-        self._pen_highlight = QPen(self._color_background)
+        self._pen_highlight = QPen(QColor('#FFFFFF'))
         self._pen_highlight.setWidthF(1.0)
         self._brush = QBrush(self._color_background)
         self._brush_highlight = QBrush(self._color_highlight)
@@ -65,11 +65,11 @@ class QDMGraphicsSocket(QGraphicsItem):
 
         """Set up the title Graphics representation: font, color, position, etc."""
         self.title_item = QGraphicsTextItem(self)
-        self._title_color = QColor("#000000")
-        self._title_color_highlighted = QColor("#1294ba")
+        self._title_color = QColor("#a2abba")
+        self._title_color_highlighted = QColor("#28daed")
         self._title_font = QFont("Roboto", 10)
-        self.title_horizontal_padding = 4.0
-        self.title_vertical_padding = 4.0
+        self.title_horizontal_padding = 8.0
+        self.title_vertical_padding = 6.0
         self.width = 100
         self.title_height = 20,
         self.edge_roundness = 0

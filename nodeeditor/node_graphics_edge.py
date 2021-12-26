@@ -53,7 +53,7 @@ class QDMGraphicsEdge(QGraphicsPathItem):
 
     def initAssets(self):
         """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
-        self._color = self._default_color = QColor("#07303c")
+        self._color = self._default_color = QColor("#7f8ba0")
         self._color_selected = QColor("#07def5")
         self._color_hovered = QColor("#028a99")
         self._color_selected_hovered = QColor("#58fffd")
@@ -61,14 +61,14 @@ class QDMGraphicsEdge(QGraphicsPathItem):
         self._color_invalid_selected = QColor("#ffc519")
         self._pen = QPen(self._color)
         self._pen_selected = QPen(self._color_selected)
-        self._pen_dragging = QPen(QColor("#5891a0"))
+        self._pen_dragging = QPen(QColor("#FFFFFF"))
         self._pen_hovered = QPen(self._color_hovered)
         self._pen_selected_hovered = QPen(self._color_selected_hovered)
         self._pen_invalid = QPen(self._color_invalid)
         self._pen_invalid_selected= QPen(self._color_invalid_selected)
         self._pen.setWidthF(1.5)
         self._pen_selected.setWidthF(1.5)
-        self._pen_dragging.setWidthF(1.5)
+        self._pen_dragging.setWidthF(0.5)
         self._pen_hovered.setWidthF(1.5)
         self._pen_selected_hovered.setWidthF(1.5)
         self._pen_invalid.setWidthF(1.5)

@@ -39,6 +39,7 @@ node_type_definitions = []
 class ExecutionNodeEditorWindow(NodeEditorWindow):
 
     def initUI(self):
+        #self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.name_company = 'Sebastian Beyer'
         self.name_product = 'ExecutionNodeEditor'
         self.process = None
@@ -175,12 +176,11 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
 
     def about(self):
         QMessageBox.about(self, "About",
-                          "This program was written by Sebastian Beyer\n"
-                          "sebastian.beyer@live.com\n\n"
+                          "Created by Sebastian Beyer (sebastian.beyer@live.com)\n\n"
 
-                          "You can view it on GitHub: https://github.com/beyse/NodeEditor.\n\n"
+                          "View it on GitHub: https://github.com/beyse/NodeEditor.\n\n"
 
-                          "It is a fork of pyqt-node-editor done by Pavel Křupala.\n"
+                          "It is a fork of pyqt-node-editor, created by Pavel Křupala.\n"
                           "Check it out as well at: https://gitlab.com/pavel.krupala/pyqt-node-editor.\n\n"
 
                           "The project is licensed under the MIT License.\n"
@@ -298,6 +298,8 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
 
     def createToolBars(self):
         toolbar = QToolBar("Main Toolbar")
+        toolbar.setFloatable(False)
+        toolbar.setMovable(False)
         self.run_graph_action = QAction(
             QIcon("assets/icons/play.png"), "Run Graph (F5)", self)
         self.run_graph_action.setShortcut('F5')
@@ -344,7 +346,8 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
     def createNodesDock(self):
         self.nodesListWidget = QDMDragListbox()
 
-        self.nodesDock = QDockWidget("Nodes")
+        self.nodesDock = QDockWidget("NODES")
+        self.nodesDock.setFont(QtGui.QFont('Roboto', 10))
         self.nodesDock.setFeatures(QDockWidget.DockWidgetMovable)
         self.nodesDock.setWidget(self.nodesListWidget)
         self.nodesDock.setFloating(False)

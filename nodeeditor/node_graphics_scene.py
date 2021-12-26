@@ -48,9 +48,9 @@ class QDMGraphicsScene(QGraphicsScene):
 
     def initAssets(self):
         """Initialize ``QObjects`` like ``QColor``, ``QPen`` and ``QBrush``"""
-        self._color_background = QColor("#ffffff")
-        self._color_light = QColor("#eeeeee")
-        self._color_dark = QColor("#e8e8e8")
+        self._color_background = QColor("#202b3c")
+        self._color_light = QColor("#2a3343")
+        self._color_dark = QColor("#2a3343")
         self._color_state = QColor("#ccc")
 
         self._pen_light = QPen(self._color_light)
@@ -74,6 +74,35 @@ class QDMGraphicsScene(QGraphicsScene):
     def drawBackground(self, painter:QPainter, rect:QRect):
         """Draw background scene grid"""
         super().drawBackground(painter, rect)
+
+        # here we create our grid
+        left = int(math.floor(rect.left()))
+        right = int(math.ceil(rect.right()))
+        top = int(math.floor(rect.top()))
+        bottom = int(math.ceil(rect.bottom()))
+
+        first_left = left - (left % self.gridSize)
+        first_top = top - (top % self.gridSize)
+
+        # compute all lines to be drawn
+        lines_light, lines_dark = [], []
+        for x in range(first_left, right, self.gridSize):
+            if (x % (self.gridSize*self.gridSquares) != 0): lines_light.append(QLine(x, top, x, bottom))
+            else: lines_dark.append(QLine(x, top, x, bottom))
+
+        for y in range(first_top, bottom, self.gridSize):
+            if (y % (self.gridSize*self.gridSquares) != 0): lines_light.append(QLine(left, y, right, y))
+            else: lines_dark.append(QLine(left, y, right, y))
+
+
+        # draw the lines
+        painter.setPen(self._pen_light)
+        try: painter.drawLines(*lines_light)                    # supporting PyQt5
+        except TypeError: painter.drawLines(lines_light)        # supporting PySide2
+
+        painter.setPen(self._pen_dark)
+        try: painter.drawLines(*lines_dark)                     # supporting PyQt5
+        except TypeError: painter.drawLines(lines_dark)         # supporting PySide2
 
         if DEBUG_STATE:
             try:
