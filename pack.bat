@@ -1,3 +1,8 @@
+::Write git commit hash into python file
+git rev-parse --short HEAD > githash.txt
+SET /p var= < githash.txt
+echo GIT_HASH = '%var%' > .\apps\execution_node_editor\commit_info.py
+
 rmdir /S /Q .\build 
 rmdir /S /Q .\dist 
 
