@@ -26,11 +26,38 @@ class JsonEditor(QtWidgets.QDockWidget):
         self.setWidget(self.tree)
         self.setMinimumWidth(100)
         self.setMinimumHeight(100)
-        self.setWindowTitle("Node Settings")
+        self.setWindowTitle("NODE SETTINGS")
+        self.setFont(QtGui.QFont('Roboto', 10))
         self.callback = None
-        self.tree.setStyleSheet('QTreeView { alternate-background-color: #f7f7f7; font-family: Roboto; font-size: 12pt;} QTreeView::item { height: 25px; }')
+        self.tree.setStyleSheet('QTreeView { '
+        'alternate-background-color: #252b3b; '
+        'selection-background-color: #1a4b61;' 
+        'font-family: Roboto; '
+        'font-size: 12pt; '
+        'color: #a0a9b8'
+        '}'
+        'QTreeView::item { height: 25px; }'
+        'QTreeView::item {'
+        '    selection-color: #ffffff;'
+        '}'
+        'QTreeView::item:hover {'
+        '        color: #ffffff;'
+        '}'
+        )
         self.tree.setAlternatingRowColors(True)
         self.tree.setEditTriggers(QAbstractItemView.AllEditTriggers)
+        self.tree.header().setStyleSheet(
+            'QHeaderView::section {'                          
+            'color: #a0a9b8;' 
+            'font-family: Roboto; font-size: 12pt;'
+                                        
+            #'padding: 0px;'                               
+            'height: 25px;'                                
+            #'border: 0px solid #2c3748;'                  
+            #'border-left:1px;'                            
+            #'border-right:1px;'                           
+            'background: #151a24;'                        
+        '}')
 
     def update(self, json_dict, callback, active):
         if active:

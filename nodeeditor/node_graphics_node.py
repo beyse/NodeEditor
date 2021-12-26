@@ -35,15 +35,7 @@ class QDMGraphicsNode(QGraphicsItem):
         self.initAssets()
         self.initUI()
 
-        shadowX = 0
-        shadowY = 5
-        self.__shadow = QGraphicsDropShadowEffect(blurRadius=30,
-                                                  offset=QPoint(shadowX, shadowY))
-        self.setGraphicsEffect(self.__shadow)
-        self.__shadow.setEnabled(True)
 
-        self.width += shadowX
-        self.height += shadowY
 
     @property
     def content(self):
@@ -92,7 +84,6 @@ class QDMGraphicsNode(QGraphicsItem):
         self._title_color = QColor("#ffffff")
         self._title_font = QFont("Roboto", 10)
 
-        self._color = QColor("#07303c")
         self._color_hovered = QColor("#52ffb9")
         self._color_selected = QColor("#28daed")
         self._color_dirty = QColor("#ed8836")
@@ -101,7 +92,7 @@ class QDMGraphicsNode(QGraphicsItem):
         self._pen_default = QPen(QColor("#00000000"))
         self._pen_default.setWidthF(0)
         self._pen_selected = QPen(self._color_selected)
-        self._pen_selected.setWidthF(0.75)
+        self._pen_selected.setWidthF(1.5)
         self._pen_dirty = QPen(self._color_dirty)
         self._pen_dirty.setWidthF(1.5)
         self._pen_dirty_selected = QPen(self._color_dirty_selected)
@@ -109,14 +100,26 @@ class QDMGraphicsNode(QGraphicsItem):
         self._pen_hovered = QPen(self._color_hovered)
         self._pen_hovered.setWidthF(2)
 
-        self._brush_title = QBrush(QColor("#009ecc"))
-        self._brush_title_hover = QBrush(QColor("#0baddc"))
-        self._brush_title_selected = QBrush(QColor("#28daed"))
+        self._brush_title = QBrush(QColor("#1b202c"))
+        self._brush_title_hover = QBrush(QColor("#222736"))
+        self._brush_title_selected = QBrush(QColor("#282f40"))
         self._brush_title_dirty = QBrush(self._color_dirty)
         self._brush_title_dirty_selected = QBrush(self._color_dirty_selected)
         self._brush_title_dirty_hovered = QBrush(QColor("#f29d33"))
-        self._brush_background = QBrush(QColor("#ffffff"))
-        self._brush_hover = QBrush(QColor("#ffffff"))
+        self._brush_background = QBrush(QColor("#151a24"))
+        self._brush_hover = QBrush(QColor("#151a24"))
+
+        shadowX = 0
+        shadowY = 0
+        self.__shadow = QGraphicsDropShadowEffect(blurRadius=0,
+                                                  offset=QPoint(shadowX, shadowY))
+        self._color_shadow = QColor('#000000')
+        self.__shadow.setColor(self._color_shadow)
+        self.__shadow.setEnabled(True)
+        self.setGraphicsEffect(self.__shadow)
+
+        self.width += shadowX
+        self.height += shadowY
 
     def onSelected(self):
         """Our event handling when the node was selected"""
@@ -240,10 +243,18 @@ class QDMGraphicsNode(QGraphicsItem):
                 painter.setBrush(self._brush_title)
 
         if self.isSelected():
+            self.__shadow.setBlurRadius(20)
             if self.node.isDirty():
                 painter.setBrush(self._brush_title_dirty_selected)
+                self.__shadow.setColor(self._color_dirty)
             else:
                 painter.setBrush(self._brush_title_selected)
+                self.__shadow.setColor(self._color_selected)
+
+        else:
+            self.__shadow.setColor(QColor('#00000000'))
+            self.__shadow.setBlurRadius(0)
+
 
         painter.drawPath(path_title.simplified())
 

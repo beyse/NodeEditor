@@ -224,7 +224,7 @@ class NodeEditorWindow(QMainWindow):
             fname, filter = QFileDialog.getSaveFileName(
                 self, 'Save graph and scene to file', self.getFileDialogDirectory(), self.getFileDialogFilter())
             if fname == '':
-                return False
+                return False, None
 
             self.onBeforeSaveAs(current_nodeeditor, fname)
             current_nodeeditor.fileSave(fname)

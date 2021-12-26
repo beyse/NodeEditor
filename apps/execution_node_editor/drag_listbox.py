@@ -21,6 +21,32 @@ class QDMDragListbox(QTreeWidget):
         self.addMyItems()
         self._font = QFont("Roboto", 12)
         self.setFont(self._font)
+        self.setStyleSheet('QTreeView { '
+        'alternate-background-color: #252b3b;'
+        'selection-background-color: #1a4b61;'
+        'font-family: Roboto;'
+        'font-size: 12pt;'
+        'color: #a0a9b8;'
+        '}'
+        'QTreeView::item { height: 25px;'
+        '}'
+        'QTreeView::item {'
+        '    selection-color: #ffffff;'
+        '}'
+        'QTreeView::item:hover {'
+        'color: #ffffff;'
+        '}'
+        
+        )
+        self.header().setStyleSheet('QHeaderView::section {'                          
+            'color: black;'                               
+            'padding: 0px;'                               
+            'height: 0px;'                                
+            'border: 0px solid #567dbc;'                  
+            'border-left:0px;'                            
+            'border-right:0px;'                           
+            'background: #f9f9f9;'                        
+        '}')
         
 
 
@@ -28,7 +54,7 @@ class QDMDragListbox(QTreeWidget):
         items = []
         for key, values in nodeTypes.items():
             item = QTreeWidgetItem([key])
-            color = QColor("#000000")
+            color = QColor("#a0a9b8")
             brush = QBrush(color)
             item.setForeground(0, brush)
             for value in values:
