@@ -37,7 +37,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "C:\Users\Sebastian\source\repos\NodeEditor\dist\ExecutionNodeEditor.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\Sebastian\source\repos\NodeEditor\dist\assets\*"; DestDir: "{app}\assets"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "C:\Users\Sebastian\source\repos\NodeEditor\dist\node_type_definitions\*"; DestDir: "{app}\node_type_definitions"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "C:\Users\Sebastian\source\repos\NodeEditor\dist\execution_subsystem\*"; DestDir: "{app}\execution_subsystem"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]
