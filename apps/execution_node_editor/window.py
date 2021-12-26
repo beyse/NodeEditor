@@ -1,6 +1,5 @@
 from apps.execution_node_editor.execution_node_base import GraphicsExecutionNode
 from apps.execution_node_editor.json_editor import JsonEditor
-import qss.nodeeditor_dark_resources
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QToolBar
 from apps.execution_node_editor.conf import register_node_types
@@ -9,6 +8,9 @@ from qtpy.QtGui import QIcon, QKeySequence
 from qtpy.QtWidgets import QMdiArea, QWidget, QDockWidget, QAction, QMessageBox, QFileDialog
 from qtpy.QtCore import Qt, QSignalMapper
 import subprocess
+from apps.execution_node_editor.version_info import VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH
+from version_info import VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH
+from commit_info import GIT_HASH
 
 from nodeeditor.utils import loadStylesheets
 from nodeeditor.node_editor_window import NodeEditorWindow
@@ -43,10 +45,9 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
         self.name_company = 'Sebastian Beyer'
         self.name_product = 'ExecutionNodeEditor'
         self.process = None
-        self.stylesheet_filename = os.path.join(
-            os.path.dirname(__file__), "qss/nodeeditor-light.qss")
+        self.stylesheet_filename = os.path.join("./assets/qss/nodeeditor-light.qss")
         loadStylesheets(
-            os.path.join(os.path.dirname(__file__), "qss/nodeeditor.qss"),
+            "./assets/qss/nodeeditor.qss",
             self.stylesheet_filename
         )
 
@@ -176,7 +177,11 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
             dumpException(e)
 
     def about(self):
+
+        #Version 0.1.0-eb42a6f
+        version_info_text = "Version {}.{}.{}-{}".format(VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, GIT_HASH)
         QMessageBox.about(self, "About",
+                          version_info_text + "\n\n"
                           "Created by Sebastian Beyer (sebastian.beyer@live.com)\n\n"
 
                           "View it on GitHub: https://github.com/beyse/NodeEditor.\n\n"
