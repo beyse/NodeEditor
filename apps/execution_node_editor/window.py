@@ -67,7 +67,8 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
             # pp(CALC_NODES)
 
         exe_path = os.path.dirname(os.path.realpath(sys.argv[0]))
-        node_definitions_dir = os.path.join(exe_path, 'node_type_definitions')
+        node_definitions_dir = os.path.join(exe_path, 'execution_subsystem' , 'node_type_definitions')
+        self.execution_subsystem_path = os.path.join(exe_path, 'execution_subsystem' , 'run_graph.exe')
         categorizes_node_type_definitions = read_node_type_definitions_from_dirs(node_definitions_dir)
 
         for category, node_types in categorizes_node_type_definitions.items():
@@ -327,10 +328,12 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
             else:
                 print('This process terminated')
 
-        exepath = "C:\\Temp\\ExecutionNodes\\build\\examples\\example_image_processing\\Release\\example_image_processing.exe"
+        #flags = subprocess.CREATE_NEW_CONSOLE
+        flags = subprocess.CREATE_NO_WINDOW
+        args = [self.execution_subsystem_path, graph_file] 
+        print(args)
         self.process = subprocess.Popen(
-            [exepath, graph_file], creationflags=subprocess.CREATE_NEW_CONSOLE)
-        #self.process = subprocess.Popen([exepath, graph_file])
+            args, creationflags=flags)
 
     def run_graph(self):
         print('run graph')
