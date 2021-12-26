@@ -1,4 +1,4 @@
 
-# ![Logo](./apps/execution_node_editor/assets/icons/64x64.png) NodeEditor
+# ![Logo](apps/execution_node_editor/assets/icons/64x64.png) NodeEditor
 
-[Image](./doc/screenshot-image-processing.jpg)
+![Image](doc/screenshot-image-processing.png)
