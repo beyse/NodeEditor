@@ -275,7 +275,7 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
     def about(self):
 
         #Version 0.1.0-eb42a6f
-        version_info_text = "Version {}.{}.{}-{}".format(VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, GIT_HASH)
+        version_info_text = "{} v{}.{}.{}-{}".format(self.name_product, VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, GIT_HASH)
         QMessageBox.about(self, "About",
                           version_info_text + "\n\n"
                           "Created by Sebastian Beyer (sebastian.beyer@live.com)\n\n"
