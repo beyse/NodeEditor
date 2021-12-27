@@ -12,6 +12,12 @@ from apps.execution_node_editor.version_info import VERSION_MAJOR, VERSION_MINOR
 from version_info import VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH
 from commit_info import GIT_HASH
 
+import requests
+import shutil
+import tempfile
+from PyQt5.QtCore import QObject, pyqtSlot as pyQtSlot
+
+
 from nodeeditor.utils import loadStylesheets
 from nodeeditor.node_editor_window import NodeEditorWindow
 from sub_window import SubWindow
@@ -36,6 +42,49 @@ Edge.registerEdgeValidator(edge_cannot_connect_input_and_output_of_same_node)
 DEBUG = False
 
 node_type_definitions = []
+
+class DownloaderSignals(QObject):
+    signalSuccess = QtCore.pyqtSignal()
+    installerPath = QtCore.pyqtSignal(object)
+class Downloader(QtCore.QRunnable):
+
+    def __init__(self):
+        super(Downloader, self).__init__()
+        self.signals = DownloaderSignals()
+
+
+    def download_file(self, url, folder_name, local_filename):
+        path = os.path.join(folder_name, local_filename)
+        with requests.get(url, stream=True) as r:
+            with open(path, 'wb') as f:
+                shutil.copyfileobj(r.raw, f)
+        
+        return path
+
+    @pyQtSlot()
+    def run(self):
+        response = requests.get("https://api.github.com/repos/beyse/NodeEditor/releases/latest")
+        release_info = response.json()
+        assets = release_info["assets"]
+        tag_name = release_info["tag_name"]
+        url = None
+        for asset in assets:
+            content_type = asset["content_type"]
+            name = asset["name"]
+            if content_type == "application/x-msdownload" and (name.startswith('Setup') or name.startswith('Install')): 
+                url = asset["browser_download_url"]
+        
+        if url is not None:
+            local_filename = 'install_{}.exe'.format(tag_name)
+            tmpdir = tempfile.gettempdir()
+            app_tmpdir = os.path.join(tmpdir, 'ExecutionNodeEditor')
+            if not os.path.exists(app_tmpdir):
+                os.mkdir(app_tmpdir)
+            
+            path = self.download_file(url, app_tmpdir, local_filename)
+            print('Successfully Downloaded {}'.format(path))
+            self.signals.installerPath.emit(path)
+            self.signals.signalSuccess.emit()
 
 
 class ExecutionNodeEditorWindow(NodeEditorWindow):
@@ -134,6 +183,12 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
         self.actAbout = QAction(
             "&About", self, statusTip="Show the application's About box", triggered=self.about)
 
+        is_update_available = self.check_for_update()
+
+        if is_update_available:
+            self.actUpdate = QAction("&Get Latest Version!", self, statusTip="A newer version is available. Click here to download and install it.", triggered=self.update)
+            self.update = self.menuBar().addAction(self.actUpdate)
+
     def getCurrentNodeEditorWidget(self):
         """ we're returning NodeEditorWidget here... """
         activeSubWindow = self.mdiArea.activeSubWindow()
@@ -176,6 +231,43 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
         except Exception as e:
             dumpException(e)
 
+    def check_for_update(self):
+        #check for updated version
+        response = requests.get("https://api.github.com/repos/beyse/NodeEditor/releases/latest")
+        release_info = response.json()
+        tag_name = release_info["tag_name"]
+        tag_name = tag_name.replace('v', '')
+        tokens = tag_name.split('.')
+        r_major = int(tokens[0])
+        r_minor = int(tokens[1])
+        r_patch = int(tokens[2])
+
+        if r_major > VERSION_MAJOR or r_minor > VERSION_MINOR or r_patch > VERSION_PATCH:
+            return True
+        else:
+            return False
+
+
+    def update_ready(self, installer_path):
+        self.downloader=None
+        print('path = ', installer_path)
+        if installer_path is not None:
+            res = QMessageBox.information(self, "Update ready", "Download finished.\nThe application will be closed.\n\nUnsaved changes can be saved.")
+            if res is not None:
+                args = [installer_path]
+                self.process = subprocess.Popen(args)
+                self.actExit.trigger()
+
+    def update(self):
+        #download newer version
+        self.threadpool = QtCore.QThreadPool()
+        self.downloader = Downloader()
+        self.downloader.signals.installerPath.connect(self.update_ready)
+        self.threadpool.start(self.downloader)
+        self.statusBar().showMessage("Downloading...", 10000)
+        self.menuBar().removeAction(self.actUpdate)
+        
+
     def about(self):
 
         #Version 0.1.0-eb42a6f
@@ -203,7 +295,6 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
 
         self.helpMenu = self.menuBar().addMenu("&Help")
         self.helpMenu.addAction(self.actAbout)
-
         self.editMenu.aboutToShow.connect(self.updateEditMenu)
 
     def updateMenus(self):
