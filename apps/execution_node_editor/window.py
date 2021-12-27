@@ -232,19 +232,23 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
             dumpException(e)
 
     def check_for_update(self):
-        #check for updated version
-        response = requests.get("https://api.github.com/repos/beyse/NodeEditor/releases/latest")
-        release_info = response.json()
-        tag_name = release_info["tag_name"]
-        tag_name = tag_name.replace('v', '')
-        tokens = tag_name.split('.')
-        r_major = int(tokens[0])
-        r_minor = int(tokens[1])
-        r_patch = int(tokens[2])
+        try:
+            #check for updated version
+            response = requests.get("https://api.github.com/repos/beyse/NodeEditor/releases/latest")
+            release_info = response.json()
+            tag_name = release_info["tag_name"]
+            tag_name = tag_name.replace('v', '')
+            tokens = tag_name.split('.')
+            r_major = int(tokens[0])
+            r_minor = int(tokens[1])
+            r_patch = int(tokens[2])
 
-        if r_major > VERSION_MAJOR or r_minor > VERSION_MINOR or r_patch > VERSION_PATCH:
-            return True
-        else:
+            if r_major > VERSION_MAJOR or r_minor > VERSION_MINOR or r_patch > VERSION_PATCH:
+                return True
+            else:
+                return False
+        except Exception:
+            print('Unable to check for update')
             return False
 
 
