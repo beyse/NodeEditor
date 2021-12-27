@@ -1,0 +1,9 @@
+name: editor
+channels:
+  - defaults
+dependencies:
+  - python=3.8.5
+  - pyqt
+  - qtpy
+  - requests
+prefix: /home/sebastian/miniconda3/envs/editor
