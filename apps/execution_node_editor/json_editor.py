@@ -3,13 +3,9 @@ from subprocess import call
 from typing import Dict
 from PyQt5 import QtCore
 from PyQt5 import QtGui
-from pyqode.core.api import syntax_highlighter
-from pyqode.core.api.decoration import TextDecoration
+from PyQt5 import QtWidgets
 from qtpy.QtCore import Qt
 from PyQtJsonModel import QJsonModel
-
-from pyqode.qt import QtWidgets
-from pyqode.json.widgets import JSONCodeEdit
 
 from PyQt5.QtWidgets import QAbstractItemView, QTreeView
 

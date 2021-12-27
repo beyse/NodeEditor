@@ -1,7 +1,6 @@
 
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QLabel
-from pyqode.qt import QtCore
 from nodeeditor.utils import dumpException
 from nodeeditor.node_socket import SocketDefinition
 from apps.execution_node_editor.execution_node_base import ExecutionNode, GraphicsExecutionNode
