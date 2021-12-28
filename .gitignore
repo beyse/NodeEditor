@@ -30,3 +30,5 @@ ExecutionNodeEditor.spec
 .vscode/*
 apps/execution_node_editor/execution_subsystem/*
 githash.txt
+*.graph.json
+*.nes
