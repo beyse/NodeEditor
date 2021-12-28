@@ -4,6 +4,7 @@ from PyQt5 import QtCore, QtGui
 from PyQt5.QtWidgets import QToolBar
 from apps.execution_node_editor.conf import register_node_types
 import os, sys
+from sys import platform
 from qtpy.QtGui import QIcon, QKeySequence
 from qtpy.QtWidgets import QMdiArea, QWidget, QDockWidget, QAction, QMessageBox, QFileDialog
 from qtpy.QtCore import Qt, QSignalMapper
@@ -118,7 +119,16 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
 
         exe_path = os.path.dirname(os.path.realpath(sys.argv[0]))
         node_definitions_dir = os.path.join(exe_path, 'execution_subsystem' , 'node_type_definitions')
-        self.execution_subsystem_path = os.path.join(exe_path, 'execution_subsystem' , 'run_graph.exe')
+        
+        if platform == "linux" or platform == "linux2":
+            # linux
+            self.execution_subsystem_path = os.path.join(exe_path, 'execution_subsystem' , 'run_graph')
+        elif platform == "darwin":
+            # OS X
+            pass
+        elif platform == "win32":
+            # Windows...
+            self.execution_subsystem_path = os.path.join(exe_path, 'execution_subsystem' , 'run_graph.exe')
         categorizes_node_type_definitions = read_node_type_definitions_from_dirs(node_definitions_dir)
 
         for category, node_types in categorizes_node_type_definitions.items():
@@ -429,11 +439,14 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
                 print('This process terminated')
 
         #flags = subprocess.CREATE_NEW_CONSOLE
-        flags = subprocess.CREATE_NO_WINDOW
         args = [self.execution_subsystem_path, graph_file] 
         print(args)
-        self.process = subprocess.Popen(
-            args, creationflags=flags)
+
+        if platform == "win32":
+            flags = subprocess.CREATE_NO_WINDOW
+            self.process = subprocess.Popen(args, creationflags=flags)
+        else:
+            self.process = subprocess.Popen(args)
 
     def run_graph(self):
         print('run graph')

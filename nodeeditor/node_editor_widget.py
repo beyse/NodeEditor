@@ -152,9 +152,12 @@ class NodeEditorWidget(QWidget):
 
         print('self.filename', self.filename)
 
-        self.graphFilename = '.graph.json'.join(
-            self.filename.rsplit('.nes', 1))
-        self.sceneFilename = '.nes'.join(self.filename.rsplit('.nes', 1))
+        if self.filename.endswith('.nes'):
+            self.graphFilename = '.graph.json'.join(self.filename.rsplit('.nes', 1))
+            self.sceneFilename = '.nes'.join(self.filename.rsplit('.nes', 1))
+        else:
+            self.graphFilename = self.filename + '.graph.json'
+            self.sceneFilename = self.filename + '.nes'
 
         QApplication.setOverrideCursor(Qt.WaitCursor)
         print('graphFilename', self.graphFilename)
