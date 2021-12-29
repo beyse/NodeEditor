@@ -28,7 +28,7 @@ wheels/
 /venv/
 ExecutionNodeEditor.spec
 .vscode/*
-apps/execution_node_editor/execution_subsystem/*
+apps/execution_node_editor/execution_subsystem/*.exe
 githash.txt
 *.graph.json
 *.nes

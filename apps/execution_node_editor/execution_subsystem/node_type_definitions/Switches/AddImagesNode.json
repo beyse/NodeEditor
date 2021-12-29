@@ -1,0 +1,25 @@
+{
+    "node_type": "AddImagesNode",
+    "input_ports": [
+      {
+        "port_name": "image1",
+        "data_type": "cv::Mat"
+      },
+      {
+        "port_name": "image2",
+        "data_type": "cv::Mat"
+      }
+    ],
+    "output_ports": [
+      {
+        "port_name": "output",
+        "data_type": "cv::Mat"
+      }
+    ],
+    "default_settings": 
+    {
+      "alpha": 0.5
+    }
+  }
+  
+  
