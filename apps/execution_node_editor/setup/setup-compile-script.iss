@@ -28,6 +28,9 @@ Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
 
+[InstallDelete]
+Type: filesandordirs; Name: {app}\*
+
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
