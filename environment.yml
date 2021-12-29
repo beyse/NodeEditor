@@ -6,4 +6,5 @@ dependencies:
   - pyqt
   - qtpy
   - requests
+  - pyinstaller
 prefix: /home/sebastian/miniconda3/envs/editor
