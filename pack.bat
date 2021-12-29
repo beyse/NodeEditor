@@ -21,7 +21,11 @@ python -m PyInstaller --noconfirm ^
 --name ExecutionNodeEditor ^
 .\apps\execution_node_editor\main.py
 
-xcopy .\apps\execution_node_editor\execution_subsystem .\dist\execution_subsystem\ /s /e
+xcopy ..\ExecutionSubsystems\CvSubsystem\_build\Release\CvSubsystem.exe .\dist\execution_subsystem\*
+cd .\dist\execution_subsystem
+ren CvSubsystem.exe run_graph.exe
+.\run_graph.exe
+cd ..\..
 xcopy .\apps\execution_node_editor\assets .\dist\assets\ /s /e
 
 "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" .\apps\execution_node_editor\setup\setup-compile-script.iss
