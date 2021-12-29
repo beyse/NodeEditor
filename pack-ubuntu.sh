@@ -1,3 +1,12 @@
+#!/bin/bash
+
+git rev-parse --short HEAD > githash.txt
+value=$(<githash.txt)
+echo "GIT_HASH = '$value'" > ./apps/execution_node_editor/commit_info.py
+
+rm -r ./build
+rm -r ./dist
+
 # create single binary from python source using PyInstaller
 python -m PyInstaller --noconfirm \
 --hidden-import PyQt5.QtWidgets \
@@ -18,7 +27,13 @@ python -m PyInstaller --noconfirm \
 chmod 777 ./dist/ExecutionNodeEditor
 
 # copy assets and subsystem
-cp -a ./apps/execution_node_editor/execution_subsystem ./dist/execution_subsystem
+
+mkdir ./dist/execution_subsystem
+cp ../ExecutionSubsystems/CvSubsystem/_build/CvSubsystem ./dist/execution_subsystem/run_graph
+cd ./dist/execution_subsystem/
+./run_graph
+cd ../..
+
 cp -a ./apps/execution_node_editor/assets ./dist/assets
 
 # zip the package
