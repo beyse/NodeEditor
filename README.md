@@ -47,11 +47,44 @@ The node editor creates two files
 ## License
 This software is licensed under [MIT License](https://opensource.org/licenses/MIT).
 
-## Credits
-This node editor is based on `pyqt-node-editor` by [Pavel Křupala](https://gitlab.com/pavel.krupala). Visit the original [repository](https://gitlab.com/pavel.krupala/pyqt-node-editor) on GitLab. 
+## How To Build
 
-Contribution from other authors:
-* The node settings editor is based on [PyQJsonModel](https://github.com/GrxE/PyQJsonModel) 
+### Prerequisits
+- Anaconda or Miniconda. Get it from: https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html
+- On **Windows only** you need Inno Setup for creating the Installer. Get it from: https://jrsoftware.org/isdl.php. Install it after you downloaded it. 
+
+### Step 1
+Create conda environment using
+```
+conda env create -f environment.yml
+```
+This will create a new conda environment called `editor`. Now activate the environment using
+```
+conda activate editor
+```
+### Step 2
+Now run the packaging script in a Terminal with the conda environment `editor` activated.
+
+For **Windows** run:
+```
+.\pack.bat
+```
+
+For **Linux** or **macOS** run:
+```
+./pack-ubuntu.sh
+```
+
+### After you are done
+You should now see the `dist` folder. It contains the executable file `ExecutionNodeEditor` or `ExecutionNodeEditor.exe` on Windows alongside with the two folders `assets` and `execution_subsystem`.
+
+- On **Windows** it contains the Installer `Setup ExecutionNodeEditor.exe`.
+- On **Linux** or **macOS** it contains a ZIP file called `ExecutionNodeEditor` which can be shipped.
+
+## Credits
+- This node editor is based on `pyqt-node-editor` by [Pavel Křupala](https://gitlab.com/pavel.krupala). Visit the original [repository](https://gitlab.com/pavel.krupala/pyqt-node-editor) on GitLab. 
+
+- The code contains a modified version of [PyQJsonModel](https://github.com/GrxE/PyQJsonModel) 
 
 
 ## Contribution
