@@ -1,4 +1,4 @@
-from apps.execution_node_editor.conf import CALC_NODES, create_node, LISTBOX_MIMETYPE
+from apps.execution_node_editor.conf import nodeTypes, create_node, LISTBOX_MIMETYPE
 from nodeeditor.node_socket import Socket, SocketDefinition
 from qtpy.QtGui import QIcon, QPixmap
 from qtpy.QtCore import QDataStream, QIODevice, Qt
@@ -19,8 +19,6 @@ class SubWindow(NodeEditorWidget):
         # self.setAttribute(Qt.WA_DeleteOnClose)
 
         self.setTitle()
-
-        self.initNewNodeActions()
 
         self.scene.addHasBeenModifiedListener(self.setTitle)
         self.scene.history.addHistoryRestoredListener(self.onHistoryRestored)
@@ -49,20 +47,16 @@ class SubWindow(NodeEditorWidget):
 
         return False
 
-    def initNewNodeActions(self):
-        self.node_actions = {}
-        keys = list(CALC_NODES.keys())
-        keys.sort()
-        for key in keys:
-            node = CALC_NODES[key]
-            self.node_actions[node.op_code] = QAction(QIcon(node.icon), node.op_title)
-            self.node_actions[node.op_code].setData(node.op_code)
-
     def initNodesContextMenu(self):
         context_menu = QMenu(self)
-        keys = list(CALC_NODES.keys())
+        keys = list(nodeTypes.keys())
         keys.sort()
-        for key in keys: context_menu.addAction(self.node_actions[key])
+        for key in keys: 
+            sub_menu = context_menu.addMenu(key)
+            types = nodeTypes[key]
+            for type in types:
+                action = sub_menu.addAction(type)
+                action.setData(type)
         return context_menu
 
     def setTitle(self):
@@ -135,6 +129,7 @@ class SubWindow(NodeEditorWidget):
     def handleNodeContextMenu(self, event):
         if DEBUG_CONTEXT: print("CONTEXT: NODE")
         context_menu = QMenu(self)
+        
         markDirtyAct = context_menu.addAction("Mark Dirty")
         markDirtyDescendantsAct = context_menu.addAction("Mark Descendant Dirty")
         markInvalidAct = context_menu.addAction("Mark Invalid")
@@ -201,17 +196,19 @@ class SubWindow(NodeEditorWidget):
         action = context_menu.exec_(self.mapToGlobal(event.pos()))
 
         if action is not None:
-            new_calc_node = get_class_from_opcode(action.data())(self.scene)
+            node_type = action.data()
+            node = create_node(self.scene, node_type)
+
             scene_pos = self.scene.getView().mapToScene(event.pos())
-            new_calc_node.setPos(scene_pos.x(), scene_pos.y())
-            if DEBUG_CONTEXT: print("Selected node:", new_calc_node)
+            node.setPos(scene_pos.x(), scene_pos.y())
+            if DEBUG_CONTEXT: print("Selected node:", node)
 
             if self.scene.getView().mode == MODE_EDGE_DRAG:
                 # if we were dragging an edge...
                 target_socket = self.determine_target_socket_of_node(self.scene.getView().dragging.drag_start_socket.is_output, new_calc_node)
                 if target_socket is not None:
                     self.scene.getView().dragging.edgeDragEnd(target_socket.grSocket)
-                    self.finish_new_node_state(new_calc_node)
+                    self.finish_new_node_state(node)
 
             else:
-                self.scene.history.storeHistory("Created %s" % new_calc_node.__class__.__name__)
+                self.scene.history.storeHistory("Created %s" % node.__class__.__name__)
