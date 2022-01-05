@@ -24,18 +24,8 @@ class SubWindow(NodeEditorWidget):
         self.scene.history.addHistoryRestoredListener(self.onHistoryRestored)
         self.scene.addDragEnterListener(self.onDragEnter)
         self.scene.addDropListener(self.onDrop)
-        self.scene.setNodeClassSelector(self.getNodeClassFromData)
 
         self._close_event_listeners = []
-
-    def getNodeClassFromData(self, data):
-        return get_node_from_type(data['node_type'])
-
-    def doEvalOutputs(self):
-        # eval all output nodes
-        for node in self.scene.nodes:
-            if node.__class__.__name__ == "CalcNode_Output":
-                node.eval()
 
     def onHistoryRestored(self):
         self.doEvalOutputs()
