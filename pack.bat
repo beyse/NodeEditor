@@ -24,6 +24,7 @@ python -m PyInstaller --noconfirm ^
 xcopy ..\ExecutionSubsystems\CvSubsystem\_build\Release\CvSubsystem.exe .\dist\execution_subsystem\*
 cd .\dist\execution_subsystem
 ren CvSubsystem.exe run_graph.exe
+:: Populate the subsystem folder with the node type definition json files
 .\run_graph.exe
 cd ..\..
 xcopy .\apps\execution_node_editor\assets .\dist\assets\ /s /e
