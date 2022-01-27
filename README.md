@@ -90,7 +90,9 @@ You should now see the `dist` folder. It contains the executable file `Execution
 ## Contribution
 
 If you would like to contribute please read this [Contribution Guide](CONTRIBUTING.md)  
+
 ## Reachout
 
 Feel free to contact me if you have any questions: sebastian.beyer@live.com
 
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/beyse)
