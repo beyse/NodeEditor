@@ -230,8 +230,13 @@ class NodeEditorWindow(QMainWindow):
                 if os.path.exists(save_dir) == False:
                     os.makedirs(save_dir, exist_ok=True)
 
-                random_filename = randomname.get_name()
-                fname = os.path.join(save_dir, random_filename)
+                # get a random filename which does not exist in the target dir
+                while True:
+                    random_filename = randomname.get_name()
+                    fname = os.path.join(save_dir, random_filename)
+                    if os.path.exists(fname) == False:
+                        break
+                    
                 self.onBeforeSaveAs(current_nodeeditor, fname)
                 current_nodeeditor.fileSave(fname)
 
