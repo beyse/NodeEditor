@@ -451,7 +451,7 @@ class ExecutionNodeEditorWindow(NodeEditorWindow):
     def run_graph(self):
         print('run graph')
         # first save the graph
-        ok, graph_file = self.onFileSave()
+        ok, graph_file = self.onFileAutosave()
         # get the file name of the graph
         #current_nodeeditor = self.getCurrentNodeEditorWidget()
         # print(current_nodeeditor)

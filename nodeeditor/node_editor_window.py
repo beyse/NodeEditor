@@ -4,10 +4,12 @@ A module containing the Main Window class
 """
 import os
 import json
+from sys import path
 from qtpy.QtCore import QSize, QSettings, QPoint
 from qtpy.QtWidgets import QMainWindow, QLabel, QAction, QMessageBox, QFileDialog, QApplication
 from nodeeditor.node_editor_widget import NodeEditorWidget
-
+from pathlib import Path
+import randomname
 
 class NodeEditorWindow(QMainWindow):
     NodeEditorWidget_class = NodeEditorWidget
@@ -216,6 +218,36 @@ class NodeEditorWindow(QMainWindow):
             else:
                 self.setTitle()
             return True, current_nodeeditor.graphFilename
+
+    def onFileAutosave(self):
+        """Handle File Autosave operation"""
+        current_nodeeditor = self.getCurrentNodeEditorWidget()
+        if current_nodeeditor is not None:
+
+            if not current_nodeeditor.isFilenameSet():
+                home_dir = Path.home()
+                save_dir = os.path.join(home_dir, 'NodeEditor Autosaves')
+                if os.path.exists(save_dir) == False:
+                    os.makedirs(save_dir, exist_ok=True)
+
+                random_filename = randomname.get_name()
+                fname = os.path.join(save_dir, random_filename)
+                self.onBeforeSaveAs(current_nodeeditor, fname)
+                current_nodeeditor.fileSave(fname)
+
+            else:
+                current_nodeeditor.fileSave()
+                self.statusBar().showMessage("Successfully saved as %s" % 
+                                            current_nodeeditor.sceneFilename, 5000)
+
+            # support for MDI app
+            if hasattr(current_nodeeditor, "setTitle"):
+                current_nodeeditor.setTitle()
+            else:
+                self.setTitle()
+            return True, current_nodeeditor.graphFilename
+        else:
+            return False, None
 
     def onFileSaveAs(self):
         """Handle File Save As operation"""
