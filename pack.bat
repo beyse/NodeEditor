@@ -15,6 +15,7 @@ python -m PyInstaller --noconfirm ^
 --hidden-import nodeeditor.node_socket ^
 --hidden-import SocketDefinition ^
 --hidden-import nodeeditor.node_socket.SocketDefinition ^
+--hidden-import randomname ^
 --noconsole ^
 --onefile ^
 --icon=apps\execution_node_editor\assets\icons\app.ico ^
