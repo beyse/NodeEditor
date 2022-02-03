@@ -69,7 +69,7 @@ Install randomname
 Randomname is used to create random file names by the editor.
 [This fork](https://github.com/beyse/randomname) of the [original](https://github.com/beasteers/randomname) package is used.
 
-Install it by cloning the [randomname](https://github.com/beyse/randomname) and then running. You need to take the fork because the original version can not be installed using the PyInstaller.
+You need to take the fork because the original version can not be installed properly using the PyInstaller.
 
 Clone the repository:
 ```
