@@ -62,7 +62,26 @@ This will create a new conda environment called `editor`. Now activate the envir
 ```
 conda activate editor
 ```
+
 ### Step 2
+Install randomname
+
+Randomname is used to create random file names by the editor.
+[This fork](https://github.com/beyse/randomname) of the [original](https://github.com/beasteers/randomname) package is used.
+
+Install it by cloning the [randomname](https://github.com/beyse/randomname) and then running. You need to take the fork because the original version can not be installed using the PyInstaller.
+
+Clone the repository:
+```
+git clone git@github.com:beyse/randomname.git
+cd randomname
+```
+
+Make sure that the `editor` environment is activated and run:
+```
+python setup.py install
+```
+### Step 3
 Now run the packaging script in a Terminal with the conda environment `editor` activated.
 
 For **Windows** run:
