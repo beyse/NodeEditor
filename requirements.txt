@@ -1,0 +1,27 @@
+altgraph @ file:///home/linux1/recipes/ci/altgraph_1611055153312/work
+brotlipy==0.7.0
+certifi==2021.10.8
+cffi @ file:///C:/ci/cffi_1636542074879/work
+charset-normalizer @ file:///tmp/build/80754af9/charset-normalizer_1630003229654/work
+cryptography @ file:///C:/ci/cryptography_1639472366776/work
+fire==0.4.0
+future==0.18.2
+idna @ file:///tmp/build/80754af9/idna_1637925883363/work
+macholib @ file:///home/linux1/recipes/ci/macholib_1611055836792/work
+pefile==2019.4.18
+pycparser @ file:///tmp/build/80754af9/pycparser_1636541352034/work
+pycryptodome @ file:///C:/ci/pycryptodome_1641468936377/work
+PyInstaller @ file:///C:/ci/pyinstaller_1615968685947/work
+pyOpenSSL @ file:///tmp/build/80754af9/pyopenssl_1635333100036/work
+PySocks @ file:///C:/ci/pysocks_1605287845585/work
+pywin32==302
+pywin32-ctypes==0.2.0
+QtPy @ file:///tmp/build/80754af9/qtpy_1629397026935/work
+randomname==0.1.6
+requests @ file:///opt/conda/conda-bld/requests_1641824580448/work
+sip==4.19.13
+six @ file:///tmp/build/80754af9/six_1623709665295/work
+termcolor==1.1.0
+urllib3==1.26.7
+win-inet-pton @ file:///C:/ci/win_inet_pton_1605306167264/work
+wincertstore==0.2
