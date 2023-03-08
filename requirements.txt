@@ -5,7 +5,7 @@ cffi @ file:///C:/ci/cffi_1636542074879/work
 charset-normalizer @ file:///tmp/build/80754af9/charset-normalizer_1630003229654/work
 cryptography @ file:///C:/ci/cryptography_1639472366776/work
 fire==0.4.0
-future==0.18.2
+future==0.18.3
 idna @ file:///tmp/build/80754af9/idna_1637925883363/work
 macholib @ file:///home/linux1/recipes/ci/macholib_1611055836792/work
 pefile==2019.4.18
