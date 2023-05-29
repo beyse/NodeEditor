@@ -8,7 +8,7 @@ A multi purpose node editor for flow-based programming.
 The purpose of this node editor is to connect functional building blocks and parameterize them in order to form a graph which can then be executed using the execution subsystem.  
 
 ### Execution Subsystem
-For running the graph created with the node editor the so called `execution subsystem` written in C++ is used. It is based on the [ExecutionNodes](https://github.com/beyse/ExecutionNodes) flow-based programming library also done by me. (Please note the repository is not publicly available yet)
+For running the graph created with the node editor the so called `execution subsystem` written in C++ is used. It is based on the [ExecutionNodes](https://github.com/beyse/ExecutionNodes) flow-based programming library also done by me.
 
 If you want, you could swap the execution subsystem shipped in the Releases by your own system. It just needs to understand the node editor's output format of the graph.
 
